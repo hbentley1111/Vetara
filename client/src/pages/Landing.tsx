@@ -31,35 +31,97 @@ export default function Landing() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <div className="text-center">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
-            Comprehensive Pet Medical Records Platform
-          </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Securely store your pet's medical records, connect with trusted veterinarians, 
-            and keep track of your furry friend's health all in one place.
-          </p>
-          <div className="flex items-center justify-center space-x-4">
-            <Button 
-              onClick={handleLogin}
-              size="lg"
-              className="bg-pet-blue hover:bg-blue-700 text-white font-medium px-8 py-3"
-            >
-              Get Started Free
-            </Button>
-            <Button 
-              variant="outline" 
-              size="lg"
-              className="border-pet-blue text-pet-blue hover:bg-pet-blue hover:text-white px-8 py-3"
-            >
-              Learn More
-            </Button>
+      {/* Hero Section with Pet Background */}
+      <div className="relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 opacity-60"></div>
+        <div className="absolute inset-0">
+          <svg className="w-full h-full object-cover opacity-20" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
+            {/* Cute pets background illustration */}
+            {/* Dog silhouette */}
+            <path d="M150 350c0-20 15-35 35-35s35 15 35 35-15 35-35 35-35-15-35-35zm25-15c5 0 10 5 10 10s-5 10-10 10-10-5-10-10 5-10 10-10z" fill="#4F46E5" opacity="0.3"/>
+            <path d="M140 330c10-15 25-25 45-25s35 10 45 25l-10 5c-8-10-20-15-35-15s-27 5-35 15l-10-5z" fill="#4F46E5" opacity="0.2"/>
+            
+            {/* Cat silhouette */}
+            <path d="M600 200c0-25 20-45 45-45s45 20 45 45-20 45-45 45-45-20-45-45zm30-20c8 0 15 7 15 15s-7 15-15 15-15-7-15-15 7-15 15-15z" fill="#7C3AED" opacity="0.3"/>
+            <ellipse cx="630" cy="170" rx="8" ry="15" fill="#7C3AED" opacity="0.2"/>
+            <ellipse cx="660" cy="170" rx="8" ry="15" fill="#7C3AED" opacity="0.2"/>
+            
+            {/* Bird silhouette */}
+            <path d="M400 150c15-10 35-5 45 10s5 35-10 45-35 5-45-10-5-35 10-45z" fill="#059669" opacity="0.3"/>
+            <circle cx="420" cy="170" r="3" fill="#059669" opacity="0.4"/>
+            
+            {/* Rabbit silhouette */}
+            <path d="M100 150c0-15 12-27 27-27s27 12 27 27-12 27-27 27-27-12-27-27z" fill="#EC4899" opacity="0.3"/>
+            <ellipse cx="115" cy="130" rx="5" ry="12" fill="#EC4899" opacity="0.2"/>
+            <ellipse cx="135" cy="130" rx="5" ry="12" fill="#EC4899" opacity="0.2"/>
+            
+            {/* Fish silhouette */}
+            <ellipse cx="700" cy="400" rx="25" ry="15" fill="#0891B2" opacity="0.3"/>
+            <path d="M725 400l15-8v16l-15-8z" fill="#0891B2" opacity="0.2"/>
+            
+            {/* Paw prints scattered around */}
+            <g fill="#6B7280" opacity="0.15">
+              <circle cx="200" cy="100" r="4"/>
+              <circle cx="195" cy="95" r="2"/>
+              <circle cx="205" cy="95" r="2"/>
+              <circle cx="200" cy="90" r="2"/>
+              
+              <circle cx="500" cy="300" r="4"/>
+              <circle cx="495" cy="295" r="2"/>
+              <circle cx="505" cy="295" r="2"/>
+              <circle cx="500" cy="290" r="2"/>
+              
+              <circle cx="300" cy="450" r="4"/>
+              <circle cx="295" cy="445" r="2"/>
+              <circle cx="305" cy="445" r="2"/>
+              <circle cx="300" cy="440" r="2"/>
+              
+              <circle cx="650" cy="350" r="4"/>
+              <circle cx="645" cy="345" r="2"/>
+              <circle cx="655" cy="345" r="2"/>
+              <circle cx="650" cy="340" r="2"/>
+            </g>
+            
+            {/* Heart shapes */}
+            <g fill="#F59E0B" opacity="0.2">
+              <path d="M250 250c0-10 8-18 18-18s18 8 18 18c0 10-8 18-18 18s-18-8-18-18z"/>
+              <path d="M550 450c0-8 6-14 14-14s14 6 14 14c0 8-6 14-14 14s-14-6-14-14z"/>
+            </g>
+          </svg>
+        </div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="text-center">
+            <h1 className="text-5xl font-bold text-gray-900 mb-6">
+              Comprehensive Pet Medical Records Platform
+            </h1>
+            <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+              Securely store your pet's medical records, connect with trusted veterinarians, 
+              and keep track of your furry friend's health all in one place.
+            </p>
+            <div className="flex items-center justify-center space-x-4">
+              <Button 
+                onClick={handleLogin}
+                size="lg"
+                className="bg-pet-blue hover:bg-blue-700 text-white font-medium px-8 py-3 shadow-lg"
+              >
+                Get Started Free
+              </Button>
+              <Button 
+                variant="outline" 
+                size="lg"
+                className="border-pet-blue text-pet-blue hover:bg-pet-blue hover:text-white px-8 py-3 shadow-lg"
+              >
+                Learn More
+              </Button>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Features Grid */}
+      {/* Features Grid */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <Card className="hover-lift">
             <CardHeader>
@@ -184,8 +246,10 @@ export default function Landing() {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* CTA Section */}
+      {/* CTA Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mt-20 text-center bg-gradient-to-r from-pet-blue to-pet-purple rounded-xl p-12 text-white">
           <h2 className="text-3xl font-bold mb-4">
             Ready to Get Started?
