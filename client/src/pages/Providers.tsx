@@ -259,8 +259,8 @@ export default function Providers() {
 
     reviewMutation.mutate({
       ...reviewData,
-      providerId: selectedProvider.id,
-      petId: reviewData.petId ? parseInt(reviewData.petId) : undefined,
+      providerId: selectedProvider.service_providers.id,
+      petId: reviewData.petId && reviewData.petId !== "none" ? parseInt(reviewData.petId) : null,
     });
   };
 
@@ -755,7 +755,7 @@ export default function Providers() {
                   <SelectValue placeholder="Select pet" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">No specific pet</SelectItem>
+                  <SelectItem value="none">No specific pet</SelectItem>
                   {pets.map((pet: any) => (
                     <SelectItem key={pet.id} value={pet.id.toString()}>
                       {pet.name}
