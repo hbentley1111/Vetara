@@ -174,7 +174,12 @@ export default function Providers() {
     return null;
   }
 
-  const filteredProviders = providers.filter((provider: any) => {
+  const filteredProviders = (providers || []).filter((provider: any) => {
+    // Ensure provider has the expected structure
+    if (!provider || !provider.service_providers) {
+      return false;
+    }
+
     const matchesSearch = searchTerm === '' || (
       provider.service_providers?.businessName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       provider.service_providers?.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -188,7 +193,8 @@ export default function Providers() {
     return matchesSearch && matchesType && matchesCity;
   });
 
-  const getProviderTypeColor = (type: string) => {
+  const getProviderTypeColor = (type: string | undefined) => {
+    if (!type) return 'bg-gray-100 text-gray-600';
     switch (type) {
       case 'veterinarian': return 'bg-pet-blue bg-opacity-10 text-pet-blue';
       case 'groomer': return 'bg-pet-green bg-opacity-10 text-pet-green';
@@ -198,7 +204,8 @@ export default function Providers() {
     }
   };
 
-  const getProviderIcon = (type: string) => {
+  const getProviderIcon = (type: string | undefined) => {
+    if (!type) return null;
     switch (type) {
       case 'veterinarian':
         return (
