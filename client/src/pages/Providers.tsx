@@ -417,50 +417,50 @@ export default function Providers() {
             </div>
           ) : (
             filteredProviders.map((provider: any) => (
-              <Card key={provider.id} className="hover-lift">
+              <Card key={provider.service_providers?.id || provider.id} className="hover-lift">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-4 mb-4">
-                    <div className={`p-3 rounded-full ${getProviderTypeColor(provider.user.userType)}`}>
-                      {getProviderIcon(provider.user.userType)}
+                    <div className={`p-3 rounded-full ${getProviderTypeColor(provider.service_providers?.userType)}`}>
+                      {getProviderIcon(provider.service_providers?.userType)}
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900">{provider.businessName}</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">{provider.service_providers?.businessName}</h3>
                       <p className="text-sm text-gray-600">
-                        {provider.user?.firstName} {provider.user?.lastName}
+                        {provider.users?.firstName} {provider.users?.lastName}
                       </p>
-                      <Badge className={getProviderTypeColor(provider.user.userType)}>
-                        {provider.user.userType.replace('_', ' ')}
+                      <Badge className={getProviderTypeColor(provider.service_providers?.userType)}>
+                        {provider.service_providers?.userType?.replace('_', ' ')}
                       </Badge>
                     </div>
                   </div>
 
                   <div className="flex items-center space-x-1 mb-3">
                     <div className="flex">
-                      {renderStars(parseFloat(provider.rating) || 0)}
+                      {renderStars(parseFloat(provider.service_providers?.rating) || 0)}
                     </div>
                     <span className="text-sm font-medium text-gray-900">
-                      {parseFloat(provider.rating).toFixed(1) || '0.0'}
+                      {parseFloat(provider.service_providers?.rating || '0').toFixed(1)}
                     </span>
                     <span className="text-sm text-gray-500">
-                      ({provider.reviewCount || 0} reviews)
+                      ({provider.service_providers?.reviewCount || 0} reviews)
                     </span>
                   </div>
 
-                  {provider.description && (
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-3">{provider.description}</p>
+                  {provider.service_providers?.description && (
+                    <p className="text-sm text-gray-600 mb-4 line-clamp-3">{provider.service_providers.description}</p>
                   )}
 
-                  {provider.specialties && provider.specialties.length > 0 && (
+                  {provider.service_providers?.specialties && provider.service_providers.specialties.length > 0 && (
                     <div className="mb-4">
                       <div className="flex flex-wrap gap-1">
-                        {provider.specialties.slice(0, 2).map((specialty: string, index: number) => (
+                        {provider.service_providers.specialties.slice(0, 2).map((specialty: string, index: number) => (
                           <Badge key={index} variant="secondary" className="text-xs">
                             {specialty}
                           </Badge>
                         ))}
-                        {provider.specialties.length > 2 && (
+                        {provider.service_providers.specialties.length > 2 && (
                           <Badge variant="secondary" className="text-xs">
-                            +{provider.specialties.length - 2} more
+                            +{provider.service_providers.specialties.length - 2} more
                           </Badge>
                         )}
                       </div>
@@ -469,16 +469,16 @@ export default function Providers() {
 
                   <div className="flex items-center justify-between">
                     <div className="text-sm text-gray-500">
-                      {provider.city && (
+                      {provider.service_providers?.city && (
                         <div className="flex items-center">
                           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                           </svg>
-                          {provider.city}, {provider.state}
+                          {provider.service_providers.city}
                         </div>
                       )}
-                      {provider.isVerified && (
+                      {provider.service_providers?.isVerified && (
                         <div className="flex items-center text-pet-green mt-1">
                           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
