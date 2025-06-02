@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Download, MapPin, Phone, Globe } from "lucide-react";
 
 export default function Providers() {
   const { toast } = useToast();
@@ -29,6 +30,12 @@ export default function Providers() {
     comment: "",
     petId: "",
     isRecommended: true,
+  });
+  const [showImportModal, setShowImportModal] = useState(false);
+  const [importLocation, setImportLocation] = useState({
+    latitude: "",
+    longitude: "",
+    radius: "10000"
   });
 
   // Redirect if not authenticated
@@ -80,6 +87,39 @@ export default function Providers() {
     queryKey: ["/api/service-providers", selectedProvider?.id, "reviews"],
     enabled: !!selectedProvider,
     retry: false,
+  });
+
+  const importMutation = useMutation({
+    mutationFn: async (locationData: any) => {
+      await apiRequest("POST", "/api/service-providers/import-radar", locationData);
+    },
+    onSuccess: (result: any) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/service-providers"] });
+      setShowImportModal(false);
+      setImportLocation({ latitude: "", longitude: "", radius: "10000" });
+      toast({
+        title: "Import Successful",
+        description: `${result.imported} businesses imported from your area`,
+      });
+    },
+    onError: (error: Error) => {
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "Unauthorized",
+          description: "You are logged out. Logging in again...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      toast({
+        title: "Import Failed",
+        description: "Failed to import businesses. Please check your location data.",
+        variant: "destructive",
+      });
+    },
   });
 
   const reviewMutation = useMutation({
@@ -219,9 +259,70 @@ export default function Providers() {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Service Providers</h1>
-          <p className="text-gray-600">Find trusted veterinarians, groomers, and pet care professionals</p>
+        <div className="mb-8 flex justify-between items-start">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Service Providers</h1>
+            <p className="text-gray-600">Find trusted veterinarians, groomers, and pet care professionals</p>
+          </div>
+          <Dialog open={showImportModal} onOpenChange={setShowImportModal}>
+            <DialogTrigger asChild>
+              <Button className="bg-pet-blue hover:bg-pet-blue/90">
+                <Download className="w-4 h-4 mr-2" />
+                Import Real Businesses
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Import Real Business Data</DialogTitle>
+                <div className="text-sm text-gray-600">
+                  Import actual veterinarians, groomers, and pet care professionals from your area using location data.
+                </div>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="latitude">Latitude</Label>
+                  <Input
+                    id="latitude"
+                    placeholder="e.g., 40.7128"
+                    value={importLocation.latitude}
+                    onChange={(e) => setImportLocation(prev => ({ ...prev, latitude: e.target.value }))}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="longitude">Longitude</Label>
+                  <Input
+                    id="longitude"
+                    placeholder="e.g., -74.0060"
+                    value={importLocation.longitude}
+                    onChange={(e) => setImportLocation(prev => ({ ...prev, longitude: e.target.value }))}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="radius">Search Radius (meters)</Label>
+                  <Input
+                    id="radius"
+                    placeholder="10000"
+                    value={importLocation.radius}
+                    onChange={(e) => setImportLocation(prev => ({ ...prev, radius: e.target.value }))}
+                  />
+                </div>
+                <div className="text-sm text-gray-500">
+                  Tip: You can find your coordinates by searching your location on Google Maps and clicking on your location pin.
+                </div>
+                <div className="flex justify-end space-x-2">
+                  <Button variant="outline" onClick={() => setShowImportModal(false)}>
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={() => importMutation.mutate(importLocation)}
+                    disabled={!importLocation.latitude || !importLocation.longitude || importMutation.isPending}
+                  >
+                    {importMutation.isPending ? "Importing..." : "Import Businesses"}
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
 
         {/* Filters */}
