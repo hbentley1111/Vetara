@@ -14,7 +14,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Download, MapPin, Phone, Globe } from "lucide-react";
 
 export default function Providers() {
   const { toast } = useToast();
@@ -30,12 +29,6 @@ export default function Providers() {
     comment: "",
     petId: "",
     isRecommended: true,
-  });
-  const [showImportModal, setShowImportModal] = useState(false);
-  const [importLocation, setImportLocation] = useState({
-    latitude: "",
-    longitude: "",
-    radius: "10000"
   });
 
   // Redirect if not authenticated
@@ -87,39 +80,6 @@ export default function Providers() {
     queryKey: ["/api/service-providers", selectedProvider?.id, "reviews"],
     enabled: !!selectedProvider,
     retry: false,
-  });
-
-  const importMutation = useMutation({
-    mutationFn: async (locationData: any) => {
-      await apiRequest("POST", "/api/service-providers/import-radar", locationData);
-    },
-    onSuccess: (result: any) => {
-      queryClient.invalidateQueries({ queryKey: ["/api/service-providers"] });
-      setShowImportModal(false);
-      setImportLocation({ latitude: "", longitude: "", radius: "10000" });
-      toast({
-        title: "Import Successful",
-        description: `${result.imported} businesses imported from your area`,
-      });
-    },
-    onError: (error: Error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
-      toast({
-        title: "Import Failed",
-        description: "Failed to import businesses. Please check your location data.",
-        variant: "destructive",
-      });
-    },
   });
 
   const reviewMutation = useMutation({
@@ -174,27 +134,17 @@ export default function Providers() {
     return null;
   }
 
-  const filteredProviders = (providers || []).filter((provider: any) => {
-    // Ensure provider has the expected structure
-    if (!provider || !provider.service_providers) {
-      return false;
-    }
+  const filteredProviders = providers.filter((provider: any) => {
+    const matchesSearch = 
+      provider.businessName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      provider.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      provider.user?.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      provider.user?.lastName?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesSearch = searchTerm === '' || (
-      provider.service_providers?.businessName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      provider.service_providers?.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      provider.users?.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      provider.users?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    const matchesType = filterType === 'all' || provider.service_providers?.userType === filterType;
-    const matchesCity = filterCity === '' || provider.service_providers?.city?.toLowerCase().includes(filterCity.toLowerCase());
-
-    return matchesSearch && matchesType && matchesCity;
+    return matchesSearch;
   });
 
-  const getProviderTypeColor = (type: string | undefined) => {
-    if (!type) return 'bg-gray-100 text-gray-600';
+  const getProviderTypeColor = (type: string) => {
     switch (type) {
       case 'veterinarian': return 'bg-pet-blue bg-opacity-10 text-pet-blue';
       case 'groomer': return 'bg-pet-green bg-opacity-10 text-pet-green';
@@ -204,8 +154,7 @@ export default function Providers() {
     }
   };
 
-  const getProviderIcon = (type: string | undefined) => {
-    if (!type) return null;
+  const getProviderIcon = (type: string) => {
     switch (type) {
       case 'veterinarian':
         return (
@@ -259,8 +208,8 @@ export default function Providers() {
 
     reviewMutation.mutate({
       ...reviewData,
-      providerId: selectedProvider.service_providers.id,
-      petId: reviewData.petId && reviewData.petId !== "none" ? parseInt(reviewData.petId) : null,
+      providerId: selectedProvider.id,
+      petId: reviewData.petId ? parseInt(reviewData.petId) : undefined,
     });
   };
 
@@ -270,70 +219,9 @@ export default function Providers() {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
-        <div className="mb-8 flex justify-between items-start">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Service Providers</h1>
-            <p className="text-gray-600">Find trusted veterinarians, groomers, and pet care professionals</p>
-          </div>
-          <Dialog open={showImportModal} onOpenChange={setShowImportModal}>
-            <DialogTrigger asChild>
-              <Button className="bg-pet-blue hover:bg-pet-blue/90">
-                <Download className="w-4 h-4 mr-2" />
-                Import Real Businesses
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>Import Real Business Data</DialogTitle>
-                <div className="text-sm text-gray-600">
-                  Import actual veterinarians, groomers, and pet care professionals from your area using location data.
-                </div>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="latitude">Latitude</Label>
-                  <Input
-                    id="latitude"
-                    placeholder="e.g., 40.7128"
-                    value={importLocation.latitude}
-                    onChange={(e) => setImportLocation(prev => ({ ...prev, latitude: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="longitude">Longitude</Label>
-                  <Input
-                    id="longitude"
-                    placeholder="e.g., -74.0060"
-                    value={importLocation.longitude}
-                    onChange={(e) => setImportLocation(prev => ({ ...prev, longitude: e.target.value }))}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="radius">Search Radius (meters)</Label>
-                  <Input
-                    id="radius"
-                    placeholder="10000"
-                    value={importLocation.radius}
-                    onChange={(e) => setImportLocation(prev => ({ ...prev, radius: e.target.value }))}
-                  />
-                </div>
-                <div className="text-sm text-gray-500">
-                  Tip: You can find your coordinates by searching your location on Google Maps and clicking on your location pin.
-                </div>
-                <div className="flex justify-end space-x-2">
-                  <Button variant="outline" onClick={() => setShowImportModal(false)}>
-                    Cancel
-                  </Button>
-                  <Button 
-                    onClick={() => importMutation.mutate(importLocation)}
-                    disabled={!importLocation.latitude || !importLocation.longitude || importMutation.isPending}
-                  >
-                    {importMutation.isPending ? "Importing..." : "Import Businesses"}
-                  </Button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Service Providers</h1>
+          <p className="text-gray-600">Find trusted veterinarians, groomers, and pet care professionals</p>
         </div>
 
         {/* Filters */}
@@ -424,50 +312,50 @@ export default function Providers() {
             </div>
           ) : (
             filteredProviders.map((provider: any) => (
-              <Card key={provider.service_providers?.id || provider.id} className="hover-lift">
+              <Card key={provider.id} className="hover-lift">
                 <CardContent className="p-6">
                   <div className="flex items-center space-x-4 mb-4">
-                    <div className={`p-3 rounded-full ${getProviderTypeColor(provider.service_providers?.userType)}`}>
-                      {getProviderIcon(provider.service_providers?.userType)}
+                    <div className={`p-3 rounded-full ${getProviderTypeColor(provider.user.userType)}`}>
+                      {getProviderIcon(provider.user.userType)}
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900">{provider.service_providers?.businessName}</h3>
+                      <h3 className="text-lg font-semibold text-gray-900">{provider.businessName}</h3>
                       <p className="text-sm text-gray-600">
-                        {provider.users?.firstName} {provider.users?.lastName}
+                        {provider.user?.firstName} {provider.user?.lastName}
                       </p>
-                      <Badge className={getProviderTypeColor(provider.service_providers?.userType)}>
-                        {provider.service_providers?.userType?.replace('_', ' ')}
+                      <Badge className={getProviderTypeColor(provider.user.userType)}>
+                        {provider.user.userType.replace('_', ' ')}
                       </Badge>
                     </div>
                   </div>
 
                   <div className="flex items-center space-x-1 mb-3">
                     <div className="flex">
-                      {renderStars(parseFloat(provider.service_providers?.rating) || 0)}
+                      {renderStars(parseFloat(provider.rating) || 0)}
                     </div>
                     <span className="text-sm font-medium text-gray-900">
-                      {parseFloat(provider.service_providers?.rating || '0').toFixed(1)}
+                      {parseFloat(provider.rating).toFixed(1) || '0.0'}
                     </span>
                     <span className="text-sm text-gray-500">
-                      ({provider.service_providers?.reviewCount || 0} reviews)
+                      ({provider.reviewCount || 0} reviews)
                     </span>
                   </div>
 
-                  {provider.service_providers?.description && (
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-3">{provider.service_providers.description}</p>
+                  {provider.description && (
+                    <p className="text-sm text-gray-600 mb-4 line-clamp-3">{provider.description}</p>
                   )}
 
-                  {provider.service_providers?.specialties && provider.service_providers.specialties.length > 0 && (
+                  {provider.specialties && provider.specialties.length > 0 && (
                     <div className="mb-4">
                       <div className="flex flex-wrap gap-1">
-                        {provider.service_providers.specialties.slice(0, 2).map((specialty: string, index: number) => (
+                        {provider.specialties.slice(0, 2).map((specialty: string, index: number) => (
                           <Badge key={index} variant="secondary" className="text-xs">
                             {specialty}
                           </Badge>
                         ))}
-                        {provider.service_providers.specialties.length > 2 && (
+                        {provider.specialties.length > 2 && (
                           <Badge variant="secondary" className="text-xs">
-                            +{provider.service_providers.specialties.length - 2} more
+                            +{provider.specialties.length - 2} more
                           </Badge>
                         )}
                       </div>
@@ -476,16 +364,16 @@ export default function Providers() {
 
                   <div className="flex items-center justify-between">
                     <div className="text-sm text-gray-500">
-                      {provider.service_providers?.city && (
+                      {provider.city && (
                         <div className="flex items-center">
                           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                           </svg>
-                          {provider.service_providers.city}
+                          {provider.city}, {provider.state}
                         </div>
                       )}
-                      {provider.service_providers?.isVerified && (
+                      {provider.isVerified && (
                         <div className="flex items-center text-pet-green mt-1">
                           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -510,13 +398,13 @@ export default function Providers() {
                         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
                           <DialogHeader>
                             <DialogTitle className="flex items-center space-x-3">
-                              <div className={`p-3 rounded-full ${getProviderTypeColor(provider.service_providers?.userType)}`}>
-                                {getProviderIcon(provider.service_providers?.userType)}
+                              <div className={`p-3 rounded-full ${getProviderTypeColor(provider.user.userType)}`}>
+                                {getProviderIcon(provider.user.userType)}
                               </div>
                               <div>
-                                <h3 className="text-xl font-semibold">{provider.service_providers?.businessName}</h3>
+                                <h3 className="text-xl font-semibold">{provider.businessName}</h3>
                                 <p className="text-sm text-gray-600">
-                                  {provider.users?.firstName} {provider.users?.lastName}
+                                  {provider.user?.firstName} {provider.user?.lastName}
                                 </p>
                               </div>
                             </DialogTitle>
@@ -525,28 +413,28 @@ export default function Providers() {
                           <div className="space-y-4">
                             <div className="flex items-center space-x-1">
                               <div className="flex">
-                                {renderStars(parseFloat(provider.service_providers?.rating || '0'))}
+                                {renderStars(parseFloat(provider.rating) || 0)}
                               </div>
                               <span className="text-sm font-medium">
-                                {parseFloat(provider.service_providers?.rating || '0').toFixed(1)}
+                                {parseFloat(provider.rating).toFixed(1) || '0.0'}
                               </span>
                               <span className="text-sm text-gray-500">
-                                ({provider.service_providers?.reviewCount || 0} reviews)
+                                ({provider.reviewCount || 0} reviews)
                               </span>
                             </div>
 
-                            {provider.service_providers?.description && (
+                            {provider.description && (
                               <div>
                                 <h4 className="font-medium mb-2">About</h4>
-                                <p className="text-sm text-gray-600">{provider.service_providers.description}</p>
+                                <p className="text-sm text-gray-600">{provider.description}</p>
                               </div>
                             )}
 
-                            {provider.service_providers?.specialties && provider.service_providers.specialties.length > 0 && (
+                            {provider.specialties && provider.specialties.length > 0 && (
                               <div>
                                 <h4 className="font-medium mb-2">Specialties</h4>
                                 <div className="flex flex-wrap gap-2">
-                                  {provider.service_providers.specialties.map((specialty: string, index: number) => (
+                                  {provider.specialties.map((specialty: string, index: number) => (
                                     <Badge key={index} variant="secondary">
                                       {specialty}
                                     </Badge>
@@ -556,14 +444,14 @@ export default function Providers() {
                             )}
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              {provider.service_providers?.phone && (
+                              {provider.phone && (
                                 <div>
                                   <h4 className="font-medium mb-1">Phone</h4>
-                                  <p className="text-sm text-gray-600">{provider.service_providers.phone}</p>
+                                  <p className="text-sm text-gray-600">{provider.phone}</p>
                                 </div>
                               )}
                               
-                              {provider.service_providers?.website && (
+                              {provider.website && (
                                 <div>
                                   <h4 className="font-medium mb-1">Website</h4>
                                   <a 
@@ -589,10 +477,7 @@ export default function Providers() {
 
                             <div className="flex space-x-3">
                               <Button 
-                                onClick={() => {
-                                  setSelectedProvider(provider);
-                                  setShowReviewModal(true);
-                                }}
+                                onClick={() => setShowReviewModal(true)}
                                 className="bg-pet-blue text-white hover:bg-blue-700"
                               >
                                 Write Review
@@ -667,7 +552,7 @@ export default function Providers() {
             <Card>
               <CardContent className="p-6 text-center">
                 <div className="text-3xl font-bold text-pet-green mb-2">
-                  {providers.filter((p: any) => p.service_providers?.userType === 'veterinarian').length}
+                  {providers.filter((p: any) => p.user.userType === 'veterinarian').length}
                 </div>
                 <div className="text-sm text-gray-600">Veterinarians</div>
               </CardContent>
@@ -676,7 +561,7 @@ export default function Providers() {
             <Card>
               <CardContent className="p-6 text-center">
                 <div className="text-3xl font-bold text-pet-purple mb-2">
-                  {providers.filter((p: any) => p.service_providers?.userType === 'groomer').length}
+                  {providers.filter((p: any) => p.user.userType === 'groomer').length}
                 </div>
                 <div className="text-sm text-gray-600">Groomers</div>
               </CardContent>
@@ -685,7 +570,7 @@ export default function Providers() {
             <Card>
               <CardContent className="p-6 text-center">
                 <div className="text-3xl font-bold text-pet-amber mb-2">
-                  {providers.filter((p: any) => p.service_providers?.isVerified).length}
+                  {providers.filter((p: any) => p.isVerified).length}
                 </div>
                 <div className="text-sm text-gray-600">Verified</div>
               </CardContent>
@@ -698,11 +583,7 @@ export default function Providers() {
       <Dialog open={showReviewModal} onOpenChange={setShowReviewModal}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>
-              Write a Review for {selectedProvider?.user?.firstName ? 
-                `${selectedProvider.user.firstName}${selectedProvider.user.lastName ? ` ${selectedProvider.user.lastName}` : ''}` : 
-                'Service Provider'}
-            </DialogTitle>
+            <DialogTitle>Write a Review</DialogTitle>
           </DialogHeader>
           
           <div className="space-y-4">
@@ -755,7 +636,7 @@ export default function Providers() {
                   <SelectValue placeholder="Select pet" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">No specific pet</SelectItem>
+                  <SelectItem value="">No specific pet</SelectItem>
                   {pets.map((pet: any) => (
                     <SelectItem key={pet.id} value={pet.id.toString()}>
                       {pet.name}
