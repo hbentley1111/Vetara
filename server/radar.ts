@@ -168,8 +168,8 @@ export class RadarService {
       userType: providerType,
       specialty,
       description: `${specialty} services provided by ${place.name}`,
-      address: place.address.formattedAddress,
-      city: place.address.city || '',
+      address: place.address?.formattedAddress || place.address?.street || 'Address not available',
+      city: place.address?.city || place.address?.state || '',
       phone: place.phone || null,
       website: place.website || null,
       socialMedia: JSON.stringify({
