@@ -589,7 +589,10 @@ export default function Providers() {
 
                             <div className="flex space-x-3">
                               <Button 
-                                onClick={() => setShowReviewModal(true)}
+                                onClick={() => {
+                                  setSelectedProvider(provider);
+                                  setShowReviewModal(true);
+                                }}
                                 className="bg-pet-blue text-white hover:bg-blue-700"
                               >
                                 Write Review
@@ -695,7 +698,11 @@ export default function Providers() {
       <Dialog open={showReviewModal} onOpenChange={setShowReviewModal}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Write a Review</DialogTitle>
+            <DialogTitle>
+              Write a Review for {selectedProvider?.user?.firstName ? 
+                `${selectedProvider.user.firstName}${selectedProvider.user.lastName ? ` ${selectedProvider.user.lastName}` : ''}` : 
+                'Service Provider'}
+            </DialogTitle>
           </DialogHeader>
           
           <div className="space-y-4">
