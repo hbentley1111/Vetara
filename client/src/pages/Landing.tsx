@@ -31,65 +31,153 @@ export default function Landing() {
         </div>
       </nav>
 
-      {/* Hero Section with Pet Background */}
-      <div className="relative overflow-hidden">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 opacity-60"></div>
+      {/* Hero Section with Enhanced Pet Background */}
+      <div className="relative overflow-hidden min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-100">
+        {/* Enhanced Background Illustration */}
         <div className="absolute inset-0">
-          <svg className="w-full h-full object-cover opacity-20" viewBox="0 0 800 600" fill="none" xmlns="http://www.w3.org/2000/svg">
-            {/* Cute pets background illustration */}
-            {/* Dog silhouette */}
-            <path d="M150 350c0-20 15-35 35-35s35 15 35 35-15 35-35 35-35-15-35-35zm25-15c5 0 10 5 10 10s-5 10-10 10-10-5-10-10 5-10 10-10z" fill="#4F46E5" opacity="0.3"/>
-            <path d="M140 330c10-15 25-25 45-25s35 10 45 25l-10 5c-8-10-20-15-35-15s-27 5-35 15l-10-5z" fill="#4F46E5" opacity="0.2"/>
+          <svg className="w-full h-full object-cover" viewBox="0 0 1200 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="dogGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style={{stopColor:"#4F46E5", stopOpacity:0.4}} />
+                <stop offset="100%" style={{stopColor:"#6366F1", stopOpacity:0.2}} />
+              </linearGradient>
+              <linearGradient id="catGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style={{stopColor:"#7C3AED", stopOpacity:0.4}} />
+                <stop offset="100%" style={{stopColor:"#8B5CF6", stopOpacity:0.2}} />
+              </linearGradient>
+              <radialGradient id="pawGradient" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" style={{stopColor:"#F59E0B", stopOpacity:0.3}} />
+                <stop offset="100%" style={{stopColor:"#F59E0B", stopOpacity:0.1}} />
+              </radialGradient>
+            </defs>
             
-            {/* Cat silhouette */}
-            <path d="M600 200c0-25 20-45 45-45s45 20 45 45-20 45-45 45-45-20-45-45zm30-20c8 0 15 7 15 15s-7 15-15 15-15-7-15-15 7-15 15-15z" fill="#7C3AED" opacity="0.3"/>
-            <ellipse cx="630" cy="170" rx="8" ry="15" fill="#7C3AED" opacity="0.2"/>
-            <ellipse cx="660" cy="170" rx="8" ry="15" fill="#7C3AED" opacity="0.2"/>
-            
-            {/* Bird silhouette */}
-            <path d="M400 150c15-10 35-5 45 10s5 35-10 45-35 5-45-10-5-35 10-45z" fill="#059669" opacity="0.3"/>
-            <circle cx="420" cy="170" r="3" fill="#059669" opacity="0.4"/>
-            
-            {/* Rabbit silhouette */}
-            <path d="M100 150c0-15 12-27 27-27s27 12 27 27-12 27-27 27-27-12-27-27z" fill="#EC4899" opacity="0.3"/>
-            <ellipse cx="115" cy="130" rx="5" ry="12" fill="#EC4899" opacity="0.2"/>
-            <ellipse cx="135" cy="130" rx="5" ry="12" fill="#EC4899" opacity="0.2"/>
-            
-            {/* Fish silhouette */}
-            <ellipse cx="700" cy="400" rx="25" ry="15" fill="#0891B2" opacity="0.3"/>
-            <path d="M725 400l15-8v16l-15-8z" fill="#0891B2" opacity="0.2"/>
-            
-            {/* Paw prints scattered around */}
-            <g fill="#6B7280" opacity="0.15">
-              <circle cx="200" cy="100" r="4"/>
-              <circle cx="195" cy="95" r="2"/>
-              <circle cx="205" cy="95" r="2"/>
-              <circle cx="200" cy="90" r="2"/>
-              
-              <circle cx="500" cy="300" r="4"/>
-              <circle cx="495" cy="295" r="2"/>
-              <circle cx="505" cy="295" r="2"/>
-              <circle cx="500" cy="290" r="2"/>
-              
-              <circle cx="300" cy="450" r="4"/>
-              <circle cx="295" cy="445" r="2"/>
-              <circle cx="305" cy="445" r="2"/>
-              <circle cx="300" cy="440" r="2"/>
-              
-              <circle cx="650" cy="350" r="4"/>
-              <circle cx="645" cy="345" r="2"/>
-              <circle cx="655" cy="345" r="2"/>
-              <circle cx="650" cy="340" r="2"/>
+            {/* Large decorative dog silhouette */}
+            <g transform="translate(100, 200)">
+              <ellipse cx="60" cy="80" rx="45" ry="35" fill="url(#dogGradient)"/>
+              <ellipse cx="40" cy="65" rx="25" ry="20" fill="url(#dogGradient)"/>
+              <ellipse cx="80" cy="65" rx="25" ry="20" fill="url(#dogGradient)"/>
+              <circle cx="35" cy="60" r="8" fill="#4F46E5" opacity="0.6"/>
+              <circle cx="85" cy="60" r="8" fill="#4F46E5" opacity="0.6"/>
+              <ellipse cx="60" cy="75" rx="5" ry="8" fill="#1F2937" opacity="0.4"/>
+              <path d="M50 85 Q60 95 70 85" stroke="#1F2937" strokeWidth="2" fill="none" opacity="0.4"/>
+              {/* Ears */}
+              <ellipse cx="35" cy="45" rx="12" ry="18" fill="url(#dogGradient)" transform="rotate(-20 35 45)"/>
+              <ellipse cx="85" cy="45" rx="12" ry="18" fill="url(#dogGradient)" transform="rotate(20 85 45)"/>
+              {/* Tail */}
+              <ellipse cx="105" cy="90" rx="8" ry="25" fill="url(#dogGradient)" transform="rotate(45 105 90)"/>
             </g>
             
-            {/* Heart shapes */}
-            <g fill="#F59E0B" opacity="0.2">
-              <path d="M250 250c0-10 8-18 18-18s18 8 18 18c0 10-8 18-18 18s-18-8-18-18z"/>
-              <path d="M550 450c0-8 6-14 14-14s14 6 14 14c0 8-6 14-14 14s-14-6-14-14z"/>
+            {/* Large decorative cat silhouette */}
+            <g transform="translate(800, 150)">
+              <ellipse cx="50" cy="70" rx="40" ry="30" fill="url(#catGradient)"/>
+              <circle cx="50" cy="45" r="22" fill="url(#catGradient)"/>
+              <circle cx="42" cy="42" r="6" fill="#7C3AED" opacity="0.6"/>
+              <circle cx="58" cy="42" r="6" fill="#7C3AED" opacity="0.6"/>
+              <path d="M45 50 L50 55 L55 50" stroke="#1F2937" strokeWidth="2" fill="none" opacity="0.4"/>
+              <path d="M40 58 Q50 65 60 58" stroke="#1F2937" strokeWidth="2" fill="none" opacity="0.4"/>
+              {/* Ears */}
+              <path d="M35 30 L40 20 L50 35 Z" fill="url(#catGradient)"/>
+              <path d="M50 35 L60 20 L65 30 Z" fill="url(#catGradient)"/>
+              {/* Tail */}
+              <path d="M85 75 Q95 65 100 80 Q95 95 85 85" fill="url(#catGradient)"/>
+              {/* Whiskers */}
+              <line x1="25" y1="48" x2="35" y2="50" stroke="#6B7280" strokeWidth="1" opacity="0.4"/>
+              <line x1="25" y1="52" x2="35" y2="52" stroke="#6B7280" strokeWidth="1" opacity="0.4"/>
+              <line x1="65" y1="50" x2="75" y2="48" stroke="#6B7280" strokeWidth="1" opacity="0.4"/>
+              <line x1="65" y1="52" x2="75" y2="52" stroke="#6B7280" strokeWidth="1" opacity="0.4"/>
+            </g>
+            
+            {/* Decorative bird */}
+            <g transform="translate(600, 100)">
+              <ellipse cx="20" cy="25" rx="18" ry="12" fill="#059669" opacity="0.4"/>
+              <circle cx="15" cy="22" r="8" fill="#059669" opacity="0.4"/>
+              <circle cx="12" cy="20" r="2" fill="#1F2937" opacity="0.6"/>
+              <path d="M35 25 L45 20 L45 30 Z" fill="#059669" opacity="0.3"/>
+              <path d="M8 22 L2 20 L8 18" fill="#F59E0B" opacity="0.5"/>
+            </g>
+            
+            {/* Decorative rabbit */}
+            <g transform="translate(300, 500)">
+              <ellipse cx="30" cy="50" rx="25" ry="20" fill="#EC4899" opacity="0.4"/>
+              <circle cx="30" cy="30" r="15" fill="#EC4899" opacity="0.4"/>
+              <circle cx="26" cy="28" r="3" fill="#1F2937" opacity="0.5"/>
+              <circle cx="34" cy="28" r="3" fill="#1F2937" opacity="0.5"/>
+              {/* Long ears */}
+              <ellipse cx="22" cy="15" rx="6" ry="18" fill="#EC4899" opacity="0.3"/>
+              <ellipse cx="38" cy="15" rx="6" ry="18" fill="#EC4899" opacity="0.3"/>
+              <path d="M26 35 L30 38 L34 35" stroke="#1F2937" strokeWidth="2" fill="none" opacity="0.4"/>
+            </g>
+            
+            {/* Enhanced paw prints with gradients */}
+            <g fill="url(#pawGradient)">
+              <g transform="translate(200, 120)">
+                <ellipse cx="0" cy="0" rx="8" ry="6"/>
+                <circle cx="-6" cy="-8" r="3"/>
+                <circle cx="6" cy="-8" r="3"/>
+                <circle cx="0" cy="-12" r="3"/>
+              </g>
+              <g transform="translate(500, 300) rotate(15)">
+                <ellipse cx="0" cy="0" rx="8" ry="6"/>
+                <circle cx="-6" cy="-8" r="3"/>
+                <circle cx="6" cy="-8" r="3"/>
+                <circle cx="0" cy="-12" r="3"/>
+              </g>
+              <g transform="translate(900, 450) rotate(-20)">
+                <ellipse cx="0" cy="0" rx="8" ry="6"/>
+                <circle cx="-6" cy="-8" r="3"/>
+                <circle cx="6" cy="-8" r="3"/>
+                <circle cx="0" cy="-12" r="3"/>
+              </g>
+              <g transform="translate(150, 600) rotate(30)">
+                <ellipse cx="0" cy="0" rx="8" ry="6"/>
+                <circle cx="-6" cy="-8" r="3"/>
+                <circle cx="6" cy="-8" r="3"/>
+                <circle cx="0" cy="-12" r="3"/>
+              </g>
+            </g>
+            
+            {/* Floating hearts and medical crosses */}
+            <g fill="#F59E0B" opacity="0.25">
+              <path d="M250 200 C245 195 235 195 235 205 C235 195 225 195 220 200 C225 210 235 220 235 220 C235 220 245 210 250 200 Z"/>
+              <path d="M750 350 C747 347 742 347 742 352 C742 347 737 347 734 350 C737 356 742 362 742 362 C742 362 747 356 750 350 Z"/>
+              <path d="M400 550 C397 547 392 547 392 552 C392 547 387 547 384 550 C387 556 392 562 392 562 C392 562 397 556 400 550 Z"/>
+            </g>
+            
+            {/* Medical cross symbols */}
+            <g fill="#10B981" opacity="0.2">
+              <rect x="950" y="200" width="3" height="15"/>
+              <rect x="943" y="207" width="17" height="3"/>
+              <rect x="350" y="350" width="3" height="15"/>
+              <rect x="343" y="357" width="17" height="3"/>
+              <rect x="650" y="550" width="3" height="15"/>
+              <rect x="643" y="557" width="17" height="3"/>
+            </g>
+            
+            {/* Decorative bubbles for playfulness */}
+            <g fill="#3B82F6" opacity="0.15">
+              <circle cx="180" cy="380" r="12"/>
+              <circle cx="850" cy="280" r="8"/>
+              <circle cx="450" cy="150" r="15"/>
+              <circle cx="750" cy="500" r="10"/>
+              <circle cx="950" cy="350" r="6"/>
+            </g>
+            
+            {/* Additional smaller paw prints scattered */}
+            <g fill="#6B7280" opacity="0.1">
+              {[...Array(12)].map((_, i) => (
+                <g key={i} transform={`translate(${100 + i * 90}, ${200 + Math.sin(i) * 150}) rotate(${i * 30})`}>
+                  <ellipse cx="0" cy="0" rx="4" ry="3"/>
+                  <circle cx="-3" cy="-4" r="1.5"/>
+                  <circle cx="3" cy="-4" r="1.5"/>
+                  <circle cx="0" cy="-6" r="1.5"/>
+                </g>
+              ))}
             </g>
           </svg>
         </div>
+        
+        {/* Gradient overlay for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white/30 via-transparent to-white/50"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
           <div className="text-center">
