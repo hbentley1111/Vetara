@@ -64,19 +64,18 @@ export default function Navigation() {
   }
 
   return (
-    <nav className="bg-card/95 backdrop-blur-md border-b border-border sticky top-0 z-50 modern-card">
+    <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center space-x-3">
             <div className="flex items-center space-x-2">
-              <div className="p-2 gradient-primary rounded-xl neon-glow-green">
-                <svg className="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2L13.09 8.26L22 9L13.09 9.74L12 16L10.91 9.74L2 9L10.91 8.26L12 2Z"/>
-                  <circle cx="12" cy="12" r="3" fill="currentColor"/>
+              <div className="p-2 bg-pet-blue rounded-lg">
+                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                 </svg>
               </div>
-              <span className="text-xl font-bold gradient-text">PetVault</span>
+              <span className="text-xl font-bold text-gray-900">PetCare Pro</span>
             </div>
           </div>
 
@@ -85,10 +84,10 @@ export default function Navigation() {
             {navItems.map((item) => (
               <Link key={item.path} href={item.path}>
                 <div
-                  className={`flex items-center space-x-2 text-sm font-medium transition-all duration-300 cursor-pointer modern-btn px-3 py-2 rounded-lg ${
+                  className={`flex items-center space-x-2 text-sm font-medium transition-colors hover:text-pet-blue cursor-pointer ${
                     location === item.path
-                      ? "text-primary bg-primary/10 border border-primary/20 neon-glow-green"
-                      : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+                      ? "text-pet-blue border-b-2 border-pet-blue pb-4"
+                      : "text-gray-600"
                   }`}
                 >
                   {getIcon(item.icon)}
@@ -101,12 +100,12 @@ export default function Navigation() {
           {/* Right side */}
           <div className="flex items-center space-x-4">
             {/* Notifications */}
-            <Button variant="ghost" size="sm" className="relative modern-btn">
-              <svg className="w-5 h-5 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <Button variant="ghost" size="sm" className="relative">
+              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5-5-5 5h5zm0 0v-3a3 3 0 00-3-3h-1m4 6V9a9 9 0 10-18 0v8a2 2 0 002 2h1" />
               </svg>
               {/* Notification badge */}
-              <Badge className="absolute -top-1 -right-1 h-5 w-5 text-xs bg-accent text-accent-foreground p-0 flex items-center justify-center neon-glow-purple">
+              <Badge className="absolute -top-1 -right-1 h-5 w-5 text-xs bg-pet-pink text-white p-0 flex items-center justify-center">
                 3
               </Badge>
             </Button>
