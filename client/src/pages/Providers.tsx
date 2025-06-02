@@ -175,13 +175,17 @@ export default function Providers() {
   }
 
   const filteredProviders = providers.filter((provider: any) => {
-    const matchesSearch = 
-      provider.businessName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      provider.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      provider.user?.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      provider.user?.lastName?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = searchTerm === '' || (
+      provider.service_providers?.businessName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      provider.service_providers?.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      provider.users?.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      provider.users?.lastName?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
-    return matchesSearch;
+    const matchesType = filterType === 'all' || provider.service_providers?.userType === filterType;
+    const matchesCity = filterCity === '' || provider.service_providers?.city?.toLowerCase().includes(filterCity.toLowerCase());
+
+    return matchesSearch && matchesType && matchesCity;
   });
 
   const getProviderTypeColor = (type: string) => {
@@ -653,7 +657,7 @@ export default function Providers() {
             <Card>
               <CardContent className="p-6 text-center">
                 <div className="text-3xl font-bold text-pet-green mb-2">
-                  {providers.filter((p: any) => p.user.userType === 'veterinarian').length}
+                  {providers.filter((p: any) => p.service_providers?.userType === 'veterinarian').length}
                 </div>
                 <div className="text-sm text-gray-600">Veterinarians</div>
               </CardContent>
@@ -662,7 +666,7 @@ export default function Providers() {
             <Card>
               <CardContent className="p-6 text-center">
                 <div className="text-3xl font-bold text-pet-purple mb-2">
-                  {providers.filter((p: any) => p.user.userType === 'groomer').length}
+                  {providers.filter((p: any) => p.service_providers?.userType === 'groomer').length}
                 </div>
                 <div className="text-sm text-gray-600">Groomers</div>
               </CardContent>
@@ -671,7 +675,7 @@ export default function Providers() {
             <Card>
               <CardContent className="p-6 text-center">
                 <div className="text-3xl font-bold text-pet-amber mb-2">
-                  {providers.filter((p: any) => p.isVerified).length}
+                  {providers.filter((p: any) => p.service_providers?.isVerified).length}
                 </div>
                 <div className="text-sm text-gray-600">Verified</div>
               </CardContent>
