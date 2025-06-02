@@ -83,8 +83,8 @@ export default function Navigation() {
           <div className="hidden md:flex items-center space-x-8">
             {navItems.map((item) => (
               <Link key={item.path} href={item.path}>
-                <a
-                  className={`flex items-center space-x-2 text-sm font-medium transition-colors hover:text-pet-blue ${
+                <div
+                  className={`flex items-center space-x-2 text-sm font-medium transition-colors hover:text-pet-blue cursor-pointer ${
                     location === item.path
                       ? "text-pet-blue border-b-2 border-pet-blue pb-4"
                       : "text-gray-600"
@@ -92,7 +92,7 @@ export default function Navigation() {
                 >
                   {getIcon(item.icon)}
                   <span>{item.label}</span>
-                </a>
+                </div>
               </Link>
             ))}
           </div>
@@ -188,8 +188,8 @@ export default function Navigation() {
             <div className="space-y-2">
               {navItems.map((item) => (
                 <Link key={item.path} href={item.path}>
-                  <a
-                    className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  <div
+                    className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                       location === item.path
                         ? "bg-pet-blue bg-opacity-10 text-pet-blue"
                         : "text-gray-600 hover:bg-gray-50"
@@ -198,7 +198,7 @@ export default function Navigation() {
                   >
                     {getIcon(item.icon)}
                     <span>{item.label}</span>
-                  </a>
+                  </div>
                 </Link>
               ))}
             </div>
