@@ -510,13 +510,13 @@ export default function Providers() {
                         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
                           <DialogHeader>
                             <DialogTitle className="flex items-center space-x-3">
-                              <div className={`p-3 rounded-full ${getProviderTypeColor(provider.user.userType)}`}>
-                                {getProviderIcon(provider.user.userType)}
+                              <div className={`p-3 rounded-full ${getProviderTypeColor(provider.service_providers?.userType)}`}>
+                                {getProviderIcon(provider.service_providers?.userType)}
                               </div>
                               <div>
-                                <h3 className="text-xl font-semibold">{provider.businessName}</h3>
+                                <h3 className="text-xl font-semibold">{provider.service_providers?.businessName}</h3>
                                 <p className="text-sm text-gray-600">
-                                  {provider.user?.firstName} {provider.user?.lastName}
+                                  {provider.users?.firstName} {provider.users?.lastName}
                                 </p>
                               </div>
                             </DialogTitle>
@@ -525,28 +525,28 @@ export default function Providers() {
                           <div className="space-y-4">
                             <div className="flex items-center space-x-1">
                               <div className="flex">
-                                {renderStars(parseFloat(provider.rating) || 0)}
+                                {renderStars(parseFloat(provider.service_providers?.rating || '0'))}
                               </div>
                               <span className="text-sm font-medium">
-                                {parseFloat(provider.rating).toFixed(1) || '0.0'}
+                                {parseFloat(provider.service_providers?.rating || '0').toFixed(1)}
                               </span>
                               <span className="text-sm text-gray-500">
-                                ({provider.reviewCount || 0} reviews)
+                                ({provider.service_providers?.reviewCount || 0} reviews)
                               </span>
                             </div>
 
-                            {provider.description && (
+                            {provider.service_providers?.description && (
                               <div>
                                 <h4 className="font-medium mb-2">About</h4>
-                                <p className="text-sm text-gray-600">{provider.description}</p>
+                                <p className="text-sm text-gray-600">{provider.service_providers.description}</p>
                               </div>
                             )}
 
-                            {provider.specialties && provider.specialties.length > 0 && (
+                            {provider.service_providers?.specialties && provider.service_providers.specialties.length > 0 && (
                               <div>
                                 <h4 className="font-medium mb-2">Specialties</h4>
                                 <div className="flex flex-wrap gap-2">
-                                  {provider.specialties.map((specialty: string, index: number) => (
+                                  {provider.service_providers.specialties.map((specialty: string, index: number) => (
                                     <Badge key={index} variant="secondary">
                                       {specialty}
                                     </Badge>
@@ -556,14 +556,14 @@ export default function Providers() {
                             )}
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                              {provider.phone && (
+                              {provider.service_providers?.phone && (
                                 <div>
                                   <h4 className="font-medium mb-1">Phone</h4>
-                                  <p className="text-sm text-gray-600">{provider.phone}</p>
+                                  <p className="text-sm text-gray-600">{provider.service_providers.phone}</p>
                                 </div>
                               )}
                               
-                              {provider.website && (
+                              {provider.service_providers?.website && (
                                 <div>
                                   <h4 className="font-medium mb-1">Website</h4>
                                   <a 
