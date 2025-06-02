@@ -252,6 +252,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Import real business data from Radar
+  app.post("/api/service-providers/import-radar", isAuthenticated, async (req, res) => {
+    try {
+      if (!radarService) {
+        return res.status(503).json({ message: "Radar service not available" });
+      }
+
+      const { latitude, longitude, radius = 10000 } = req.body;
+      
+      if (!latitude || !longitude) {
+        return res.status(400).json({ message: "Latitude and longitude are required" });
+      }
+
+      const result = await radarService.importServiceProviders(
+        parseFloat(latitude),
+        parseFloat(longitude),
+        parseInt(radius)
+      );
+
+      res.json({
+        message: `Import completed: ${result.imported} businesses imported, ${result.errors} errors`,
+        imported: result.imported,
+        errors: result.errors
+      });
+    } catch (error) {
+      console.error("Error importing from Radar:", error);
+      res.status(500).json({ message: "Failed to import businesses from Radar" });
+    }
+  });
+
+  // Search for businesses by city using Radar
+  app.post("/api/service-providers/search-radar", isAuthenticated, async (req, res) => {
+    try {
+      if (!radarService) {
+        return res.status(503).json({ message: "Radar service not available" });
+      }
+
+      const { city, state } = req.body;
+      
+      if (!city) {
+        return res.status(400).json({ message: "City is required" });
+      }
+
+      const places = await radarService.searchByCity(city, state);
+      
+      res.json({
+        places: places.map(place => ({
+          name: place.name,
+          address: place.address.formattedAddress,
+          phone: place.phone,
+          website: place.website,
+          categories: place.categories,
+          location: {
+            latitude: place.location.coordinates[1],
+            longitude: place.location.coordinates[0]
+          }
+        })),
+        count: places.length
+      });
+    } catch (error) {
+      console.error("Error searching Radar:", error);
+      res.status(500).json({ message: "Failed to search businesses" });
+    }
+  });
+
   // Reviews routes
   app.get('/api/service-providers/:id/reviews', async (req, res) => {
     try {

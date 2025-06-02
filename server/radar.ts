@@ -177,13 +177,10 @@ export class RadarService {
         instagram: place.instagram,
         twitter: place.twitter,
       }),
-      operatingHours: place.hours ? JSON.stringify(place.hours) : null,
-      servicesOffered: place.categories.join(', '),
-      emergencyAvailable: place.categories.some(cat => 
-        cat.includes('animal-hospital') || cat.includes('emergency')
-      ),
-      latitude: place.location.coordinates[1],
-      longitude: place.location.coordinates[0],
+      specialties: [specialty],
+      isVerified: true, // Radar places are considered verified
+      latitude: place.location.coordinates[1].toString(),
+      longitude: place.location.coordinates[0].toString(),
       radarPlaceId: place._id,
     };
   }
