@@ -1,0 +1,187 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 210 11% 98%; /* #F5F7FA */
+  --foreground: 222 22% 5%; /* #0A0B0D */
+  --muted: 214 13% 95%; /* #F1F3F5 */
+  --muted-foreground: 215 8% 46%; /* #6B7280 */
+  --popover: 0 0% 100%; /* #FFFFFF */
+  --popover-foreground: 222 22% 5%; /* #0A0B0D */
+  --card: 0 0% 100%; /* #FFFFFF */
+  --card-foreground: 222 22% 5%; /* #0A0B0D */
+  --border: 214 13% 90%; /* #E5E7EB */
+  --input: 214 13% 90%; /* #E5E7EB */
+  --primary: 217 91% 60%; /* #2563EB */
+  --primary-foreground: 0 0% 100%; /* #FFFFFF */
+  --secondary: 214 13% 95%; /* #F1F3F5 */
+  --secondary-foreground: 222 22% 5%; /* #0A0B0D */
+  --accent: 214 13% 95%; /* #F1F3F5 */
+  --accent-foreground: 222 22% 5%; /* #0A0B0D */
+  --destructive: 0 84% 60%; /* #EF4444 */
+  --destructive-foreground: 0 0% 100%; /* #FFFFFF */
+  --ring: 217 91% 60%; /* #2563EB */
+  --radius: 0.5rem;
+
+  /* Pet-specific colors */
+  --pet-blue: 217 91% 60%; /* #2563EB */
+  --pet-purple: 262 83% 58%; /* #7C3AED */
+  --pet-green: 158 64% 52%; /* #10B981 */
+  --pet-amber: 43 96% 56%; /* #F59E0B */
+  --pet-pink: 329 86% 70%; /* #F472B6 */
+  --pet-mint: 160 84% 60%; /* #34D399 */
+}
+
+.dark {
+  --background: 224 71% 4%; /* #0A0E27 */
+  --foreground: 213 31% 91%; /* #E2E8F0 */
+  --muted: 223 47% 11%; /* #1E293B */
+  --muted-foreground: 215 16% 57%; /* #94A3B8 */
+  --popover: 224 71% 4%; /* #0A0E27 */
+  --popover-foreground: 213 31% 91%; /* #E2E8F0 */
+  --card: 224 71% 4%; /* #0A0E27 */
+  --card-foreground: 213 31% 91%; /* #E2E8F0 */
+  --border: 216 34% 17%; /* #334155 */
+  --input: 216 34% 17%; /* #334155 */
+  --primary: 217 91% 60%; /* #2563EB */
+  --primary-foreground: 0 0% 100%; /* #FFFFFF */
+  --secondary: 223 47% 11%; /* #1E293B */
+  --secondary-foreground: 213 31% 91%; /* #E2E8F0 */
+  --accent: 223 47% 11%; /* #1E293B */
+  --accent-foreground: 213 31% 91%; /* #E2E8F0 */
+  --destructive: 0 63% 31%; /* #7F1D1D */
+  --destructive-foreground: 213 31% 91%; /* #E2E8F0 */
+  --ring: 217 91% 60%; /* #2563EB */
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold;
+  }
+}
+
+@layer components {
+  .pet-blue {
+    color: hsl(var(--pet-blue));
+  }
+  
+  .bg-pet-blue {
+    background-color: hsl(var(--pet-blue));
+  }
+  
+  .pet-purple {
+    color: hsl(var(--pet-purple));
+  }
+  
+  .bg-pet-purple {
+    background-color: hsl(var(--pet-purple));
+  }
+  
+  .pet-green {
+    color: hsl(var(--pet-green));
+  }
+  
+  .bg-pet-green {
+    background-color: hsl(var(--pet-green));
+  }
+  
+  .pet-amber {
+    color: hsl(var(--pet-amber));
+  }
+  
+  .bg-pet-amber {
+    background-color: hsl(var(--pet-amber));
+  }
+  
+  .pet-pink {
+    color: hsl(var(--pet-pink));
+  }
+  
+  .bg-pet-pink {
+    background-color: hsl(var(--pet-pink));
+  }
+  
+  .pet-mint {
+    color: hsl(var(--pet-mint));
+  }
+  
+  .bg-pet-mint {
+    background-color: hsl(var(--pet-mint));
+  }
+}
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground));
+}
+
+/* Loading animation */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Card hover effects */
+.hover-lift {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Button ripple effect */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ripple::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s;
+}
+
+.btn-ripple:active::before {
+  width: 200px;
+  height: 200px;
+}
