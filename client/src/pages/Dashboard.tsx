@@ -392,7 +392,7 @@ export default function Dashboard() {
                             <p className="text-sm text-gray-600">{formatDate(record.visitDate)}</p>
                             <div className="flex items-center space-x-2 mt-1">
                               <Badge className={getRecordTypeColor(record.recordType)}>
-                                {record.recordType.replace('_', ' ')}
+                                {record.recordType?.replace('_', ' ') || 'Medical Record'}
                               </Badge>
                               {record.pet && (
                                 <span className="text-xs text-gray-500">{record.pet.name}</span>
