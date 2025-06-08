@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
 export default function Providers() {
   const { toast } = useToast();
@@ -21,6 +22,7 @@ export default function Providers() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [filterCity, setFilterCity] = useState("");
+  const [includeGoogle, setIncludeGoogle] = useState(true);
   const [selectedProvider, setSelectedProvider] = useState<any>(null);
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [reviewData, setReviewData] = useState({

@@ -261,10 +261,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
 
           // Convert Google Places results to our format
-          const convertedResults = googleResults.map(place => {
+          const convertedResults = googleResults.map((place, index) => {
             const converted = convertGooglePlaceToServiceProvider(place, 'google_user');
             return {
-              id: `google_${place.place_id}`,
+              id: -(index + 1), // Use negative IDs for Google Places to avoid conflicts
               ...converted,
               user: {
                 id: 'google_user',
@@ -276,7 +276,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 createdAt: new Date(),
                 updatedAt: new Date()
               },
-              isGooglePlace: true
+              isGooglePlace: true,
+              googlePlaceId: place.place_id
             };
           });
 
