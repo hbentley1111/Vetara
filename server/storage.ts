@@ -86,6 +86,29 @@ export interface IStorage {
   // Provider portal operations
   getAuthorizedPetsForProvider(providerId: string): Promise<(Pet & { owner: User; medicalRecords: MedicalRecord[] })[]>;
   checkProviderAccess(providerId: string, petId: number): Promise<boolean>;
+  
+  // Insurance partner operations
+  getInsurancePartners(): Promise<InsurancePartner[]>;
+  getInsurancePartnerById(id: number): Promise<InsurancePartner | undefined>;
+  createInsurancePartner(partner: InsertInsurancePartner): Promise<InsurancePartner>;
+  updateInsurancePartner(id: number, partner: Partial<InsertInsurancePartner>): Promise<InsurancePartner>;
+  
+  // Pet insurance policy operations
+  getPetInsurancePolicies(ownerId: string): Promise<(PetInsurancePolicy & { pet: Pet; insurancePartner: InsurancePartner })[]>;
+  getPetInsurancePolicyById(id: number): Promise<(PetInsurancePolicy & { pet: Pet; insurancePartner: InsurancePartner }) | undefined>;
+  createPetInsurancePolicy(policy: InsertPetInsurancePolicy): Promise<PetInsurancePolicy>;
+  updatePetInsurancePolicy(id: number, policy: Partial<InsertPetInsurancePolicy>): Promise<PetInsurancePolicy>;
+  
+  // Health score operations
+  calculateHealthScore(petId: number): Promise<{ score: number; factors: any; discountEarned: number }>;
+  createHealthScoreRecord(record: InsertHealthScoreHistory): Promise<HealthScoreHistory>;
+  getHealthScoreHistory(petId: number): Promise<HealthScoreHistory[]>;
+  updateInsuranceDiscounts(petId: number): Promise<void>;
+  
+  // Insurance claim operations
+  getInsuranceClaimsByPolicy(policyId: number): Promise<(InsuranceClaim & { medicalRecord?: MedicalRecord })[]>;
+  createInsuranceClaim(claim: InsertInsuranceClaim): Promise<InsuranceClaim>;
+  updateInsuranceClaim(id: number, claim: Partial<InsertInsuranceClaim>): Promise<InsuranceClaim>;
 }
 
 export class DatabaseStorage implements IStorage {

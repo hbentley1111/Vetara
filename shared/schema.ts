@@ -182,6 +182,79 @@ export const providerSubscriptions = pgTable("provider_subscriptions", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Insurance partners table
+export const insurancePartners = pgTable("insurance_partners", {
+  id: serial("id").primaryKey(),
+  companyName: varchar("company_name").notNull(),
+  partnerCode: varchar("partner_code").unique().notNull(),
+  logoUrl: varchar("logo_url"),
+  description: text("description"),
+  websiteUrl: varchar("website_url"),
+  contactEmail: varchar("contact_email"),
+  contactPhone: varchar("contact_phone"),
+  isActive: boolean("is_active").default(true),
+  baseDiscountRate: decimal("base_discount_rate", { precision: 5, scale: 2 }).default("5.00"), // 5% base discount
+  maxDiscountRate: decimal("max_discount_rate", { precision: 5, scale: 2 }).default("25.00"), // 25% max discount
+  apiEndpoint: varchar("api_endpoint"), // for discount verification API
+  apiKey: varchar("api_key"), // encrypted API key for partner
+  commissionRate: decimal("commission_rate", { precision: 5, scale: 2 }).default("3.00"), // 3% commission from insurance
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Pet insurance policies table
+export const petInsurancePolicies = pgTable("pet_insurance_policies", {
+  id: serial("id").primaryKey(),
+  petId: integer("pet_id").notNull().references(() => pets.id, { onDelete: "cascade" }),
+  ownerId: varchar("owner_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  insurancePartnerId: integer("insurance_partner_id").notNull().references(() => insurancePartners.id),
+  policyNumber: varchar("policy_number").notNull(),
+  policyType: varchar("policy_type").notNull(), // basic, comprehensive, premium
+  premiumAmount: decimal("premium_amount", { precision: 10, scale: 2 }).notNull(),
+  discountPercentage: decimal("discount_percentage", { precision: 5, scale: 2 }).default("0.00"),
+  discountedPremium: decimal("discounted_premium", { precision: 10, scale: 2 }),
+  coverageStartDate: timestamp("coverage_start_date").notNull(),
+  coverageEndDate: timestamp("coverage_end_date").notNull(),
+  status: varchar("status").default("active"), // active, expired, cancelled
+  lastHealthScoreUpdate: timestamp("last_health_score_update"),
+  currentHealthScore: integer("current_health_score").default(0), // 0-100 health score
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Health score tracking table
+export const healthScoreHistory = pgTable("health_score_history", {
+  id: serial("id").primaryKey(),
+  petId: integer("pet_id").notNull().references(() => pets.id, { onDelete: "cascade" }),
+  policyId: integer("policy_id").references(() => petInsurancePolicies.id, { onDelete: "cascade" }),
+  score: integer("score").notNull(), // 0-100 health score
+  previousScore: integer("previous_score"),
+  scoreChange: integer("score_change"), // difference from previous score
+  calculationFactors: jsonb("calculation_factors"), // factors that contributed to score
+  discountEarned: decimal("discount_earned", { precision: 5, scale: 2 }).default("0.00"),
+  recordDate: timestamp("record_date").defaultNow(),
+  nextEvaluation: timestamp("next_evaluation"), // when next score calculation is due
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Insurance claims integration table
+export const insuranceClaims = pgTable("insurance_claims", {
+  id: serial("id").primaryKey(),
+  policyId: integer("policy_id").notNull().references(() => petInsurancePolicies.id, { onDelete: "cascade" }),
+  medicalRecordId: integer("medical_record_id").references(() => medicalRecords.id),
+  claimNumber: varchar("claim_number").unique().notNull(),
+  claimAmount: decimal("claim_amount", { precision: 10, scale: 2 }).notNull(),
+  claimType: varchar("claim_type").notNull(), // routine, emergency, surgery, medication
+  claimStatus: varchar("claim_status").default("submitted"), // submitted, approved, denied, processing
+  submittedDate: timestamp("submitted_date").defaultNow(),
+  processedDate: timestamp("processed_date"),
+  approvedAmount: decimal("approved_amount", { precision: 10, scale: 2 }),
+  denialReason: text("denial_reason"),
+  platformCommission: decimal("platform_commission", { precision: 10, scale: 2 }), // our commission from insurance
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Relations
 export const userRelations = relations(users, ({ many }) => ({
   pets: many(pets),
@@ -282,6 +355,49 @@ export const providerSubscriptionRelations = relations(providerSubscriptions, ({
   }),
 }));
 
+export const insurancePartnerRelations = relations(insurancePartners, ({ many }) => ({
+  policies: many(petInsurancePolicies),
+}));
+
+export const petInsurancePolicyRelations = relations(petInsurancePolicies, ({ one, many }) => ({
+  pet: one(pets, {
+    fields: [petInsurancePolicies.petId],
+    references: [pets.id],
+  }),
+  owner: one(users, {
+    fields: [petInsurancePolicies.ownerId],
+    references: [users.id],
+  }),
+  insurancePartner: one(insurancePartners, {
+    fields: [petInsurancePolicies.insurancePartnerId],
+    references: [insurancePartners.id],
+  }),
+  healthScores: many(healthScoreHistory),
+  claims: many(insuranceClaims),
+}));
+
+export const healthScoreHistoryRelations = relations(healthScoreHistory, ({ one }) => ({
+  pet: one(pets, {
+    fields: [healthScoreHistory.petId],
+    references: [pets.id],
+  }),
+  policy: one(petInsurancePolicies, {
+    fields: [healthScoreHistory.policyId],
+    references: [petInsurancePolicies.id],
+  }),
+}));
+
+export const insuranceClaimRelations = relations(insuranceClaims, ({ one }) => ({
+  policy: one(petInsurancePolicies, {
+    fields: [insuranceClaims.policyId],
+    references: [petInsurancePolicies.id],
+  }),
+  medicalRecord: one(medicalRecords, {
+    fields: [insuranceClaims.medicalRecordId],
+    references: [medicalRecords.id],
+  }),
+}));
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   createdAt: true,
@@ -335,6 +451,29 @@ export const insertProviderSubscriptionSchema = createInsertSchema(providerSubsc
   updatedAt: true,
 });
 
+export const insertInsurancePartnerSchema = createInsertSchema(insurancePartners).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertPetInsurancePolicySchema = createInsertSchema(petInsurancePolicies).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertHealthScoreHistorySchema = createInsertSchema(healthScoreHistory).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertInsuranceClaimSchema = createInsertSchema(insuranceClaims).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type UpsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -356,3 +495,15 @@ export type ProviderAccess = typeof providerAccess.$inferSelect;
 
 export type InsertProviderSubscription = z.infer<typeof insertProviderSubscriptionSchema>;
 export type ProviderSubscription = typeof providerSubscriptions.$inferSelect;
+
+export type InsertInsurancePartner = z.infer<typeof insertInsurancePartnerSchema>;
+export type InsurancePartner = typeof insurancePartners.$inferSelect;
+
+export type InsertPetInsurancePolicy = z.infer<typeof insertPetInsurancePolicySchema>;
+export type PetInsurancePolicy = typeof petInsurancePolicies.$inferSelect;
+
+export type InsertHealthScoreHistory = z.infer<typeof insertHealthScoreHistorySchema>;
+export type HealthScoreHistory = typeof healthScoreHistory.$inferSelect;
+
+export type InsertInsuranceClaim = z.infer<typeof insertInsuranceClaimSchema>;
+export type InsuranceClaim = typeof insuranceClaims.$inferSelect;
