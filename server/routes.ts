@@ -4,6 +4,7 @@ import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
 import { GooglePlacesService, convertGooglePlaceToServiceProvider } from "./googlePlaces";
 import { insertPetSchema, insertMedicalRecordSchema, insertReviewSchema, insertAppointmentSchema } from "@shared/schema";
+import { seedDemoData } from "./seedData";
 import { z } from "zod";
 import multer from "multer";
 import path from "path";

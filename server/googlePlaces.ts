@@ -209,10 +209,10 @@ export function convertGooglePlaceToServiceProvider(place: GooglePlaceResult, us
     rating: place.rating ? place.rating.toString() : "0",
     reviewCount: place.user_ratings_total || null,
     googlePlaceId: place.place_id || null,
-    googleRating: place.rating || null,
+    googleRating: place.rating ? place.rating.toString() : null,
     googleReviewCount: place.user_ratings_total || null,
-    latitude: place.geometry.location.lat,
-    longitude: place.geometry.location.lng,
+    latitude: place.geometry.location.lat.toString(),
+    longitude: place.geometry.location.lng.toString(),
     priceLevel: place.price_level || null,
     isVerified: true, // Google Places data is considered verified
     licenseNumber: null,
