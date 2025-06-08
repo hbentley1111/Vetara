@@ -111,12 +111,12 @@ export default function Records() {
 
   const filteredRecords = records.filter((record: any) => {
     const matchesSearch = 
-      record.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      record.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       record.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (record.pet?.name.toLowerCase().includes(searchTerm.toLowerCase()));
+      (record.pet?.name?.toLowerCase().includes(searchTerm.toLowerCase()));
     
     const matchesType = filterType === "all" || record.recordType === filterType;
-    const matchesPet = selectedPet === "all" || record.petId.toString() === selectedPet;
+    const matchesPet = selectedPet === "all" || record.petId?.toString() === selectedPet;
 
     return matchesSearch && matchesType && matchesPet;
   });
@@ -325,7 +325,7 @@ export default function Records() {
                         )}
                         <div className="flex items-center space-x-2">
                           <Badge className={getRecordTypeColor(record.recordType)}>
-                            {record.recordType.replace('_', ' ')}
+                            {record.recordType?.replace('_', ' ') || 'Medical Record'}
                           </Badge>
                           {record.diagnosis && (
                             <span className="text-xs text-gray-500">
