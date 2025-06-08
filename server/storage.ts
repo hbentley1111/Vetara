@@ -64,6 +64,22 @@ export interface IStorage {
   // Shared record operations
   shareRecord(sharedRecord: InsertSharedRecord): Promise<SharedRecord>;
   getSharedRecordsByUser(userId: string): Promise<(SharedRecord & { record: MedicalRecord & { pet: Pet } })[]>;
+  
+  // Provider access operations
+  grantProviderAccess(access: InsertProviderAccess): Promise<ProviderAccess>;
+  revokeProviderAccess(accessId: number): Promise<void>;
+  getProviderAccessByProvider(providerId: string): Promise<(ProviderAccess & { pet: Pet & { owner: User } })[]>;
+  getProviderAccessByPet(petId: number): Promise<(ProviderAccess & { provider: User })[]>;
+  updateProviderAccessLastAccessed(accessId: number): Promise<void>;
+  
+  // Provider subscription operations
+  createProviderSubscription(subscription: InsertProviderSubscription): Promise<ProviderSubscription>;
+  getProviderSubscription(providerId: string): Promise<ProviderSubscription | undefined>;
+  updateProviderSubscription(providerId: string, subscription: Partial<InsertProviderSubscription>): Promise<ProviderSubscription>;
+  
+  // Provider portal operations
+  getAuthorizedPetsForProvider(providerId: string): Promise<(Pet & { owner: User; medicalRecords: MedicalRecord[] })[]>;
+  checkProviderAccess(providerId: string, petId: number): Promise<boolean>;
 }
 
 export class DatabaseStorage implements IStorage {

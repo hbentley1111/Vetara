@@ -33,6 +33,10 @@ export const users = pgTable("users", {
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
   userType: varchar("user_type").notNull().default("pet_owner"), // pet_owner, veterinarian, groomer, trainer
+  subscriptionStatus: varchar("subscription_status").default("inactive"), // active, inactive, trial
+  subscriptionTier: varchar("subscription_tier").default("basic"), // basic, pro, enterprise
+  subscriptionExpiresAt: timestamp("subscription_expires_at"),
+  monthlyAccessFee: decimal("monthly_access_fee", { precision: 10, scale: 2 }).default("29.99"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -144,6 +148,40 @@ export const sharedRecords = pgTable("shared_records", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Provider access permissions table
+export const providerAccess = pgTable("provider_access", {
+  id: serial("id").primaryKey(),
+  petId: integer("pet_id").notNull().references(() => pets.id, { onDelete: "cascade" }),
+  providerId: varchar("provider_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  ownerId: varchar("owner_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  accessLevel: varchar("access_level").default("read"), // read, write, emergency
+  isActive: boolean("is_active").default(true),
+  grantedAt: timestamp("granted_at").defaultNow(),
+  expiresAt: timestamp("expires_at"),
+  lastAccessedAt: timestamp("last_accessed_at"),
+  accessReason: text("access_reason"), // "routine_checkup", "emergency", "consultation"
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Provider subscriptions table
+export const providerSubscriptions = pgTable("provider_subscriptions", {
+  id: serial("id").primaryKey(),
+  providerId: varchar("provider_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  subscriptionTier: varchar("subscription_tier").notNull(), // basic, pro, enterprise
+  status: varchar("status").default("active"), // active, inactive, suspended, trial
+  monthlyFee: decimal("monthly_fee", { precision: 10, scale: 2 }).notNull(),
+  petsAccessLimit: integer("pets_access_limit").default(50), // number of pets they can access
+  currentPetsAccessed: integer("current_pets_accessed").default(0),
+  billingCycle: varchar("billing_cycle").default("monthly"), // monthly, yearly
+  startDate: timestamp("start_date").defaultNow(),
+  endDate: timestamp("end_date"),
+  lastBilledAt: timestamp("last_billed_at"),
+  nextBillingDate: timestamp("next_billing_date"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Relations
 export const userRelations = relations(users, ({ many }) => ({
   pets: many(pets),
@@ -222,6 +260,28 @@ export const sharedRecordRelations = relations(sharedRecords, ({ one }) => ({
   }),
 }));
 
+export const providerAccessRelations = relations(providerAccess, ({ one }) => ({
+  pet: one(pets, {
+    fields: [providerAccess.petId],
+    references: [pets.id],
+  }),
+  provider: one(users, {
+    fields: [providerAccess.providerId],
+    references: [users.id],
+  }),
+  owner: one(users, {
+    fields: [providerAccess.ownerId],
+    references: [users.id],
+  }),
+}));
+
+export const providerSubscriptionRelations = relations(providerSubscriptions, ({ one }) => ({
+  provider: one(users, {
+    fields: [providerSubscriptions.providerId],
+    references: [users.id],
+  }),
+}));
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   createdAt: true,
@@ -263,6 +323,18 @@ export const insertSharedRecordSchema = createInsertSchema(sharedRecords).omit({
   createdAt: true,
 });
 
+export const insertProviderAccessSchema = createInsertSchema(providerAccess).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertProviderSubscriptionSchema = createInsertSchema(providerSubscriptions).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type UpsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -278,3 +350,9 @@ export type InsertAppointment = z.infer<typeof insertAppointmentSchema>;
 export type Appointment = typeof appointments.$inferSelect;
 export type InsertSharedRecord = z.infer<typeof insertSharedRecordSchema>;
 export type SharedRecord = typeof sharedRecords.$inferSelect;
+
+export type InsertProviderAccess = z.infer<typeof insertProviderAccessSchema>;
+export type ProviderAccess = typeof providerAccess.$inferSelect;
+
+export type InsertProviderSubscription = z.infer<typeof insertProviderSubscriptionSchema>;
+export type ProviderSubscription = typeof providerSubscriptions.$inferSelect;
