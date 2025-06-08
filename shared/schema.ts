@@ -255,6 +255,92 @@ export const insuranceClaims = pgTable("insurance_claims", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
+// Provider quality metrics table (similar to Healthgrades)
+export const providerQualityMetrics = pgTable("provider_quality_metrics", {
+  id: serial("id").primaryKey(),
+  providerId: integer("provider_id").notNull().references(() => serviceProviders.id, { onDelete: "cascade" }),
+  
+  // Overall ratings
+  overallRating: decimal("overall_rating", { precision: 3, scale: 2 }).default("0.00"), // 0.00 to 5.00
+  totalPatients: integer("total_patients").default(0),
+  totalProcedures: integer("total_procedures").default(0),
+  yearsOfExperience: integer("years_of_experience").default(0),
+  
+  // Quality scores (0-100)
+  clinicalQualityScore: integer("clinical_quality_score").default(0),
+  patientSafetyScore: integer("patient_safety_score").default(0),
+  patientExperienceScore: integer("patient_experience_score").default(0),
+  timeliness: integer("timeliness").default(0),
+  effectiveness: integer("effectiveness").default(0),
+  
+  // Treatment outcome metrics
+  successRate: decimal("success_rate", { precision: 5, scale: 2 }).default("0.00"), // percentage
+  complicationRate: decimal("complication_rate", { precision: 5, scale: 2 }).default("0.00"),
+  readmissionRate: decimal("readmission_rate", { precision: 5, scale: 2 }).default("0.00"),
+  emergencyResponseTime: integer("emergency_response_time").default(0), // minutes
+  averageAppointmentWaitTime: integer("average_appointment_wait_time").default(0), // minutes
+  
+  // Patient satisfaction metrics
+  communicationRating: decimal("communication_rating", { precision: 3, scale: 2 }).default("0.00"),
+  compassionRating: decimal("compassion_rating", { precision: 3, scale: 2 }).default("0.00"),
+  professionalismRating: decimal("professionalism_rating", { precision: 3, scale: 2 }).default("0.00"),
+  recommendationRate: decimal("recommendation_rate", { precision: 5, scale: 2 }).default("0.00"), // percentage
+  
+  // Certifications and credentials
+  boardCertifications: text("board_certifications").array(),
+  specialtyCertifications: text("specialty_certifications").array(),
+  continuingEducationHours: integer("continuing_education_hours").default(0),
+  lastCertificationUpdate: timestamp("last_certification_update"),
+  
+  // Cost metrics
+  averageCostRating: decimal("average_cost_rating", { precision: 3, scale: 2 }).default("0.00"), // 1-5 scale
+  insuranceAcceptanceRate: decimal("insurance_acceptance_rate", { precision: 5, scale: 2 }).default("0.00"),
+  
+  // Accessibility
+  wheelchairAccessible: boolean("wheelchair_accessible").default(false),
+  emergencyServices: boolean("emergency_services").default(false),
+  telemedicineAvailable: boolean("telemedicine_available").default(false),
+  
+  // Calculation metadata
+  lastCalculated: timestamp("last_calculated").defaultNow(),
+  calculationPeriod: varchar("calculation_period").default("12_months"), // time period for metrics
+  dataPoints: integer("data_points").default(0), // number of reviews/records used
+  
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Provider performance tracking table
+export const providerPerformanceHistory = pgTable("provider_performance_history", {
+  id: serial("id").primaryKey(),
+  providerId: integer("provider_id").notNull().references(() => serviceProviders.id, { onDelete: "cascade" }),
+  metricType: varchar("metric_type").notNull(), // clinical_quality, patient_safety, etc.
+  metricValue: decimal("metric_value", { precision: 10, scale: 4 }).notNull(),
+  previousValue: decimal("previous_value", { precision: 10, scale: 4 }),
+  changePercentage: decimal("change_percentage", { precision: 6, scale: 2 }),
+  trendDirection: varchar("trend_direction"), // improving, declining, stable
+  recordDate: timestamp("record_date").defaultNow(),
+  reportingPeriod: varchar("reporting_period").notNull(), // monthly, quarterly, yearly
+  dataSource: varchar("data_source").notNull(), // reviews, outcomes, surveys
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Provider awards and recognitions table
+export const providerRecognitions = pgTable("provider_recognitions", {
+  id: serial("id").primaryKey(),
+  providerId: integer("provider_id").notNull().references(() => serviceProviders.id, { onDelete: "cascade" }),
+  awardType: varchar("award_type").notNull(), // top_rated, patient_choice, excellence, safety
+  awardName: varchar("award_name").notNull(),
+  awardingOrganization: varchar("awarding_organization").notNull(),
+  awardYear: integer("award_year").notNull(),
+  description: text("description"),
+  verificationStatus: varchar("verification_status").default("pending"), // verified, pending, disputed
+  displayOrder: integer("display_order").default(0),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Relations
 export const userRelations = relations(users, ({ many }) => ({
   pets: many(pets),
@@ -398,6 +484,37 @@ export const insuranceClaimRelations = relations(insuranceClaims, ({ one }) => (
   }),
 }));
 
+export const providerQualityMetricsRelations = relations(providerQualityMetrics, ({ one, many }) => ({
+  provider: one(serviceProviders, {
+    fields: [providerQualityMetrics.providerId],
+    references: [serviceProviders.id],
+  }),
+  performanceHistory: many(providerPerformanceHistory),
+  recognitions: many(providerRecognitions),
+}));
+
+export const providerPerformanceHistoryRelations = relations(providerPerformanceHistory, ({ one }) => ({
+  provider: one(serviceProviders, {
+    fields: [providerPerformanceHistory.providerId],
+    references: [serviceProviders.id],
+  }),
+  qualityMetrics: one(providerQualityMetrics, {
+    fields: [providerPerformanceHistory.providerId],
+    references: [providerQualityMetrics.providerId],
+  }),
+}));
+
+export const providerRecognitionsRelations = relations(providerRecognitions, ({ one }) => ({
+  provider: one(serviceProviders, {
+    fields: [providerRecognitions.providerId],
+    references: [serviceProviders.id],
+  }),
+  qualityMetrics: one(providerQualityMetrics, {
+    fields: [providerRecognitions.providerId],
+    references: [providerQualityMetrics.providerId],
+  }),
+}));
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({
   createdAt: true,
@@ -474,6 +591,25 @@ export const insertInsuranceClaimSchema = createInsertSchema(insuranceClaims).om
   updatedAt: true,
 });
 
+export const insertProviderQualityMetricsSchema = createInsertSchema(providerQualityMetrics).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  lastCalculated: true,
+});
+
+export const insertProviderPerformanceHistorySchema = createInsertSchema(providerPerformanceHistory).omit({
+  id: true,
+  createdAt: true,
+  recordDate: true,
+});
+
+export const insertProviderRecognitionsSchema = createInsertSchema(providerRecognitions).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // Types
 export type UpsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
@@ -507,3 +643,12 @@ export type HealthScoreHistory = typeof healthScoreHistory.$inferSelect;
 
 export type InsertInsuranceClaim = z.infer<typeof insertInsuranceClaimSchema>;
 export type InsuranceClaim = typeof insuranceClaims.$inferSelect;
+
+export type InsertProviderQualityMetrics = z.infer<typeof insertProviderQualityMetricsSchema>;
+export type ProviderQualityMetrics = typeof providerQualityMetrics.$inferSelect;
+
+export type InsertProviderPerformanceHistory = z.infer<typeof insertProviderPerformanceHistorySchema>;
+export type ProviderPerformanceHistory = typeof providerPerformanceHistory.$inferSelect;
+
+export type InsertProviderRecognitions = z.infer<typeof insertProviderRecognitionsSchema>;
+export type ProviderRecognitions = typeof providerRecognitions.$inferSelect;
