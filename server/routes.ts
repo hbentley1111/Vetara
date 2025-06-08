@@ -297,6 +297,131 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Provider quality metrics routes (Healthgrades-style grading system)
+  app.get('/api/providers/:id/quality-metrics', isAuthenticated, async (req, res) => {
+    try {
+      const providerId = parseInt(req.params.id);
+      const metrics = await storage.getProviderQualityMetrics(providerId);
+      
+      if (!metrics) {
+        // Calculate metrics if they don't exist
+        const calculatedMetrics = await storage.calculateProviderQualityMetrics(providerId);
+        res.json(calculatedMetrics);
+      } else {
+        res.json(metrics);
+      }
+    } catch (error) {
+      console.error("Error fetching provider quality metrics:", error);
+      res.status(500).json({ message: "Failed to fetch quality metrics" });
+    }
+  });
+
+  app.post('/api/providers/:id/calculate-metrics', isAuthenticated, async (req, res) => {
+    try {
+      const providerId = parseInt(req.params.id);
+      const metrics = await storage.calculateProviderQualityMetrics(providerId);
+      res.json(metrics);
+    } catch (error) {
+      console.error("Error calculating provider metrics:", error);
+      res.status(500).json({ message: "Failed to calculate metrics" });
+    }
+  });
+
+  app.get('/api/providers/:id/performance-history', isAuthenticated, async (req, res) => {
+    try {
+      const providerId = parseInt(req.params.id);
+      const history = await storage.getProviderPerformanceHistory(providerId);
+      res.json(history);
+    } catch (error) {
+      console.error("Error fetching performance history:", error);
+      res.status(500).json({ message: "Failed to fetch performance history" });
+    }
+  });
+
+  app.get('/api/providers/:id/recognitions', isAuthenticated, async (req, res) => {
+    try {
+      const providerId = parseInt(req.params.id);
+      const recognitions = await storage.getProviderRecognitions(providerId);
+      res.json(recognitions);
+    } catch (error) {
+      console.error("Error fetching provider recognitions:", error);
+      res.status(500).json({ message: "Failed to fetch recognitions" });
+    }
+  });
+
+  // Provider search and ranking routes
+  app.get('/api/providers/top-rated', async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 10;
+      const providers = await storage.getTopRatedProviders(limit);
+      res.json(providers);
+    } catch (error) {
+      console.error("Error fetching top-rated providers:", error);
+      res.status(500).json({ message: "Failed to fetch top-rated providers" });
+    }
+  });
+
+  app.get('/api/providers/by-specialty/:specialty', async (req, res) => {
+    try {
+      const specialty = req.params.specialty;
+      const limit = parseInt(req.query.limit as string) || 10;
+      const providers = await storage.getProvidersBySpecialty(specialty, limit);
+      res.json(providers);
+    } catch (error) {
+      console.error("Error fetching providers by specialty:", error);
+      res.status(500).json({ message: "Failed to fetch providers by specialty" });
+    }
+  });
+
+  app.get('/api/providers/search-by-quality', async (req, res) => {
+    try {
+      const filters = {
+        city: req.query.city as string,
+        minRating: req.query.minRating ? parseFloat(req.query.minRating as string) : undefined,
+        specialty: req.query.specialty as string,
+      };
+      
+      const providers = await storage.searchProvidersByQuality(filters);
+      res.json(providers);
+    } catch (error) {
+      console.error("Error searching providers by quality:", error);
+      res.status(500).json({ message: "Failed to search providers by quality" });
+    }
+  });
+
+  // Insurance routes
+  app.get('/api/insurance/partners', isAuthenticated, async (req, res) => {
+    try {
+      const partners = await storage.getInsurancePartners();
+      res.json(partners);
+    } catch (error) {
+      console.error("Error fetching insurance partners:", error);
+      res.status(500).json({ message: "Failed to fetch insurance partners" });
+    }
+  });
+
+  app.get('/api/insurance/policies', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      const policies = await storage.getPetInsurancePolicies(userId);
+      res.json(policies);
+    } catch (error) {
+      console.error("Error fetching insurance policies:", error);
+      res.status(500).json({ message: "Failed to fetch insurance policies" });
+    }
+  });
+
+  app.get('/api/pets/:id/health-score', isAuthenticated, async (req: any, res) => {
+    try {
+      const petId = parseInt(req.params.id);
+      const healthScore = await storage.calculateHealthScore(petId);
+      res.json(healthScore);
+    } catch (error) {
+      console.error("Error calculating health score:", error);
+      res.status(500).json({ message: "Failed to calculate health score" });
+    }
+  });
+
   // Demo data seeding endpoint
   app.post('/api/seed-demo-data', isAuthenticated, async (req: any, res) => {
     try {
