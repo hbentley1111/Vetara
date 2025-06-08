@@ -6,6 +6,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -121,16 +122,62 @@ export default function Navigation() {
           {/* Right side */}
           <div className="flex items-center space-x-4">
             {/* Notifications */}
-            <Button variant="ghost" size="sm" className="relative">
-              <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
-                {/* Dog paw icon */}
-                <path d="M12 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-4 4c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm8 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7 10c-1.66 0-3 1.34-3 3s1.34 3 3 3c.5 0 .97-.12 1.39-.34l1.83 1.83c.78.78 2.05.78 2.83 0l1.83-1.83c.42.22.89.34 1.39.34 1.66 0 3-1.34 3-3s-1.34-3-3-3c-.5 0-.97.12-1.39.34l-1.83-1.83c-.78-.78-2.05-.78-2.83 0l-1.83 1.83C7.97 10.12 7.5 10 7 10z"/>
-              </svg>
-              {/* Notification badge */}
-              <Badge className="absolute -top-1 -right-1 h-5 w-5 text-xs bg-pet-pink text-white p-0 flex items-center justify-center">
-                3
-              </Badge>
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="relative">
+                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM15 17v5l-5-5h5zM15 17l-5-5v5h5z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 3c0-1.1.9-2 2-2s2 .9 2 2-1.1 2-2 2-2-.9-2-2zm4 4c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2z" />
+                  </svg>
+                  {/* Notification badge */}
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 text-xs bg-pet-pink text-white p-0 flex items-center justify-center">
+                    3
+                  </Badge>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-80">
+                <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <div className="max-h-96 overflow-y-auto">
+                  <div className="p-2 hover:bg-gray-50 cursor-pointer border-b">
+                    <div className="flex items-start space-x-3">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">Vaccination Reminder</p>
+                        <p className="text-xs text-gray-600">Buddy's rabies vaccination is due in 3 days</p>
+                        <p className="text-xs text-gray-400 mt-1">2 hours ago</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-2 hover:bg-gray-50 cursor-pointer border-b">
+                    <div className="flex items-start space-x-3">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">Appointment Confirmed</p>
+                        <p className="text-xs text-gray-600">Your appointment with Dr. Thompson has been confirmed</p>
+                        <p className="text-xs text-gray-400 mt-1">5 hours ago</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-2 hover:bg-gray-50 cursor-pointer">
+                    <div className="flex items-start space-x-3">
+                      <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">Health Score Updated</p>
+                        <p className="text-xs text-gray-600">Max's health score improved to 92/100</p>
+                        <p className="text-xs text-gray-400 mt-1">1 day ago</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <DropdownMenuSeparator />
+                <div className="p-2">
+                  <Button variant="ghost" className="w-full text-sm">
+                    View All Notifications
+                  </Button>
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
             {/* User menu */}
             <DropdownMenu>

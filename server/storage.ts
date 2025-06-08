@@ -539,7 +539,7 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(petInsurancePolicies)
       .leftJoin(pets, eq(petInsurancePolicies.petId, pets.id))
-      .leftJoin(insurancePartners, eq(petInsurancePolicies.partnerId, insurancePartners.id))
+      .leftJoin(insurancePartners, eq(petInsurancePolicies.insurancePartnerId, insurancePartners.id))
       .where(eq(pets.ownerId, ownerId));
 
     return policies.map(policy => ({
@@ -554,7 +554,7 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(petInsurancePolicies)
       .leftJoin(pets, eq(petInsurancePolicies.petId, pets.id))
-      .leftJoin(insurancePartners, eq(petInsurancePolicies.partnerId, insurancePartners.id))
+      .leftJoin(insurancePartners, eq(petInsurancePolicies.insurancePartnerId, insurancePartners.id))
       .where(eq(petInsurancePolicies.id, id));
 
     if (!policy) return undefined;
