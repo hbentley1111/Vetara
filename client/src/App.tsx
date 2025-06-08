@@ -11,6 +11,7 @@ import Pets from "@/pages/Pets";
 import Records from "@/pages/Records";
 import Providers from "@/pages/Providers";
 import ProviderPortal from "@/pages/ProviderPortal";
+import Insurance from "@/pages/Insurance";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -25,6 +26,7 @@ function Router() {
           <Route path="/pets" component={Pets} />
           <Route path="/records" component={Records} />
           <Route path="/providers" component={Providers} />
+          <Route path="/insurance" component={Insurance} />
           <Route path="/provider-portal" component={ProviderPortal} />
         </>
       )}
