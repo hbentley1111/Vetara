@@ -109,7 +109,13 @@ export default function Records() {
     return null;
   }
 
-  const filteredRecords = records.filter((record: any) => {
+  // Extract the actual medical records from the nested structure
+  const medicalRecords = (records as any[]).map((item: any) => ({
+    ...item.medical_records,
+    pet: item.pet
+  }));
+
+  const filteredRecords = medicalRecords.filter((record: any) => {
     const matchesSearch = 
       record.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       record.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -398,11 +404,11 @@ export default function Records() {
         </div>
 
         {/* Summary Stats */}
-        {!recordsLoading && records.length > 0 && (
+        {!recordsLoading && medicalRecords.length > 0 && (
           <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-6">
             <Card>
               <CardContent className="p-6 text-center">
-                <div className="text-3xl font-bold text-pet-blue mb-2">{records.length}</div>
+                <div className="text-3xl font-bold text-pet-blue mb-2">{medicalRecords.length}</div>
                 <div className="text-sm text-gray-600">Total Records</div>
               </CardContent>
             </Card>
@@ -410,7 +416,7 @@ export default function Records() {
             <Card>
               <CardContent className="p-6 text-center">
                 <div className="text-3xl font-bold text-pet-green mb-2">
-                  {records.filter((r: any) => r.recordType === 'vaccination').length}
+                  {medicalRecords.filter((r: any) => r.recordType === 'Vaccination').length}
                 </div>
                 <div className="text-sm text-gray-600">Vaccinations</div>
               </CardContent>
@@ -419,7 +425,7 @@ export default function Records() {
             <Card>
               <CardContent className="p-6 text-center">
                 <div className="text-3xl font-bold text-pet-purple mb-2">
-                  {records.filter((r: any) => r.recordType === 'checkup').length}
+                  {medicalRecords.filter((r: any) => r.recordType === 'Routine Checkup').length}
                 </div>
                 <div className="text-sm text-gray-600">Checkups</div>
               </CardContent>
@@ -428,7 +434,7 @@ export default function Records() {
             <Card>
               <CardContent className="p-6 text-center">
                 <div className="text-3xl font-bold text-pet-amber mb-2">
-                  {records.filter((r: any) => r.isEmergency).length}
+                  {medicalRecords.filter((r: any) => r.recordType === 'Surgery' || r.isEmergency).length}
                 </div>
                 <div className="text-sm text-gray-600">Emergency Records</div>
               </CardContent>
