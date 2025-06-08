@@ -15,6 +15,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Star, MapPin, Phone, Globe, Mail, Calendar, MessageSquare } from "lucide-react";
 
 export default function Providers() {
   const { toast } = useToast();
@@ -49,27 +50,13 @@ export default function Providers() {
   }, [isAuthenticated, authLoading, toast]);
 
   const { data: providers = [], isLoading: providersLoading } = useQuery({
-    queryKey: ["/api/service-providers", { city: filterCity, userType: filterType !== "all" ? filterType : undefined }],
+    queryKey: ["/api/service-providers", { 
+      city: filterCity, 
+      userType: filterType !== "all" ? filterType : undefined,
+      includeGoogle: includeGoogle ? 'true' : 'false'
+    }],
     enabled: isAuthenticated,
-    retry: false,
-    onError: (error: Error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
-      toast({
-        title: "Error",
-        description: "Failed to fetch service providers",
-        variant: "destructive",
-      });
-    },
+    retry: false
   });
 
   const { data: pets = [] } = useQuery({
@@ -104,30 +91,19 @@ export default function Providers() {
         description: "Review submitted successfully",
       });
     },
-    onError: (error: Error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
-      toast({
-        title: "Error",
-        description: "Failed to submit review",
-        variant: "destructive",
-      });
-    },
   });
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pet-blue"></div>
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <Skeleton key={i} className="h-64 w-full" />
+            ))}
+          </div>
+        </div>
       </div>
     );
   }
@@ -136,395 +112,283 @@ export default function Providers() {
     return null;
   }
 
-  const filteredProviders = providers.filter((provider: any) => {
-    const matchesSearch = 
-      provider.businessName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  const filteredProviders = (providers as any[]).filter(provider => {
+    const matchesSearch = searchTerm === "" || 
+      provider.businessName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       provider.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      provider.user?.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      provider.user?.lastName?.toLowerCase().includes(searchTerm.toLowerCase());
-
+      provider.specialties?.some((s: string) => s.toLowerCase().includes(searchTerm.toLowerCase()));
+    
     return matchesSearch;
   });
 
-  const getProviderTypeColor = (type: string) => {
-    switch (type) {
-      case 'veterinarian': return 'bg-pet-blue bg-opacity-10 text-pet-blue';
-      case 'groomer': return 'bg-pet-green bg-opacity-10 text-pet-green';
-      case 'trainer': return 'bg-pet-purple bg-opacity-10 text-pet-purple';
-      case 'pet_sitter': return 'bg-pet-amber bg-opacity-10 text-pet-amber';
-      default: return 'bg-gray-100 text-gray-600';
-    }
-  };
-
-  const getProviderIcon = (type: string) => {
-    switch (type) {
-      case 'veterinarian':
-        return (
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-          </svg>
-        );
-      case 'groomer':
-        return (
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-          </svg>
-        );
-      case 'trainer':
-        return (
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-          </svg>
-        );
-      default:
-        return (
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-          </svg>
-        );
-    }
+  const handleSubmitReview = () => {
+    if (!selectedProvider) return;
+    
+    reviewMutation.mutate({
+      ...reviewData,
+      providerId: selectedProvider.id,
+      petId: reviewData.petId || null,
+    });
   };
 
   const renderStars = (rating: number) => {
     return [...Array(5)].map((_, i) => (
-      <svg
+      <Star
         key={i}
-        className={`w-4 h-4 ${i < Math.floor(rating) ? 'text-yellow-400' : 'text-gray-300'}`}
-        fill="currentColor"
-        viewBox="0 0 20 20"
-      >
-        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-      </svg>
+        className={`w-4 h-4 ${i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+      />
     ));
   };
 
-  const handleSubmitReview = () => {
-    if (!reviewData.title || !reviewData.comment) {
-      toast({
-        title: "Error",
-        description: "Please fill in all required fields",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    reviewMutation.mutate({
-      ...reviewData,
-      providerId: selectedProvider.id,
-      petId: reviewData.petId ? parseInt(reviewData.petId) : undefined,
-    });
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Navigation />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
+      <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Service Providers</h1>
-          <p className="text-gray-600">Find trusted veterinarians, groomers, and pet care professionals</p>
+          <h1 className="text-3xl font-bold text-foreground mb-2">Service Providers</h1>
+          <p className="text-muted-foreground">
+            Find trusted veterinarians, groomers, and pet care professionals in your area
+          </p>
         </div>
 
-        {/* Filters */}
-        <Card className="mb-8">
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <Input
-                placeholder="Search providers..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full"
-              />
-              
-              <Select value={filterType} onValueChange={setFilterType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Provider Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="veterinarian">Veterinarians</SelectItem>
-                  <SelectItem value="groomer">Groomers</SelectItem>
-                  <SelectItem value="trainer">Trainers</SelectItem>
-                  <SelectItem value="pet_sitter">Pet Sitters</SelectItem>
-                </SelectContent>
-              </Select>
+        {/* Search and Filter Controls */}
+        <div className="mb-6 space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <Input
+              placeholder="Search providers..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full"
+            />
+            
+            <Select value={filterType} onValueChange={setFilterType}>
+              <SelectTrigger>
+                <SelectValue placeholder="Filter by type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="Veterinarian">Veterinarians</SelectItem>
+                <SelectItem value="Groomer">Groomers</SelectItem>
+                <SelectItem value="Pet Store">Pet Stores</SelectItem>
+                <SelectItem value="Emergency Vet">Emergency Vets</SelectItem>
+              </SelectContent>
+            </Select>
 
-              <Input
-                placeholder="City..."
-                value={filterCity}
-                onChange={(e) => setFilterCity(e.target.value)}
-                className="w-full"
-              />
+            <Input
+              placeholder="Filter by city..."
+              value={filterCity}
+              onChange={(e) => setFilterCity(e.target.value)}
+              className="w-full"
+            />
 
-              <Button 
-                variant="outline" 
-                onClick={() => {
-                  setSearchTerm("");
-                  setFilterType("all");
-                  setFilterCity("");
-                }}
-                className="border-pet-blue text-pet-blue hover:bg-pet-blue hover:text-white"
-              >
-                Clear Filters
-              </Button>
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="google-toggle"
+                checked={includeGoogle}
+                onCheckedChange={setIncludeGoogle}
+              />
+              <Label htmlFor="google-toggle" className="text-sm font-medium">
+                Include Google Places
+              </Label>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Providers Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {providersLoading ? (
-            // Loading skeletons
-            [...Array(6)].map((_, i) => (
-              <Card key={i} className="hover-lift">
-                <CardContent className="p-6">
-                  <div className="flex items-center space-x-4 mb-4">
-                    <Skeleton className="h-16 w-16 rounded-full" />
+        {providersLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <Skeleton key={i} className="h-64 w-full" />
+            ))}
+          </div>
+        ) : filteredProviders.length === 0 ? (
+          <Card>
+            <CardContent className="text-center py-8">
+              <p className="text-muted-foreground">No service providers found matching your criteria.</p>
+              {!includeGoogle && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  Try enabling "Include Google Places" for more results.
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredProviders.map((provider: any) => (
+              <Card key={provider.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+                <CardHeader>
+                  <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <Skeleton className="h-5 w-32 mb-2" />
-                      <Skeleton className="h-4 w-20 mb-2" />
-                      <Skeleton className="h-3 w-24" />
-                    </div>
-                  </div>
-                  <Skeleton className="h-4 w-full mb-2" />
-                  <Skeleton className="h-4 w-3/4 mb-4" />
-                  <div className="flex justify-between items-center">
-                    <Skeleton className="h-4 w-20" />
-                    <Skeleton className="h-8 w-20" />
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          ) : filteredProviders.length === 0 ? (
-            <div className="col-span-full">
-              <Card>
-                <CardContent className="p-12 text-center">
-                  <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-6">
-                    <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">No providers found</h3>
-                  <p className="text-gray-600 mb-6">
-                    No service providers match your current filters. Try adjusting your search criteria.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          ) : (
-            filteredProviders.map((provider: any) => (
-              <Card key={provider.id} className="hover-lift">
-                <CardContent className="p-6">
-                  <div className="flex items-center space-x-4 mb-4">
-                    <div className={`p-3 rounded-full ${getProviderTypeColor(provider.user.userType)}`}>
-                      {getProviderIcon(provider.user.userType)}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900">{provider.businessName}</h3>
-                      <p className="text-sm text-gray-600">
-                        {provider.user?.firstName} {provider.user?.lastName}
-                      </p>
-                      <Badge className={getProviderTypeColor(provider.user.userType)}>
-                        {provider.user.userType.replace('_', ' ')}
-                      </Badge>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center space-x-1 mb-3">
-                    <div className="flex">
-                      {renderStars(parseFloat(provider.rating) || 0)}
-                    </div>
-                    <span className="text-sm font-medium text-gray-900">
-                      {parseFloat(provider.rating).toFixed(1) || '0.0'}
-                    </span>
-                    <span className="text-sm text-gray-500">
-                      ({provider.reviewCount || 0} reviews)
-                    </span>
-                  </div>
-
-                  {provider.description && (
-                    <p className="text-sm text-gray-600 mb-4 line-clamp-3">{provider.description}</p>
-                  )}
-
-                  {provider.specialties && provider.specialties.length > 0 && (
-                    <div className="mb-4">
-                      <div className="flex flex-wrap gap-1">
-                        {provider.specialties.slice(0, 2).map((specialty: string, index: number) => (
-                          <Badge key={index} variant="secondary" className="text-xs">
+                      <CardTitle className="text-lg">{provider.businessName}</CardTitle>
+                      <div className="flex items-center mt-2 space-x-2">
+                        {provider.specialties?.map((specialty: string) => (
+                          <Badge key={specialty} variant="secondary" className="text-xs">
                             {specialty}
                           </Badge>
                         ))}
-                        {provider.specialties.length > 2 && (
-                          <Badge variant="secondary" className="text-xs">
-                            +{provider.specialties.length - 2} more
+                        {provider.isGooglePlace && (
+                          <Badge variant="outline" className="text-xs">
+                            Google Places
                           </Badge>
                         )}
                       </div>
                     </div>
-                  )}
-
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm text-gray-500">
-                      {provider.city && (
-                        <div className="flex items-center">
-                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
-                          {provider.city}, {provider.state}
+                    {provider.rating && (
+                      <div className="flex items-center space-x-1">
+                        <div className="flex">
+                          {renderStars(Math.round(parseFloat(provider.rating) || 0))}
                         </div>
-                      )}
-                      {provider.isVerified && (
-                        <div className="flex items-center text-pet-green mt-1">
-                          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          Verified
-                        </div>
-                      )}
-                    </div>
+                        <span className="text-sm text-muted-foreground">
+                          ({provider.reviewCount || 0})
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </CardHeader>
+                
+                <CardContent>
+                  <div className="space-y-3">
+                    {provider.description && (
+                      <p className="text-sm text-muted-foreground line-clamp-2">
+                        {provider.description}
+                      </p>
+                    )}
                     
-                    <div className="flex space-x-2">
+                    {provider.address && (
+                      <div className="flex items-center space-x-2 text-sm">
+                        <MapPin className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">{provider.address}</span>
+                      </div>
+                    )}
+                    
+                    {provider.phone && (
+                      <div className="flex items-center space-x-2 text-sm">
+                        <Phone className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-muted-foreground">{provider.phone}</span>
+                      </div>
+                    )}
+                    
+                    {provider.website && (
+                      <div className="flex items-center space-x-2 text-sm">
+                        <Globe className="w-4 h-4 text-muted-foreground" />
+                        <a 
+                          href={provider.website} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-primary hover:underline"
+                        >
+                          Visit Website
+                        </a>
+                      </div>
+                    )}
+                    
+                    <div className="flex space-x-2 pt-2">
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button 
                             variant="outline" 
                             size="sm"
                             onClick={() => setSelectedProvider(provider)}
-                            className="border-pet-blue text-pet-blue hover:bg-pet-blue hover:text-white"
                           >
                             View Details
                           </Button>
                         </DialogTrigger>
                         <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
                           <DialogHeader>
-                            <DialogTitle className="flex items-center space-x-3">
-                              <div className={`p-3 rounded-full ${getProviderTypeColor(provider.user.userType)}`}>
-                                {getProviderIcon(provider.user.userType)}
-                              </div>
-                              <div>
-                                <h3 className="text-xl font-semibold">{provider.businessName}</h3>
-                                <p className="text-sm text-gray-600">
-                                  {provider.user?.firstName} {provider.user?.lastName}
-                                </p>
-                              </div>
-                            </DialogTitle>
+                            <DialogTitle>{provider.businessName}</DialogTitle>
                           </DialogHeader>
                           
                           <div className="space-y-4">
-                            <div className="flex items-center space-x-1">
-                              <div className="flex">
-                                {renderStars(parseFloat(provider.rating) || 0)}
-                              </div>
-                              <span className="text-sm font-medium">
-                                {parseFloat(provider.rating).toFixed(1) || '0.0'}
-                              </span>
-                              <span className="text-sm text-gray-500">
-                                ({provider.reviewCount || 0} reviews)
-                              </span>
+                            <div className="flex items-center space-x-2">
+                              {provider.specialties?.map((specialty: string) => (
+                                <Badge key={specialty} variant="secondary">
+                                  {specialty}
+                                </Badge>
+                              ))}
+                              {provider.isGooglePlace && (
+                                <Badge variant="outline">Google Places</Badge>
+                              )}
                             </div>
-
+                            
                             {provider.description && (
                               <div>
-                                <h4 className="font-medium mb-2">About</h4>
-                                <p className="text-sm text-gray-600">{provider.description}</p>
+                                <h4 className="font-semibold mb-2">Description</h4>
+                                <p className="text-muted-foreground">{provider.description}</p>
                               </div>
                             )}
-
-                            {provider.specialties && provider.specialties.length > 0 && (
-                              <div>
-                                <h4 className="font-medium mb-2">Specialties</h4>
-                                <div className="flex flex-wrap gap-2">
-                                  {provider.specialties.map((specialty: string, index: number) => (
-                                    <Badge key={index} variant="secondary">
-                                      {specialty}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-
+                            
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              {provider.address && (
+                                <div className="flex items-center space-x-2">
+                                  <MapPin className="w-4 h-4 text-muted-foreground" />
+                                  <span className="text-sm">{provider.address}</span>
+                                </div>
+                              )}
+                              
                               {provider.phone && (
-                                <div>
-                                  <h4 className="font-medium mb-1">Phone</h4>
-                                  <p className="text-sm text-gray-600">{provider.phone}</p>
+                                <div className="flex items-center space-x-2">
+                                  <Phone className="w-4 h-4 text-muted-foreground" />
+                                  <span className="text-sm">{provider.phone}</span>
                                 </div>
                               )}
                               
                               {provider.website && (
-                                <div>
-                                  <h4 className="font-medium mb-1">Website</h4>
+                                <div className="flex items-center space-x-2">
+                                  <Globe className="w-4 h-4 text-muted-foreground" />
                                   <a 
                                     href={provider.website} 
                                     target="_blank" 
                                     rel="noopener noreferrer"
-                                    className="text-sm text-pet-blue hover:underline"
+                                    className="text-sm text-primary hover:underline"
                                   >
-                                    {provider.website}
+                                    Visit Website
                                   </a>
                                 </div>
                               )}
-                              
-                              {provider.address && (
-                                <div className="md:col-span-2">
-                                  <h4 className="font-medium mb-1">Address</h4>
-                                  <p className="text-sm text-gray-600">
-                                    {provider.address}, {provider.city}, {provider.state} {provider.zipCode}
-                                  </p>
-                                </div>
-                              )}
                             </div>
-
-                            <div className="flex space-x-3">
-                              <Button 
-                                onClick={() => setShowReviewModal(true)}
-                                className="bg-pet-blue text-white hover:bg-blue-700"
-                              >
-                                Write Review
-                              </Button>
-                              <Button variant="outline">
-                                Schedule Appointment
-                              </Button>
-                            </div>
-
+                            
                             {/* Reviews Section */}
                             <div>
-                              <h4 className="font-medium mb-3">Recent Reviews</h4>
+                              <div className="flex items-center justify-between mb-4">
+                                <h4 className="font-semibold">Reviews</h4>
+                                {!provider.isGooglePlace && (
+                                  <Button
+                                    size="sm"
+                                    onClick={() => setShowReviewModal(true)}
+                                  >
+                                    <MessageSquare className="w-4 h-4 mr-2" />
+                                    Write Review
+                                  </Button>
+                                )}
+                              </div>
+                              
                               {reviewsLoading ? (
-                                <div className="space-y-3">
-                                  {[1, 2, 3].map((i) => (
-                                    <div key={i} className="border rounded-lg p-4">
-                                      <Skeleton className="h-4 w-32 mb-2" />
-                                      <Skeleton className="h-3 w-full mb-2" />
-                                      <Skeleton className="h-3 w-3/4" />
-                                    </div>
+                                <div className="space-y-2">
+                                  {[...Array(3)].map((_, i) => (
+                                    <Skeleton key={i} className="h-16 w-full" />
                                   ))}
                                 </div>
-                              ) : reviews.length === 0 ? (
-                                <p className="text-sm text-gray-500">No reviews yet</p>
+                              ) : (reviews as any[]).length === 0 ? (
+                                <p className="text-muted-foreground text-sm">No reviews yet.</p>
                               ) : (
-                                <div className="space-y-3 max-h-60 overflow-y-auto">
-                                  {reviews.slice(0, 5).map((review: any) => (
-                                    <div key={review.id} className="border rounded-lg p-4">
-                                      <div className="flex items-center justify-between mb-2">
-                                        <div className="flex items-center space-x-2">
-                                          <div className="flex">
-                                            {renderStars(review.rating)}
-                                          </div>
-                                          <span className="text-sm font-medium">
-                                            {review.reviewer?.firstName || 'Anonymous'}
-                                          </span>
+                                <div className="space-y-3 max-h-64 overflow-y-auto">
+                                  {(reviews as any[]).map((review: any) => (
+                                    <div key={review.id} className="border-b pb-3 last:border-b-0">
+                                      <div className="flex items-center space-x-2 mb-1">
+                                        <div className="flex">
+                                          {renderStars(review.rating)}
                                         </div>
-                                        <span className="text-xs text-gray-500">
-                                          {new Date(review.createdAt).toLocaleDateString()}
+                                        <span className="font-medium text-sm">
+                                          {review.reviewer?.firstName} {review.reviewer?.lastName}
                                         </span>
                                       </div>
                                       {review.title && (
                                         <h5 className="font-medium text-sm mb-1">{review.title}</h5>
                                       )}
-                                      <p className="text-sm text-gray-600">{review.comment}</p>
+                                      {review.comment && (
+                                        <p className="text-sm text-muted-foreground">{review.comment}</p>
+                                      )}
                                     </div>
                                   ))}
                                 </div>
@@ -533,151 +397,117 @@ export default function Providers() {
                           </div>
                         </DialogContent>
                       </Dialog>
+                      
+                      {!provider.isGooglePlace && (
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            setSelectedProvider(provider);
+                            setShowReviewModal(true);
+                          }}
+                        >
+                          <MessageSquare className="w-4 h-4 mr-2" />
+                          Review
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            ))
-          )}
-        </div>
-
-        {/* Summary Stats */}
-        {!providersLoading && providers.length > 0 && (
-          <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-6">
-            <Card>
-              <CardContent className="p-6 text-center">
-                <div className="text-3xl font-bold text-pet-blue mb-2">{providers.length}</div>
-                <div className="text-sm text-gray-600">Total Providers</div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="p-6 text-center">
-                <div className="text-3xl font-bold text-pet-green mb-2">
-                  {providers.filter((p: any) => p.user.userType === 'veterinarian').length}
-                </div>
-                <div className="text-sm text-gray-600">Veterinarians</div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="p-6 text-center">
-                <div className="text-3xl font-bold text-pet-purple mb-2">
-                  {providers.filter((p: any) => p.user.userType === 'groomer').length}
-                </div>
-                <div className="text-sm text-gray-600">Groomers</div>
-              </CardContent>
-            </Card>
-            
-            <Card>
-              <CardContent className="p-6 text-center">
-                <div className="text-3xl font-bold text-pet-amber mb-2">
-                  {providers.filter((p: any) => p.isVerified).length}
-                </div>
-                <div className="text-sm text-gray-600">Verified</div>
-              </CardContent>
-            </Card>
+            ))}
           </div>
         )}
-      </div>
 
-      {/* Review Modal */}
-      <Dialog open={showReviewModal} onOpenChange={setShowReviewModal}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Write a Review</DialogTitle>
-          </DialogHeader>
-          
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="rating">Rating</Label>
-              <div className="flex items-center space-x-2 mt-1">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    onClick={() => setReviewData({ ...reviewData, rating: star })}
-                    className={`w-6 h-6 ${star <= reviewData.rating ? 'text-yellow-400' : 'text-gray-300'}`}
+        {/* Review Modal */}
+        <Dialog open={showReviewModal} onOpenChange={setShowReviewModal}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Write a Review for {selectedProvider?.businessName}</DialogTitle>
+            </DialogHeader>
+            
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="rating">Rating</Label>
+                <div className="flex items-center space-x-1 mt-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className={`w-6 h-6 cursor-pointer ${
+                        star <= reviewData.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+                      }`}
+                      onClick={() => setReviewData({...reviewData, rating: star})}
+                    />
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="title">Title (Optional)</Label>
+                <Input
+                  id="title"
+                  value={reviewData.title}
+                  onChange={(e) => setReviewData({...reviewData, title: e.target.value})}
+                  placeholder="Brief summary of your experience"
+                />
+              </div>
+              
+              <div>
+                <Label htmlFor="comment">Comment</Label>
+                <Textarea
+                  id="comment"
+                  value={reviewData.comment}
+                  onChange={(e) => setReviewData({...reviewData, comment: e.target.value})}
+                  placeholder="Share your experience..."
+                  rows={4}
+                />
+              </div>
+              
+              {(pets as any[]).length > 0 && (
+                <div>
+                  <Label htmlFor="pet">Pet (Optional)</Label>
+                  <Select 
+                    value={reviewData.petId} 
+                    onValueChange={(value) => setReviewData({...reviewData, petId: value})}
                   >
-                    <svg fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  </button>
-                ))}
-                <span className="text-sm text-gray-600 ml-2">{reviewData.rating} star{reviewData.rating !== 1 ? 's' : ''}</span>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a pet" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">No specific pet</SelectItem>
+                      {(pets as any[]).map((pet: any) => (
+                        <SelectItem key={pet.id} value={pet.id.toString()}>
+                          {pet.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+              
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="recommended"
+                  checked={reviewData.isRecommended}
+                  onCheckedChange={(checked) => setReviewData({...reviewData, isRecommended: checked})}
+                />
+                <Label htmlFor="recommended">Would you recommend this provider?</Label>
+              </div>
+              
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline" onClick={() => setShowReviewModal(false)}>
+                  Cancel
+                </Button>
+                <Button 
+                  onClick={handleSubmitReview}
+                  disabled={reviewMutation.isPending}
+                >
+                  {reviewMutation.isPending ? "Submitting..." : "Submit Review"}
+                </Button>
               </div>
             </div>
-
-            <div>
-              <Label htmlFor="title">Review Title</Label>
-              <Input
-                id="title"
-                value={reviewData.title}
-                onChange={(e) => setReviewData({ ...reviewData, title: e.target.value })}
-                placeholder="Brief title for your review"
-                className="mt-1"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="comment">Review</Label>
-              <Textarea
-                id="comment"
-                value={reviewData.comment}
-                onChange={(e) => setReviewData({ ...reviewData, comment: e.target.value })}
-                placeholder="Share your experience..."
-                rows={4}
-                className="mt-1"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="pet">Pet (Optional)</Label>
-              <Select value={reviewData.petId} onValueChange={(value) => setReviewData({ ...reviewData, petId: value })}>
-                <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Select pet" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="">No specific pet</SelectItem>
-                  {pets.map((pet: any) => (
-                    <SelectItem key={pet.id} value={pet.id.toString()}>
-                      {pet.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="recommended"
-                checked={reviewData.isRecommended}
-                onChange={(e) => setReviewData({ ...reviewData, isRecommended: e.target.checked })}
-                className="rounded border-gray-300 text-pet-blue focus:ring-pet-blue"
-              />
-              <Label htmlFor="recommended">I recommend this provider</Label>
-            </div>
-
-            <div className="flex space-x-3">
-              <Button
-                onClick={handleSubmitReview}
-                disabled={reviewMutation.isPending}
-                className="bg-pet-blue text-white hover:bg-blue-700"
-              >
-                {reviewMutation.isPending ? "Submitting..." : "Submit Review"}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => setShowReviewModal(false)}
-                disabled={reviewMutation.isPending}
-              >
-                Cancel
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }
