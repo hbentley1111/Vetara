@@ -9,6 +9,7 @@ import { Heart, Calendar, FileText, Clock, DollarSign, Users, Shield } from "luc
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import { BackToDashboard } from "@/components/BackToDashboard";
 
 export default function ProviderPortal() {
   const { toast } = useToast();
@@ -200,6 +201,7 @@ export default function ProviderPortal() {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
       <div className="max-w-7xl mx-auto">
+        <BackToDashboard />
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Provider Portal</h1>

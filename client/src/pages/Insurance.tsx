@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import { BackToDashboard } from "@/components/BackToDashboard";
 import { 
   Shield, 
   TrendingUp, 

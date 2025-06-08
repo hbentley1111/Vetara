@@ -16,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Star, MapPin, Phone, Globe, Mail, Calendar, MessageSquare } from "lucide-react";
+import { BackToDashboard } from "@/components/BackToDashboard";
 
 export default function Providers() {
   const { toast } = useToast();
