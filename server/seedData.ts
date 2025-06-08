@@ -97,20 +97,56 @@ const providerProfiles = [
   { 
     firstName: "Jennifer", 
     lastName: "Miller", 
-    businessName: "Miller Dermatology for Pets", 
+    businessName: "Miller Dermatology for Pets",
     specialty: "Dermatology",
-    grade: "A-",
-    rating: 4.5,
-    reviewCount: 178
+    grade: "A",
+    rating: 4.7,
+    reviewCount: 189
   },
   { 
     firstName: "James", 
-    lastName: "Brown", 
-    businessName: "Brown Oncology Center", 
+    lastName: "Wilson", 
+    businessName: "Wilson Pet Oncology Center",
     specialty: "Oncology",
     grade: "A+",
     rating: 4.9,
-    reviewCount: 267
+    reviewCount: 98
+  },
+  { 
+    firstName: "Amanda", 
+    lastName: "Brown", 
+    businessName: "Brown Mobile Veterinary",
+    specialty: "General Practice",
+    grade: "B+",
+    rating: 4.4,
+    reviewCount: 156
+  },
+  { 
+    firstName: "Christopher", 
+    lastName: "Garcia", 
+    businessName: "Garcia 24/7 Animal Hospital",
+    specialty: "Emergency",
+    grade: "B+",
+    rating: 4.3,
+    reviewCount: 278
+  },
+  { 
+    firstName: "Rachel", 
+    lastName: "Martinez", 
+    businessName: "Martinez Holistic Pet Care",
+    specialty: "General Practice",
+    grade: "B+",
+    rating: 4.2,
+    reviewCount: 145
+  },
+  { 
+    firstName: "Kevin", 
+    lastName: "Lee", 
+    businessName: "Lee Emergency Animal Care",
+    specialty: "Emergency",
+    grade: "B",
+    rating: 4.1,
+    reviewCount: 203
   }
 ];
 

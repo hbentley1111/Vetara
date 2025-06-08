@@ -297,6 +297,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get top-rated providers (B+ and above)
+  app.get('/api/service-providers/top-rated', async (req, res) => {
+    try {
+      const topProviders = await storage.getTopRatedProviders(6);
+      res.json(topProviders);
+    } catch (error) {
+      console.error("Error fetching top-rated providers:", error);
+      res.status(500).json({ message: "Failed to fetch top-rated providers" });
+    }
+  });
+
   // Provider quality metrics routes (Healthgrades-style grading system)
   app.get('/api/providers/:id/quality-metrics', isAuthenticated, async (req, res) => {
     try {

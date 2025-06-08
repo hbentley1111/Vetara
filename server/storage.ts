@@ -828,6 +828,17 @@ export class DatabaseStorage implements IStorage {
       .from(serviceProviders)
       .leftJoin(users, eq(serviceProviders.userId, users.id))
       .leftJoin(providerQualityMetrics, eq(serviceProviders.id, providerQualityMetrics.providerId))
+      .where(
+        and(
+          isNotNull(providerQualityMetrics.qualityGrade),
+          or(
+            eq(providerQualityMetrics.qualityGrade, 'A+'),
+            eq(providerQualityMetrics.qualityGrade, 'A'),
+            eq(providerQualityMetrics.qualityGrade, 'A-'),
+            eq(providerQualityMetrics.qualityGrade, 'B+')
+          )
+        )
+      )
       .orderBy(desc(providerQualityMetrics.overallRating))
       .limit(limit);
 
