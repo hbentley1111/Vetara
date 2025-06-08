@@ -6,6 +6,8 @@ import {
   reviews,
   appointments,
   sharedRecords,
+  providerAccess,
+  providerSubscriptions,
   type User,
   type UpsertUser,
   type Pet,
@@ -20,6 +22,10 @@ import {
   type InsertAppointment,
   type SharedRecord,
   type InsertSharedRecord,
+  type ProviderAccess,
+  type InsertProviderAccess,
+  type ProviderSubscription,
+  type InsertProviderSubscription,
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, and, sql, ilike, gte, lte } from "drizzle-orm";
@@ -314,6 +320,129 @@ export class DatabaseStorage implements IStorage {
       .innerJoin(pets, eq(medicalRecords.petId, pets.id))
       .where(and(eq(sharedRecords.sharedWithId, userId), eq(sharedRecords.isRevoked, false)))
       .orderBy(desc(sharedRecords.createdAt));
+  }
+
+  // Provider access operations
+  async grantProviderAccess(access: InsertProviderAccess): Promise<ProviderAccess> {
+    const [newAccess] = await db
+      .insert(providerAccess)
+      .values(access)
+      .returning();
+    return newAccess;
+  }
+
+  async revokeProviderAccess(accessId: number): Promise<void> {
+    await db
+      .update(providerAccess)
+      .set({ isActive: false, updatedAt: new Date() })
+      .where(eq(providerAccess.id, accessId));
+  }
+
+  async getProviderAccessByProvider(providerId: string): Promise<(ProviderAccess & { pet: Pet & { owner: User } })[]> {
+    const accessList = await db
+      .select()
+      .from(providerAccess)
+      .leftJoin(pets, eq(providerAccess.petId, pets.id))
+      .leftJoin(users, eq(pets.ownerId, users.id))
+      .where(and(
+        eq(providerAccess.providerId, providerId),
+        eq(providerAccess.isActive, true)
+      ));
+
+    return accessList.map(access => ({
+      ...access.provider_access,
+      pet: {
+        ...access.pets,
+        owner: access.users,
+      },
+    })) as any;
+  }
+
+  async getProviderAccessByPet(petId: number): Promise<(ProviderAccess & { provider: User })[]> {
+    const accessList = await db
+      .select()
+      .from(providerAccess)
+      .leftJoin(users, eq(providerAccess.providerId, users.id))
+      .where(and(
+        eq(providerAccess.petId, petId),
+        eq(providerAccess.isActive, true)
+      ));
+
+    return accessList.map(access => ({
+      ...access.provider_access,
+      provider: access.users,
+    })) as any;
+  }
+
+  async updateProviderAccessLastAccessed(accessId: number): Promise<void> {
+    await db
+      .update(providerAccess)
+      .set({ lastAccessedAt: new Date(), updatedAt: new Date() })
+      .where(eq(providerAccess.id, accessId));
+  }
+
+  // Provider subscription operations
+  async createProviderSubscription(subscription: InsertProviderSubscription): Promise<ProviderSubscription> {
+    const [newSubscription] = await db
+      .insert(providerSubscriptions)
+      .values(subscription)
+      .returning();
+    return newSubscription;
+  }
+
+  async getProviderSubscription(providerId: string): Promise<ProviderSubscription | undefined> {
+    const [subscription] = await db
+      .select()
+      .from(providerSubscriptions)
+      .where(eq(providerSubscriptions.providerId, providerId));
+    return subscription;
+  }
+
+  async updateProviderSubscription(providerId: string, subscription: Partial<InsertProviderSubscription>): Promise<ProviderSubscription> {
+    const [updated] = await db
+      .update(providerSubscriptions)
+      .set({ ...subscription, updatedAt: new Date() })
+      .where(eq(providerSubscriptions.providerId, providerId))
+      .returning();
+    return updated;
+  }
+
+  // Provider portal operations
+  async getAuthorizedPetsForProvider(providerId: string): Promise<(Pet & { owner: User; medicalRecords: MedicalRecord[] })[]> {
+    const accessList = await db
+      .select()
+      .from(providerAccess)
+      .leftJoin(pets, eq(providerAccess.petId, pets.id))
+      .leftJoin(users, eq(pets.ownerId, users.id))
+      .where(and(
+        eq(providerAccess.providerId, providerId),
+        eq(providerAccess.isActive, true)
+      ));
+
+    const petsWithRecords = await Promise.all(
+      accessList.map(async (access) => {
+        const records = await this.getMedicalRecordsByPet(access.pets!.id);
+        return {
+          ...access.pets!,
+          owner: access.users!,
+          medicalRecords: records,
+        };
+      })
+    );
+
+    return petsWithRecords;
+  }
+
+  async checkProviderAccess(providerId: string, petId: number): Promise<boolean> {
+    const [access] = await db
+      .select()
+      .from(providerAccess)
+      .where(and(
+        eq(providerAccess.providerId, providerId),
+        eq(providerAccess.petId, petId),
+        eq(providerAccess.isActive, true)
+      ));
+    return !!access;
   }
 }
 

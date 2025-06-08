@@ -465,6 +465,109 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Provider portal routes
+  app.get('/api/provider/pets', isAuthenticated, async (req: any, res) => {
+    try {
+      const providerId = req.user.claims.sub;
+      const user = await storage.getUser(providerId);
+      
+      if (!user || (user.userType !== 'veterinarian' && user.userType !== 'groomer' && user.userType !== 'trainer')) {
+        return res.status(403).json({ message: "Access denied. Provider account required." });
+      }
+
+      // Check subscription status
+      if (user.subscriptionStatus !== 'active' && user.subscriptionStatus !== 'trial') {
+        return res.status(402).json({ message: "Active subscription required to access pet records." });
+      }
+
+      const authorizedPets = await storage.getAuthorizedPetsForProvider(providerId);
+      res.json(authorizedPets);
+    } catch (error) {
+      console.error("Error fetching provider pets:", error);
+      res.status(500).json({ message: "Failed to fetch authorized pets" });
+    }
+  });
+
+  app.get('/api/provider/pet/:petId/records', isAuthenticated, async (req: any, res) => {
+    try {
+      const providerId = req.user.claims.sub;
+      const petId = parseInt(req.params.petId);
+      
+      const hasAccess = await storage.checkProviderAccess(providerId, petId);
+      if (!hasAccess) {
+        return res.status(403).json({ message: "Access denied to this pet's records." });
+      }
+
+      const records = await storage.getMedicalRecordsByPet(petId);
+      res.json(records);
+    } catch (error) {
+      console.error("Error fetching pet records:", error);
+      res.status(500).json({ message: "Failed to fetch pet medical records" });
+    }
+  });
+
+  app.post('/api/provider/access/grant', isAuthenticated, async (req: any, res) => {
+    try {
+      const ownerId = req.user.claims.sub;
+      const { petId, providerId, accessLevel, accessReason, expiresAt } = req.body;
+      
+      // Verify pet ownership
+      const pet = await storage.getPetById(petId);
+      if (!pet || pet.ownerId !== ownerId) {
+        return res.status(403).json({ message: "You can only grant access to your own pets." });
+      }
+
+      const access = await storage.grantProviderAccess({
+        petId,
+        providerId,
+        ownerId,
+        accessLevel: accessLevel || 'read',
+        accessReason,
+        expiresAt: expiresAt ? new Date(expiresAt) : undefined,
+      });
+
+      res.json(access);
+    } catch (error) {
+      console.error("Error granting provider access:", error);
+      res.status(500).json({ message: "Failed to grant provider access" });
+    }
+  });
+
+  app.post('/api/provider/subscription', isAuthenticated, async (req: any, res) => {
+    try {
+      const providerId = req.user.claims.sub;
+      const { subscriptionTier, monthlyFee, petsAccessLimit } = req.body;
+      
+      const subscription = await storage.createProviderSubscription({
+        providerId,
+        subscriptionTier: subscriptionTier || 'basic',
+        monthlyFee: monthlyFee || '29.99',
+        petsAccessLimit: petsAccessLimit || 50,
+        status: 'trial',
+        billingCycle: 'monthly',
+        endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+        nextBillingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      });
+
+      res.json(subscription);
+    } catch (error) {
+      console.error("Error creating provider subscription:", error);
+      res.status(500).json({ message: "Failed to create subscription" });
+    }
+  });
+
+  // Seed demo data endpoint
+  app.post('/api/seed-demo-data', isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.claims.sub;
+      await seedDemoData(userId);
+      res.json({ message: "Demo data seeded successfully" });
+    } catch (error) {
+      console.error("Error seeding demo data:", error);
+      res.status(500).json({ message: "Failed to seed demo data" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
