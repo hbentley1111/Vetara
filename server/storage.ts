@@ -49,7 +49,7 @@ import {
   type InsertProviderRecognitions,
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and, sql, ilike, gte, lte } from "drizzle-orm";
+import { eq, desc, and, sql, ilike, gte, lte, or, isNotNull } from "drizzle-orm";
 
 export interface IStorage {
   // User operations (mandatory for Replit Auth)
@@ -829,15 +829,7 @@ export class DatabaseStorage implements IStorage {
       .leftJoin(users, eq(serviceProviders.userId, users.id))
       .leftJoin(providerQualityMetrics, eq(serviceProviders.id, providerQualityMetrics.providerId))
       .where(
-        and(
-          isNotNull(providerQualityMetrics.qualityGrade),
-          or(
-            eq(providerQualityMetrics.qualityGrade, 'A+'),
-            eq(providerQualityMetrics.qualityGrade, 'A'),
-            eq(providerQualityMetrics.qualityGrade, 'A-'),
-            eq(providerQualityMetrics.qualityGrade, 'B+')
-          )
-        )
+        gte(providerQualityMetrics.overallRating, "4.2")
       )
       .orderBy(desc(providerQualityMetrics.overallRating))
       .limit(limit);
