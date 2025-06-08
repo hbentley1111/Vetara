@@ -9,8 +9,8 @@ import { useState } from "react";
 
 export default function ProviderGrading() {
   const [searchCity, setSearchCity] = useState("");
-  const [selectedSpecialty, setSelectedSpecialty] = useState("");
-  const [minRating, setMinRating] = useState("");
+  const [selectedSpecialty, setSelectedSpecialty] = useState("all");
+  const [minRating, setMinRating] = useState("any");
 
   // Fetch top-rated providers
   const { data: topProviders, isLoading: loadingTop } = useQuery({
@@ -19,8 +19,8 @@ export default function ProviderGrading() {
 
   // Fetch providers by quality search
   const { data: searchResults, isLoading: loadingSearch } = useQuery({
-    queryKey: ['/api/providers/search-by-quality', searchCity, selectedSpecialty, minRating],
-    enabled: !!(searchCity || selectedSpecialty || minRating),
+    queryKey: ['/api/providers/search-by-quality', searchCity, selectedSpecialty === 'all' ? '' : selectedSpecialty, minRating === 'any' ? '' : minRating],
+    enabled: !!(searchCity || (selectedSpecialty && selectedSpecialty !== 'all') || (minRating && minRating !== 'any')),
   });
 
   const renderStars = (rating: number) => {
@@ -173,7 +173,7 @@ export default function ProviderGrading() {
                 <SelectValue placeholder="Specialty" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Specialties</SelectItem>
+                <SelectItem value="all">All Specialties</SelectItem>
                 <SelectItem value="Emergency">Emergency Medicine</SelectItem>
                 <SelectItem value="Surgery">Surgery</SelectItem>
                 <SelectItem value="Cardiology">Cardiology</SelectItem>
@@ -187,7 +187,7 @@ export default function ProviderGrading() {
                 <SelectValue placeholder="Minimum Rating" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Any Rating</SelectItem>
+                <SelectItem value="any">Any Rating</SelectItem>
                 <SelectItem value="4.5">4.5+ Stars</SelectItem>
                 <SelectItem value="4.0">4.0+ Stars</SelectItem>
                 <SelectItem value="3.5">3.5+ Stars</SelectItem>
@@ -196,8 +196,8 @@ export default function ProviderGrading() {
             </Select>
             <Button onClick={() => {
               setSearchCity("");
-              setSelectedSpecialty("");
-              setMinRating("");
+              setSelectedSpecialty("all");
+              setMinRating("any");
             }}>
               Clear Filters
             </Button>
@@ -280,8 +280,8 @@ export default function ProviderGrading() {
                 <p className="text-gray-600">No providers found matching your criteria.</p>
                 <Button variant="outline" className="mt-4" onClick={() => {
                   setSearchCity("");
-                  setSelectedSpecialty("");
-                  setMinRating("");
+                  setSelectedSpecialty("all");
+                  setMinRating("any");
                 }}>
                   Clear Filters
                 </Button>
