@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
+import { GooglePlacesService, convertGooglePlaceToServiceProvider } from "./googlePlaces";
 import { insertPetSchema, insertMedicalRecordSchema, insertReviewSchema, insertAppointmentSchema } from "@shared/schema";
 import { z } from "zod";
 import multer from "multer";
@@ -217,21 +218,97 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Service providers routes
+  // Service providers routes with Google Places integration
   app.get('/api/service-providers', async (req, res) => {
     try {
-      const { city, specialty, userType } = req.query;
-      const filters = {
+      const { city, specialty, userType, lat, lng, radius, includeGoogle } = req.query;
+      
+      let providers = await storage.getServiceProviders({
         city: city as string,
         specialty: specialty as string,
         userType: userType as string,
-      };
-      
-      const providers = await storage.getServiceProviders(filters);
+      });
+
+      // If Google Places integration is requested and API key is available
+      if (includeGoogle === 'true' && process.env.GOOGLE_PLACES_API_KEY) {
+        try {
+          const googlePlaces = new GooglePlacesService(process.env.GOOGLE_PLACES_API_KEY);
+          let googleResults: any[] = [];
+
+          if (lat && lng) {
+            // Search by location
+            const latitude = parseFloat(lat as string);
+            const longitude = parseFloat(lng as string);
+            const searchRadius = radius ? parseInt(radius as string) : 5000;
+
+            if (specialty === 'Veterinarian' || !specialty) {
+              const vets = await googlePlaces.searchNearbyVeterinarians(latitude, longitude, searchRadius);
+              googleResults.push(...vets);
+            }
+            if (specialty === 'Groomer' || !specialty) {
+              const groomers = await googlePlaces.searchNearbyPetGroomers(latitude, longitude, searchRadius);
+              googleResults.push(...groomers);
+            }
+            if (specialty === 'Pet Store' || !specialty) {
+              const stores = await googlePlaces.searchNearbyPetStores(latitude, longitude, searchRadius);
+              googleResults.push(...stores);
+            }
+          } else if (city) {
+            // Search by city
+            const searchType = specialty === 'Veterinarian' ? 'veterinary_care' : 
+                             specialty === 'Groomer' ? 'pet_grooming' : 'pet_store';
+            googleResults = await googlePlaces.searchByCity(city as string, searchType);
+          }
+
+          // Convert Google Places results to our format
+          const convertedResults = googleResults.map(place => {
+            const converted = convertGooglePlaceToServiceProvider(place, 'google_user');
+            return {
+              id: `google_${place.place_id}`,
+              ...converted,
+              user: {
+                id: 'google_user',
+                email: null,
+                firstName: 'Google',
+                lastName: 'Places',
+                profileImageUrl: null,
+                userType: 'provider',
+                createdAt: new Date(),
+                updatedAt: new Date()
+              },
+              isGooglePlace: true
+            };
+          });
+
+          // Merge with existing providers
+          providers = [...providers, ...convertedResults];
+        } catch (googleError) {
+          console.error('Google Places API error:', googleError);
+          // Continue with local providers only
+        }
+      }
+
       res.json(providers);
     } catch (error) {
       console.error("Error fetching service providers:", error);
       res.status(500).json({ message: "Failed to fetch service providers" });
+    }
+  });
+
+  // Get Google Place details
+  app.get('/api/google-place/:placeId', async (req, res) => {
+    try {
+      if (!process.env.GOOGLE_PLACES_API_KEY) {
+        return res.status(400).json({ message: "Google Places API not configured" });
+      }
+
+      const googlePlaces = new GooglePlacesService(process.env.GOOGLE_PLACES_API_KEY);
+      const placeDetails = await googlePlaces.getPlaceDetails(req.params.placeId);
+      
+      res.json(placeDetails);
+    } catch (error) {
+      console.error("Error fetching Google Place details:", error);
+      res.status(500).json({ message: "Failed to fetch place details" });
     }
   });
 
