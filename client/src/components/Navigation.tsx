@@ -115,8 +115,9 @@ export default function Navigation() {
           <div className="flex items-center space-x-4">
             {/* Notifications */}
             <Button variant="ghost" size="sm" className="relative">
-              <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5-5-5 5h5zm0 0v-3a3 3 0 00-3-3h-1m4 6V9a9 9 0 10-18 0v8a2 2 0 002 2h1" />
+              <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
+                {/* Dog paw icon */}
+                <path d="M12 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-4 4c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm8 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM7 10c-1.66 0-3 1.34-3 3s1.34 3 3 3c.5 0 .97-.12 1.39-.34l1.83 1.83c.78.78 2.05.78 2.83 0l1.83-1.83c.42.22.89.34 1.39.34 1.66 0 3-1.34 3-3s-1.34-3-3-3c-.5 0-.97.12-1.39.34l-1.83-1.83c-.78-.78-2.05-.78-2.83 0l-1.83 1.83C7.97 10.12 7.5 10 7 10z"/>
               </svg>
               {/* Notification badge */}
               <Badge className="absolute -top-1 -right-1 h-5 w-5 text-xs bg-pet-pink text-white p-0 flex items-center justify-center">
