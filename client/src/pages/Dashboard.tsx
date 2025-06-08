@@ -121,8 +121,15 @@ export default function Dashboard() {
     setShowQRModal(true);
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+  const formatDate = (dateString: string | Date) => {
+    if (!dateString) return 'No date';
+    
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      return 'Invalid Date';
+    }
+    
+    return date.toLocaleDateString('en-US', {
       month: 'short',
       day: 'numeric',
       year: 'numeric'
@@ -390,14 +397,14 @@ export default function Dashboard() {
                             </svg>
                           </div>
                           <div>
-                            <h4 className="font-medium text-gray-900">{record.title}</h4>
-                            <p className="text-sm text-gray-600">{formatDate(record.visitDate)}</p>
+                            <h4 className="font-medium text-gray-900">{record.title || record.medical_records?.title}</h4>
+                            <p className="text-sm text-gray-600">{formatDate(record.visitDate || record.medical_records?.visitDate)}</p>
                             <div className="flex items-center space-x-2 mt-1">
-                              <Badge className={getRecordTypeColor(record.recordType)}>
-                                {record.recordType?.replace('_', ' ') || 'Medical Record'}
+                              <Badge className={getRecordTypeColor(record.recordType || record.medical_records?.recordType)}>
+                                {(record.recordType || record.medical_records?.recordType)?.replace('_', ' ') || 'Medical Record'}
                               </Badge>
-                              {record.pet && (
-                                <span className="text-xs text-gray-500">{record.pet.name}</span>
+                              {(record.pet || record.pets) && (
+                                <span className="text-xs text-gray-500">{record.pet?.name || record.pets?.name}</span>
                               )}
                             </div>
                           </div>
