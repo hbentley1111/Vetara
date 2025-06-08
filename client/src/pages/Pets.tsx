@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BackToDashboard } from "@/components/BackToDashboard";
 
 export default function Pets() {
   const [showQRModal, setShowQRModal] = useState(false);
@@ -36,6 +37,7 @@ export default function Pets() {
       <Navigation />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <BackToDashboard />
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">

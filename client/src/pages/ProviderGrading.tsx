@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Star, Award, TrendingUp, Shield, Heart, Clock, CheckCircle } from "lucide-react";
 import { useState } from "react";
+import { BackToDashboard } from "@/components/BackToDashboard";
 
 export default function ProviderGrading() {
   const [searchCity, setSearchCity] = useState("");
@@ -144,6 +145,7 @@ export default function ProviderGrading() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <BackToDashboard />
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           Find Top-Rated Veterinary Providers
