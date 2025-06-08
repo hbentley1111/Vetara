@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import Navigation from "@/components/Navigation";
+import { BackToDashboard } from "@/components/BackToDashboard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +17,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Star, MapPin, Phone, Globe, Mail, Calendar, MessageSquare } from "lucide-react";
-import { BackToDashboard } from "@/components/BackToDashboard";
 
 export default function Providers() {
   const { toast } = useToast();
@@ -146,6 +146,7 @@ export default function Providers() {
       <Navigation />
       
       <div className="container mx-auto px-4 py-8">
+        <BackToDashboard />
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground mb-2">Service Providers</h1>
           <p className="text-muted-foreground">

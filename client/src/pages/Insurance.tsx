@@ -148,6 +148,7 @@ export default function Insurance() {
 
   return (
     <div className="container mx-auto p-6 space-y-8">
+      <BackToDashboard />
       <div className="flex items-center gap-3 mb-8">
         <Shield className="h-8 w-8 text-blue-600" />
         <div>

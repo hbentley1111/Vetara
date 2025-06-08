@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import Navigation from "@/components/Navigation";
+import { BackToDashboard } from "@/components/BackToDashboard";
 import PetCard from "@/components/PetCard";
 import QRModal from "@/components/QRModal";
 import AddPetModal from "@/components/AddPetModal";
@@ -13,7 +14,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BackToDashboard } from "@/components/BackToDashboard";
 
 export default function Dashboard() {
   const { toast } = useToast();
