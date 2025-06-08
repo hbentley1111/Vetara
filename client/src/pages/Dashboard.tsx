@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
+import { apiRequest, queryClient } from "@/lib/queryClient";
 import Navigation from "@/components/Navigation";
 import PetCard from "@/components/PetCard";
 import QRModal from "@/components/QRModal";
@@ -20,6 +21,41 @@ export default function Dashboard() {
   const [showAddPetModal, setShowAddPetModal] = useState(false);
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [selectedPet, setSelectedPet] = useState<any>(null);
+
+  // Demo data mutation
+  const demoDataMutation = useMutation({
+    mutationFn: async () => {
+      await apiRequest("POST", "/api/seed-demo-data", {});
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/pets"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/dashboard/stats"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/service-providers"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/medical-records"] });
+      toast({
+        title: "Success",
+        description: "Demo data has been added to your account",
+      });
+    },
+    onError: (error: Error) => {
+      if (isUnauthorizedError(error)) {
+        toast({
+          title: "Unauthorized",
+          description: "You are logged out. Logging in again...",
+          variant: "destructive",
+        });
+        setTimeout(() => {
+          window.location.href = "/api/login";
+        }, 500);
+        return;
+      }
+      toast({
+        title: "Error",
+        description: "Failed to add demo data",
+        variant: "destructive",
+      });
+    },
+  });
 
   // Redirect to home if not authenticated
   useEffect(() => {
@@ -222,15 +258,30 @@ export default function Dashboard() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="text-xl font-semibold text-gray-900">My Pets</CardTitle>
-                  <Button 
-                    onClick={() => setShowAddPetModal(true)}
-                    className="bg-pet-blue text-white hover:bg-blue-700"
-                  >
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                    Add Pet
-                  </Button>
+                  <div className="flex space-x-2">
+                    {(pets as any[]).length === 0 && (
+                      <Button 
+                        onClick={() => demoDataMutation.mutate()}
+                        disabled={demoDataMutation.isPending}
+                        variant="outline"
+                        className="border-pet-purple text-pet-purple hover:bg-pet-purple hover:text-white"
+                      >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
+                        </svg>
+                        {demoDataMutation.isPending ? "Adding Demo Data..." : "Add Demo Data"}
+                      </Button>
+                    )}
+                    <Button 
+                      onClick={() => setShowAddPetModal(true)}
+                      className="bg-pet-blue text-white hover:bg-blue-700"
+                    >
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                      Add Pet
+                    </Button>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent>
