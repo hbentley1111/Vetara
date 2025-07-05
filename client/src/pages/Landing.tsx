@@ -24,11 +24,11 @@ export default function Landing() {
             
             {/* Desktop Navigation Menu */}
             <div className="hidden md:flex items-center space-x-8">
-              <a href="#" className="text-slate-300 hover:text-cyan-400 font-medium transition-colors">Health Records</a>
-              <a href="#" className="text-slate-300 hover:text-cyan-400 font-medium transition-colors">Provider Network</a>
-              <a href="#" className="text-slate-300 hover:text-cyan-400 font-medium transition-colors">Insurance</a>
-              <a href="#" className="text-slate-300 hover:text-cyan-400 font-medium transition-colors">QR Protection</a>
-              <a href="#" className="text-slate-300 hover:text-cyan-400 font-medium transition-colors">Analytics</a>
+              <a href="/records" className="text-slate-300 hover:text-cyan-400 font-medium transition-colors">Health Records</a>
+              <a href="/providers" className="text-slate-300 hover:text-cyan-400 font-medium transition-colors">Provider Network</a>
+              <a href="/insurance" className="text-slate-300 hover:text-cyan-400 font-medium transition-colors">Insurance</a>
+              <a href="/pets" className="text-slate-300 hover:text-cyan-400 font-medium transition-colors">QR Protection</a>
+              <a href="/provider-grading" className="text-slate-300 hover:text-cyan-400 font-medium transition-colors">Analytics</a>
             </div>
 
             <div className="flex items-center space-x-4">
@@ -339,22 +339,22 @@ export default function Landing() {
             <div>
               <h3 className="font-semibold mb-6 text-white">Platform</h3>
               <ul className="space-y-3 text-slate-400">
-                <li className="hover:text-cyan-400 transition-colors cursor-pointer">Health Records</li>
-                <li className="hover:text-cyan-400 transition-colors cursor-pointer">QR Technology</li>
-                <li className="hover:text-cyan-400 transition-colors cursor-pointer">Provider Network</li>
-                <li className="hover:text-cyan-400 transition-colors cursor-pointer">Analytics Dashboard</li>
-                <li className="hover:text-cyan-400 transition-colors cursor-pointer">API Access</li>
+                <li><a href="/records" className="hover:text-cyan-400 transition-colors">Health Records</a></li>
+                <li><a href="/pets" className="hover:text-cyan-400 transition-colors">QR Technology</a></li>
+                <li><a href="/providers" className="hover:text-cyan-400 transition-colors">Provider Network</a></li>
+                <li><a href="/provider-grading" className="hover:text-cyan-400 transition-colors">Analytics Dashboard</a></li>
+                <li><a href="/provider-portal" className="hover:text-cyan-400 transition-colors">API Access</a></li>
               </ul>
             </div>
 
             <div>
               <h3 className="font-semibold mb-6 text-white">Enterprise</h3>
               <ul className="space-y-3 text-slate-400">
-                <li className="hover:text-cyan-400 transition-colors cursor-pointer">Security</li>
-                <li className="hover:text-cyan-400 transition-colors cursor-pointer">Compliance</li>
-                <li className="hover:text-cyan-400 transition-colors cursor-pointer">Support</li>
-                <li className="hover:text-cyan-400 transition-colors cursor-pointer">Documentation</li>
-                <li className="hover:text-cyan-400 transition-colors cursor-pointer">Status</li>
+                <li><a href="/insurance" className="hover:text-cyan-400 transition-colors">Insurance</a></li>
+                <li><a href="/provider-portal" className="hover:text-cyan-400 transition-colors">Provider Portal</a></li>
+                <li><a href="/dashboard" className="hover:text-cyan-400 transition-colors">Dashboard</a></li>
+                <li><a href="/providers" className="hover:text-cyan-400 transition-colors">Directory</a></li>
+                <li><a href="/pets" className="hover:text-cyan-400 transition-colors">Pet Management</a></li>
               </ul>
             </div>
           </div>
