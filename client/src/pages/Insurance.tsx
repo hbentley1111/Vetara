@@ -135,8 +135,8 @@ export default function Insurance() {
   const getHealthScoreColor = (score: number) => {
     if (score >= 90) return "text-green-600";
     if (score >= 80) return "text-blue-600";
-    if (score >= 70) return "text-yellow-600";
-    if (score >= 60) return "text-orange-600";
+    if (score >= 70) return "text-cyan-600";
+    if (score >= 60) return "text-blue-600";
     return "text-red-600";
   };
 
@@ -407,13 +407,13 @@ export default function Insurance() {
                   <span>80-89 Score</span>
                   <Badge className="bg-blue-600">20% Discount</Badge>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg">
                   <span>70-79 Score</span>
-                  <Badge className="bg-yellow-600">15% Discount</Badge>
+                  <Badge className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white">15% Discount</Badge>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
+                <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
                   <span>60-69 Score</span>
-                  <Badge className="bg-orange-600">10% Discount</Badge>
+                  <Badge className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white">10% Discount</Badge>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <span>50-59 Score</span>

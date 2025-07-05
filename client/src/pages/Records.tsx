@@ -141,7 +141,7 @@ export default function Records() {
       case 'vaccination': return 'bg-pet-green bg-opacity-10 text-pet-green';
       case 'checkup': return 'bg-pet-blue bg-opacity-10 text-pet-blue';
       case 'surgery': return 'bg-pet-purple bg-opacity-10 text-pet-purple';
-      case 'lab_results': return 'bg-pet-amber bg-opacity-10 text-pet-amber';
+      case 'lab_results': return 'bg-gradient-to-r from-cyan-500/10 to-blue-500/10 text-cyan-400';
       case 'emergency': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-600';
     }
@@ -435,7 +435,7 @@ export default function Records() {
             
             <Card>
               <CardContent className="p-6 text-center">
-                <div className="text-3xl font-bold text-pet-amber mb-2">
+                <div className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-2">
                   {medicalRecords.filter((r: any) => r.recordType === 'Surgery' || r.isEmergency).length}
                 </div>
                 <div className="text-sm text-gray-600">Emergency Records</div>

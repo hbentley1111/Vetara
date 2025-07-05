@@ -29,7 +29,7 @@ export default function ProviderGrading() {
       <Star
         key={i}
         className={`w-4 h-4 ${
-          i < Math.floor(rating) ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+          i < Math.floor(rating) ? 'fill-cyan-400 text-cyan-400' : 'text-gray-300'
         }`}
       />
     ));
@@ -211,7 +211,7 @@ export default function ProviderGrading() {
       <Card className="mb-8">
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
-            <Award className="w-5 h-5 text-yellow-500" />
+            <Award className="w-5 h-5 text-cyan-400" />
             Quality Rating System
           </CardTitle>
         </CardHeader>
@@ -239,7 +239,7 @@ export default function ProviderGrading() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Clock className="w-5 h-5 text-orange-500" />
+              <Clock className="w-5 h-5 text-blue-400" />
               <div>
                 <div className="font-medium">Timeliness</div>
                 <div className="text-sm text-gray-600">Appointment availability, wait times</div>
@@ -296,7 +296,7 @@ export default function ProviderGrading() {
       {/* Top-Rated Providers */}
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <Award className="w-6 h-6 text-yellow-500" />
+          <Award className="w-6 h-6 text-cyan-400" />
           Top-Rated Providers
         </h2>
         {loadingTop ? (

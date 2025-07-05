@@ -136,7 +136,7 @@ export default function Providers() {
     return [...Array(5)].map((_, i) => (
       <Star
         key={i}
-        className={`w-4 h-4 ${i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+        className={`w-4 h-4 ${i < rating ? 'fill-cyan-400 text-cyan-400' : 'text-gray-300'}`}
       />
     ));
   };
@@ -435,7 +435,7 @@ export default function Providers() {
                     <Star
                       key={star}
                       className={`w-6 h-6 cursor-pointer ${
-                        star <= reviewData.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+                        star <= reviewData.rating ? 'fill-cyan-400 text-cyan-400' : 'text-gray-300'
                       }`}
                       onClick={() => setReviewData({...reviewData, rating: star})}
                     />
