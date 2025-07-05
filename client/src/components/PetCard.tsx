@@ -70,7 +70,7 @@ export default function PetCard({ pet, onGenerateQR, showFullActions = false }: 
       case "Due Soon":
         return "bg-gradient-to-r from-cyan-50 to-blue-50 text-cyan-600";
       case "Overdue":
-        return "bg-red-100 text-red-800";
+        return "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700";
       default:
         return "bg-gray-100 text-gray-600";
     }
