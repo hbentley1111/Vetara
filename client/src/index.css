@@ -34,24 +34,24 @@
 }
 
 .dark {
-  --background: 222 84% 5%; /* #0F172A */
-  --foreground: 210 40% 98%; /* #F8FAFC */
-  --muted: 215 28% 17%; /* #334155 */
-  --muted-foreground: 215 20% 65%; /* #94A3B8 */
-  --popover: 222 84% 5%; /* #0F172A */
-  --popover-foreground: 210 40% 98%; /* #F8FAFC */
-  --card: 220 13% 8%; /* #1E293B */
-  --card-foreground: 210 40% 98%; /* #F8FAFC */
-  --border: 215 28% 17%; /* #334155 */
-  --input: 215 28% 17%; /* #334155 */
+  --background: 222 84% 4%; /* #0A1020 */
+  --foreground: 0 0% 100%; /* #FFFFFF */
+  --muted: 215 28% 12%; /* #1E293B */
+  --muted-foreground: 215 20% 75%; /* #B0BCC9 */
+  --popover: 222 84% 4%; /* #0A1020 */
+  --popover-foreground: 0 0% 100%; /* #FFFFFF */
+  --card: 220 13% 6%; /* #0F1629 */
+  --card-foreground: 0 0% 100%; /* #FFFFFF */
+  --border: 215 28% 15%; /* #27374D */
+  --input: 215 28% 12%; /* #1E293B */
   --primary: 199 89% 48%; /* #06B6D4 */
   --primary-foreground: 0 0% 100%; /* #FFFFFF */
-  --secondary: 215 28% 17%; /* #334155 */
-  --secondary-foreground: 210 40% 98%; /* #F8FAFC */
-  --accent: 215 28% 17%; /* #334155 */
-  --accent-foreground: 210 40% 98%; /* #F8FAFC */
+  --secondary: 215 28% 12%; /* #1E293B */
+  --secondary-foreground: 0 0% 100%; /* #FFFFFF */
+  --accent: 215 28% 12%; /* #1E293B */
+  --accent-foreground: 0 0% 100%; /* #FFFFFF */
   --destructive: 0 84% 60%; /* #EF4444 */
-  --destructive-foreground: 210 40% 98%; /* #F8FAFC */
+  --destructive-foreground: 0 0% 100%; /* #FFFFFF */
   --ring: 199 89% 48%; /* #06B6D4 */
 }
 
@@ -184,4 +184,110 @@
 .btn-ripple:active::before {
   width: 200px;
   height: 200px;
+}
+
+/* Force dark theme overrides */
+.dark * {
+  border-color: hsl(var(--border)) !important;
+}
+
+.dark .bg-white {
+  background-color: hsl(var(--card)) !important;
+}
+
+.dark .bg-gray-50 {
+  background-color: hsl(var(--background)) !important;
+}
+
+.dark .bg-gray-100 {
+  background-color: hsl(var(--muted)) !important;
+}
+
+.dark .text-gray-900 {
+  color: hsl(var(--foreground)) !important;
+}
+
+.dark .text-gray-600 {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+.dark .text-gray-500 {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+.dark .text-gray-400 {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+/* Force background colors for common components */
+.dark [data-state="open"],
+.dark [data-state="checked"] {
+  background-color: hsl(var(--accent)) !important;
+}
+
+.dark .bg-background {
+  background-color: hsl(var(--background)) !important;
+}
+
+.dark .bg-card {
+  background-color: hsl(var(--card)) !important;
+}
+
+.dark .bg-popover {
+  background-color: hsl(var(--popover)) !important;
+}
+
+.dark .bg-muted {
+  background-color: hsl(var(--muted)) !important;
+}
+
+.dark .bg-destructive {
+  background-color: hsl(var(--destructive)) !important;
+}
+
+/* Fix input and form elements */
+.dark input,
+.dark textarea,
+.dark select {
+  background-color: hsl(var(--input)) !important;
+  color: hsl(var(--foreground)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+
+.dark .placeholder\:text-muted-foreground::placeholder {
+  color: hsl(var(--muted-foreground)) !important;
+}
+
+/* Fix button variants */
+.dark button[variant="outline"] {
+  background-color: transparent !important;
+  border-color: hsl(var(--border)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.dark button[variant="ghost"] {
+  background-color: transparent !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+/* Fix table elements */
+.dark table,
+.dark th,
+.dark td {
+  background-color: hsl(var(--card)) !important;
+  color: hsl(var(--foreground)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+
+.dark .table-header {
+  background-color: hsl(var(--muted)) !important;
+}
+
+/* Fix dropdown and popover content */
+.dark [role="menu"],
+.dark [role="listbox"],
+.dark [data-radix-popper-content-wrapper] {
+  background-color: hsl(var(--popover)) !important;
+  color: hsl(var(--popover-foreground)) !important;
+  border-color: hsl(var(--border)) !important;
 }
