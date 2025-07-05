@@ -25,7 +25,7 @@
   --radius: 0.5rem;
 
   /* Pet-specific colors */
-  --pet-blue: 217 91% 60%; /* #2563EB */
+  --pet-blue: 199 89% 48%; /* #06B6D4 */
   --pet-purple: 262 83% 58%; /* #7C3AED */
   --pet-green: 158 64% 52%; /* #10B981 */
   --pet-amber: 43 96% 56%; /* #F59E0B */
@@ -34,25 +34,25 @@
 }
 
 .dark {
-  --background: 224 71% 4%; /* #0A0E27 */
-  --foreground: 213 31% 91%; /* #E2E8F0 */
-  --muted: 223 47% 11%; /* #1E293B */
-  --muted-foreground: 215 16% 57%; /* #94A3B8 */
-  --popover: 224 71% 4%; /* #0A0E27 */
-  --popover-foreground: 213 31% 91%; /* #E2E8F0 */
-  --card: 224 71% 4%; /* #0A0E27 */
-  --card-foreground: 213 31% 91%; /* #E2E8F0 */
-  --border: 216 34% 17%; /* #334155 */
-  --input: 216 34% 17%; /* #334155 */
-  --primary: 217 91% 60%; /* #2563EB */
+  --background: 222 84% 5%; /* #0F172A */
+  --foreground: 210 40% 98%; /* #F8FAFC */
+  --muted: 215 28% 17%; /* #334155 */
+  --muted-foreground: 215 20% 65%; /* #94A3B8 */
+  --popover: 222 84% 5%; /* #0F172A */
+  --popover-foreground: 210 40% 98%; /* #F8FAFC */
+  --card: 220 13% 8%; /* #1E293B */
+  --card-foreground: 210 40% 98%; /* #F8FAFC */
+  --border: 215 28% 17%; /* #334155 */
+  --input: 215 28% 17%; /* #334155 */
+  --primary: 199 89% 48%; /* #06B6D4 */
   --primary-foreground: 0 0% 100%; /* #FFFFFF */
-  --secondary: 223 47% 11%; /* #1E293B */
-  --secondary-foreground: 213 31% 91%; /* #E2E8F0 */
-  --accent: 223 47% 11%; /* #1E293B */
-  --accent-foreground: 213 31% 91%; /* #E2E8F0 */
-  --destructive: 0 63% 31%; /* #7F1D1D */
-  --destructive-foreground: 213 31% 91%; /* #E2E8F0 */
-  --ring: 217 91% 60%; /* #2563EB */
+  --secondary: 215 28% 17%; /* #334155 */
+  --secondary-foreground: 210 40% 98%; /* #F8FAFC */
+  --accent: 215 28% 17%; /* #334155 */
+  --accent-foreground: 210 40% 98%; /* #F8FAFC */
+  --destructive: 0 84% 60%; /* #EF4444 */
+  --destructive-foreground: 210 40% 98%; /* #F8FAFC */
+  --ring: 199 89% 48%; /* #06B6D4 */
 }
 
 @layer base {
