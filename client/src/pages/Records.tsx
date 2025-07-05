@@ -177,7 +177,7 @@ export default function Records() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Navigation />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -186,8 +186,8 @@ export default function Records() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Medical Records</h1>
-              <p className="text-gray-600">Manage and view your pets' medical history</p>
+              <h1 className="text-3xl font-bold text-foreground mb-2">Medical Records</h1>
+              <p className="text-muted-foreground">Manage and view your pets' medical history</p>
             </div>
             <Button 
               onClick={() => setShowUploadModal(true)}

@@ -162,17 +162,17 @@ export default function Dashboard() {
     : [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <Navigation />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <BackToDashboard />
         {/* Dashboard Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-foreground mb-2">
             Welcome back!
           </h1>
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             Manage your pets' health records and connect with trusted service providers.
           </p>
         </div>
@@ -183,11 +183,11 @@ export default function Dashboard() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">My Pets</p>
+                  <p className="text-sm font-medium text-muted-foreground">My Pets</p>
                   {statsLoading ? (
                     <Skeleton className="h-8 w-8 mt-2" />
                   ) : (
-                    <p className="text-3xl font-bold text-gray-900">{stats?.totalPets || 0}</p>
+                    <p className="text-3xl font-bold text-foreground">{stats?.totalPets || 0}</p>
                   )}
                 </div>
                 <div className="bg-pet-blue bg-opacity-10 p-3 rounded-lg">
@@ -203,11 +203,11 @@ export default function Dashboard() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Recent Checkups</p>
+                  <p className="text-sm font-medium text-muted-foreground">Recent Checkups</p>
                   {statsLoading ? (
                     <Skeleton className="h-8 w-8 mt-2" />
                   ) : (
-                    <p className="text-3xl font-bold text-gray-900">{stats?.recentCheckups || 0}</p>
+                    <p className="text-3xl font-bold text-foreground">{stats?.recentCheckups || 0}</p>
                   )}
                 </div>
                 <div className="bg-pet-green bg-opacity-10 p-3 rounded-lg">
@@ -223,11 +223,11 @@ export default function Dashboard() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Upcoming Appointments</p>
+                  <p className="text-sm font-medium text-muted-foreground">Upcoming Appointments</p>
                   {statsLoading ? (
                     <Skeleton className="h-8 w-8 mt-2" />
                   ) : (
-                    <p className="text-3xl font-bold text-gray-900">{stats?.upcomingAppointments || 0}</p>
+                    <p className="text-3xl font-bold text-foreground">{stats?.upcomingAppointments || 0}</p>
                   )}
                 </div>
                 <div className="bg-pet-amber bg-opacity-10 p-3 rounded-lg">
@@ -243,11 +243,11 @@ export default function Dashboard() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Due Vaccinations</p>
+                  <p className="text-sm font-medium text-muted-foreground">Due Vaccinations</p>
                   {statsLoading ? (
                     <Skeleton className="h-8 w-8 mt-2" />
                   ) : (
-                    <p className="text-3xl font-bold text-gray-900">{stats?.dueVaccinations || 0}</p>
+                    <p className="text-3xl font-bold text-foreground">{stats?.dueVaccinations || 0}</p>
                   )}
                 </div>
                 <div className="bg-pet-purple bg-opacity-10 p-3 rounded-lg">

@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { BackToDashboard } from "@/components/BackToDashboard";
+import Navigation from "@/components/Navigation";
 import { 
   Shield, 
   TrendingUp, 
@@ -147,15 +148,17 @@ export default function Insurance() {
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-8">
-      <BackToDashboard />
-      <div className="flex items-center gap-3 mb-8">
-        <Shield className="h-8 w-8 text-blue-600" />
-        <div>
-          <h1 className="text-3xl font-bold">Pet Insurance Dashboard</h1>
-          <p className="text-gray-600">Manage your pet insurance and earn discounts through preventive care</p>
+    <div className="min-h-screen bg-background">
+      <Navigation />
+      <div className="container mx-auto p-6 space-y-8">
+        <BackToDashboard />
+        <div className="flex items-center gap-3 mb-8">
+          <Shield className="h-8 w-8 text-blue-600" />
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Pet Insurance Dashboard</h1>
+            <p className="text-muted-foreground">Manage your pet insurance and earn discounts through preventive care</p>
+          </div>
         </div>
-      </div>
 
       {/* Insurance Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -421,6 +424,7 @@ export default function Insurance() {
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }
