@@ -56,7 +56,7 @@ export default function Landing() {
       {/* Banner */}
       <div className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-center py-3">
         <p className="text-sm font-medium">
-          <a href="#" className="hover:underline">🚀 Advanced Pet Health Analytics Now Available - Experience the Future</a>
+          <a href="#" className="hover:underline">Advanced Pet Health Analytics Now Available - Experience the Future</a>
         </p>
       </div>
 
