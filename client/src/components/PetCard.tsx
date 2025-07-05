@@ -68,7 +68,7 @@ export default function PetCard({ pet, onGenerateQR, showFullActions = false }: 
       case "Vaccinated":
         return "bg-pet-green bg-opacity-10 text-pet-green";
       case "Due Soon":
-        return "bg-pet-amber bg-opacity-10 text-pet-amber";
+        return "bg-gradient-to-r from-cyan-50 to-blue-50 text-cyan-600";
       case "Overdue":
         return "bg-red-100 text-red-800";
       default:
