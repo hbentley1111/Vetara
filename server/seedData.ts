@@ -332,8 +332,9 @@ export async function seedDemoData(userId: string) {
 
     const insertedPets = await db.insert(pets).values(demoPets).returning();
 
-    // Create demo medical records
+    // Create comprehensive demo medical records
     const demoRecords = [
+      // Buddy (Golden Retriever) - Complete medical history
       {
         petId: insertedPets[0].id, // Buddy
         recordType: "Vaccination",
@@ -346,7 +347,8 @@ export async function seedDemoData(userId: string) {
         medications: "No medications prescribed",
         notes: "Next vaccination due in 12 months. Recommend dental cleaning in 6 months.",
         visitDate: new Date('2024-05-15'),
-        followUpDate: new Date('2025-05-15')
+        followUpDate: new Date('2025-05-15'),
+        cost: "125.00"
       },
       {
         petId: insertedPets[0].id, // Buddy
@@ -360,8 +362,56 @@ export async function seedDemoData(userId: string) {
         medications: "Flea and tick prevention (monthly)",
         notes: "Pet is in excellent condition. Weight is ideal. Continue current diet and exercise routine.",
         visitDate: new Date('2024-11-20'),
-        followUpDate: new Date('2025-05-20')
+        followUpDate: new Date('2025-05-20'),
+        cost: "85.00"
       },
+      {
+        petId: insertedPets[0].id, // Buddy
+        recordType: "Emergency",
+        title: "Porcupine Quill Removal",
+        description: "Emergency visit for removal of porcupine quills from face and paws. Multiple quills removed under sedation.",
+        veterinarian: "Dr. Emily Rodriguez",
+        clinic: "Rodriguez Emergency Veterinary",
+        diagnosis: "Porcupine quill injury - face and paws",
+        treatment: "Sedation and quill removal, wound cleaning, antibiotic injection",
+        medications: "Amoxicillin 500mg twice daily for 10 days, Rimadyl 50mg once daily for 5 days",
+        notes: "All quills successfully removed. Watch for signs of infection. Keep activity limited for 3 days.",
+        visitDate: new Date('2024-09-03'),
+        followUpDate: new Date('2024-09-10'),
+        isEmergency: true,
+        cost: "385.00"
+      },
+      {
+        petId: insertedPets[0].id, // Buddy
+        recordType: "Dental",
+        title: "Professional Dental Cleaning",
+        description: "Annual dental cleaning with examination under anesthesia. One tooth extraction required.",
+        veterinarian: "Dr. Robert Davis",
+        clinic: "Davis Dental Veterinary",
+        diagnosis: "Mild periodontal disease, one damaged tooth",
+        treatment: "Dental scaling, polishing, tooth extraction (upper left premolar)",
+        medications: "Pain medication for 3 days post-procedure",
+        notes: "Dental health overall good. Recommend daily teeth brushing and dental chews.",
+        visitDate: new Date('2024-01-22'),
+        followUpDate: new Date('2025-01-22'),
+        cost: "450.00"
+      },
+      {
+        petId: insertedPets[0].id, // Buddy
+        recordType: "Lab Work",
+        title: "Annual Blood Panel",
+        description: "Comprehensive blood chemistry panel and complete blood count for annual wellness screening.",
+        veterinarian: "Dr. Sarah Johnson",
+        clinic: "Happy Paws Veterinary Clinic",
+        diagnosis: "All values within normal limits",
+        treatment: "Blood draw and laboratory analysis",
+        medications: "None required",
+        notes: "Excellent blood work results. All organ functions normal. Continue current care regimen.",
+        visitDate: new Date('2024-05-15'),
+        cost: "95.00"
+      },
+
+      // Whiskers (Maine Coon) - Medical history
       {
         petId: insertedPets[1].id, // Whiskers
         recordType: "Surgery",
@@ -374,34 +424,145 @@ export async function seedDemoData(userId: string) {
         medications: "Pain medication (3 days), Antibiotic (7 days)",
         notes: "Surgery completed successfully. Keep incision clean and dry. Return in 10 days for suture removal.",
         visitDate: new Date('2024-03-10'),
-        followUpDate: new Date('2024-03-20')
+        followUpDate: new Date('2024-03-20'),
+        cost: "275.00"
       },
       {
         petId: insertedPets[1].id, // Whiskers
         recordType: "Grooming",
         title: "Full Grooming Service",
-        description: "Complete grooming service including bath, brush, nail trim, and ear cleaning. Cat was very cooperative.",
-        veterinarian: "Professional Groomer Lisa Wang",
-        clinic: "Pampered Pets Grooming Salon",
-        diagnosis: "Routine grooming maintenance",
-        treatment: "Full grooming package with nail trim",
-        notes: "Beautiful coat condition. Recommend grooming every 8-10 weeks due to long fur.",
+        description: "Complete grooming service including bath, brush out, nail trim, and ear cleaning for long-haired breed.",
+        veterinarian: "Professional Groomer - Lisa",
+        clinic: "Happy Paws Veterinary Clinic",
+        diagnosis: "Routine grooming - healthy coat",
+        treatment: "Bath, thorough brush out, nail trim, ear cleaning",
+        medications: "None",
+        notes: "Beautiful coat condition. Regular brushing at home recommended to prevent matting.",
         visitDate: new Date('2024-10-05'),
-        followUpDate: new Date('2024-12-05')
+        followUpDate: new Date('2025-01-05'),
+        cost: "65.00"
       },
+      {
+        petId: insertedPets[1].id, // Whiskers
+        recordType: "Vaccination",
+        title: "Core Vaccinations - FVRCP",
+        description: "Annual core vaccinations for indoor cat including FVRCP (Feline Viral Rhinotracheitis, Calicivirus, Panleukopenia).",
+        veterinarian: "Dr. David Johnson",
+        clinic: "Johnson Family Pet Care",
+        diagnosis: "Healthy - Preventive Care",
+        treatment: "FVRCP vaccination administered",
+        medications: "None required",
+        notes: "Excellent response to vaccination. Continue indoor lifestyle. Next vaccination due in 12 months.",
+        visitDate: new Date('2024-04-18'),
+        followUpDate: new Date('2025-04-18'),
+        cost: "85.00"
+      },
+      {
+        petId: insertedPets[1].id, // Whiskers
+        recordType: "Routine Checkup",
+        title: "Annual Wellness Examination",
+        description: "Comprehensive annual health examination including physical assessment and weight monitoring.",
+        veterinarian: "Dr. Jennifer Miller",
+        clinic: "Miller Dermatology for Pets",
+        diagnosis: "Excellent health, minor skin sensitivity noted",
+        treatment: "Complete physical examination, skin assessment",
+        medications: "Hypoallergenic shampoo recommended",
+        notes: "Overall excellent health. Minor skin sensitivity - recommend limited ingredient diet trial.",
+        visitDate: new Date('2024-08-12'),
+        followUpDate: new Date('2025-08-12'),
+        cost: "75.00"
+      },
+      {
+        petId: insertedPets[1].id, // Whiskers
+        recordType: "Diagnostic",
+        title: "Skin Allergy Testing",
+        description: "Comprehensive skin allergy testing due to mild dermatitis symptoms and excessive grooming behavior.",
+        veterinarian: "Dr. Jennifer Miller",
+        clinic: "Miller Dermatology for Pets",
+        diagnosis: "Mild environmental allergies - dust mites and pollen",
+        treatment: "Intradermal allergy testing, consultation on management",
+        medications: "Antihistamine as needed, hypoallergenic diet",
+        notes: "Positive reactions to common environmental allergens. Management plan developed for long-term comfort.",
+        visitDate: new Date('2024-09-20'),
+        followUpDate: new Date('2024-12-20'),
+        cost: "320.00"
+      },
+
+      // Luna (British Shorthair) - Medical history
       {
         petId: insertedPets[2].id, // Luna
         recordType: "Vaccination",
         title: "Kitten Vaccination Series - Final",
-        description: "Final vaccination in kitten series. Luna has completed all required vaccinations and is fully protected.",
+        description: "Final vaccination in kitten series including FVRCP and first rabies vaccination.",
         veterinarian: "Dr. Sarah Johnson",
         clinic: "Happy Paws Veterinary Clinic",
-        diagnosis: "Healthy kitten - vaccination complete",
-        treatment: "FVRCP and Rabies vaccinations",
-        medications: "No medications needed",
-        notes: "Kitten vaccination series complete. Next annual vaccination due in 12 months.",
-        visitDate: new Date('2024-08-12'),
-        followUpDate: new Date('2025-08-12')
+        diagnosis: "Healthy kitten - completing vaccination series",
+        treatment: "FVRCP booster and first rabies vaccination",
+        medications: "None required",
+        notes: "Completed kitten vaccination series successfully. Next annual vaccinations due in 12 months.",
+        visitDate: new Date('2024-06-10'),
+        followUpDate: new Date('2025-06-10'),
+        cost: "110.00"
+      },
+      {
+        petId: insertedPets[2].id, // Luna
+        recordType: "Routine Checkup",
+        title: "6-Month Kitten Check",
+        description: "Six-month wellness examination to monitor growth and development in young cat.",
+        veterinarian: "Dr. Michael Chen",
+        clinic: "Happy Paws Veterinary Clinic",
+        diagnosis: "Healthy development, ideal weight for age",
+        treatment: "Physical examination, growth assessment, nutritional counseling",
+        medications: "None required",
+        notes: "Excellent growth and development. Continue current kitten food until 12 months of age.",
+        visitDate: new Date('2024-08-25'),
+        followUpDate: new Date('2025-02-25'),
+        cost: "65.00"
+      },
+      {
+        petId: insertedPets[2].id, // Luna
+        recordType: "Surgery",
+        title: "Spay Surgery - Young Adult",
+        description: "Elective spay surgery performed at appropriate age. Procedure completed without complications.",
+        veterinarian: "Dr. Michael Chen",
+        clinic: "Chen Animal Medical Center",
+        diagnosis: "Routine spay procedure",
+        treatment: "Ovariohysterectomy under general anesthesia",
+        medications: "Pain management for 5 days, antibiotic course",
+        notes: "Surgery successful. Patient recovered well. Suture removal scheduled for 10-14 days post-op.",
+        visitDate: new Date('2024-11-08'),
+        followUpDate: new Date('2024-11-18'),
+        cost: "285.00"
+      },
+      {
+        petId: insertedPets[2].id, // Luna
+        recordType: "Emergency",
+        title: "Foreign Object Ingestion",
+        description: "Emergency presentation for ingestion of small toy. X-rays confirmed object in stomach.",
+        veterinarian: "Dr. Christopher Garcia",
+        clinic: "Garcia 24/7 Animal Hospital",
+        diagnosis: "Foreign body ingestion - small rubber toy",
+        treatment: "Induced vomiting successfully retrieved object, IV fluids, monitoring",
+        medications: "Anti-nausea medication, gastric protectant for 3 days",
+        notes: "Object successfully removed by induced vomiting. Monitor appetite and eliminate foreign objects from environment.",
+        visitDate: new Date('2024-09-15'),
+        followUpDate: new Date('2024-09-18'),
+        isEmergency: true,
+        cost: "195.00"
+      },
+      {
+        petId: insertedPets[2].id, // Luna
+        recordType: "Diagnostic",
+        title: "Pre-Surgical Blood Work",
+        description: "Pre-anesthetic blood panel to ensure safety for upcoming spay surgery.",
+        veterinarian: "Dr. Michael Chen",
+        clinic: "Chen Animal Medical Center",
+        diagnosis: "All parameters normal for surgery",
+        treatment: "Complete blood count and chemistry panel",
+        medications: "None required",
+        notes: "Excellent blood work results. Patient cleared for anesthesia and surgery.",
+        visitDate: new Date('2024-11-05'),
+        cost: "85.00"
       }
     ];
 
