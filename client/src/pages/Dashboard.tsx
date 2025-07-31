@@ -524,9 +524,9 @@ export default function Dashboard() {
             </Card>
 
             {/* Recommended Providers */}
-            <Card>
+            <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-lg font-semibold text-gray-900">Recommended Providers</CardTitle>
+                <CardTitle className="text-lg font-semibold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Recommended Providers</CardTitle>
               </CardHeader>
               <CardContent>
                 {providersLoading ? (
@@ -544,40 +544,40 @@ export default function Dashboard() {
                   </div>
                 ) : topProviders.length === 0 ? (
                   <div className="text-center py-4">
-                    <div className="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                      <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="mx-auto w-12 h-12 bg-slate-700/50 rounded-full flex items-center justify-center mb-3">
+                      <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                     </div>
-                    <p className="text-sm text-gray-600">No providers found</p>
+                    <p className="text-sm text-slate-400">No providers found</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {topProviders.map((provider: any) => (
-                      <div key={provider.id} className="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                        <div className="h-12 w-12 bg-gray-200 rounded-full flex items-center justify-center">
-                          <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div key={provider.id} className="flex items-center space-x-3 p-3 border border-slate-700 rounded-lg hover:bg-slate-700/30 transition-colors bg-slate-800/30">
+                        <div className="h-12 w-12 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full flex items-center justify-center">
+                          <svg className="w-6 h-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                           </svg>
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-medium text-gray-900">{provider.businessName}</h4>
-                          <p className="text-sm text-gray-600">{provider.specialties?.[0] || 'General Practice'}</p>
+                          <h4 className="font-medium text-slate-200">{provider.businessName}</h4>
+                          <p className="text-sm text-slate-400">{provider.specialties?.[0] || 'General Practice'}</p>
                           <div className="flex items-center space-x-1 mt-1">
                             <div className="flex text-cyan-400">
                               {[...Array(5)].map((_, i) => (
-                                <svg key={`star-${provider.id}-${i}`} className={`w-3 h-3 ${i < Math.floor(parseFloat(provider.qualityMetrics?.overallRating || '0')) ? 'text-cyan-400' : 'text-gray-300'}`} fill="currentColor" viewBox="0 0 20 20">
+                                <svg key={`star-${provider.id}-${i}`} className={`w-3 h-3 ${i < Math.floor(parseFloat(provider.qualityMetrics?.overallRating || '0')) ? 'text-cyan-400' : 'text-slate-600'}`} fill="currentColor" viewBox="0 0 20 20">
                                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                 </svg>
                               ))}
                             </div>
-                            <span className="text-xs text-gray-500">
+                            <span className="text-xs text-slate-500">
                               {provider.qualityMetrics?.overallRating || '0.0'} ({provider.qualityMetrics?.dataPoints || 0} reviews)
                             </span>
                           </div>
                         </div>
                         <div className="text-right">
-                          <span className="inline-block px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded">
+                          <span className="inline-block px-2 py-1 text-xs font-medium bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 rounded">
                             B+ Rated
                           </span>
                         </div>
@@ -585,7 +585,7 @@ export default function Dashboard() {
                     ))}
                     <Button 
                       variant="ghost" 
-                      className="w-full text-pet-blue hover:text-blue-700 text-sm"
+                      className="w-full text-cyan-400 hover:text-cyan-300 hover:bg-slate-700/30 text-sm"
                       onClick={() => window.location.href = '/providers'}
                     >
                       View All Providers
