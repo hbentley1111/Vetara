@@ -1,10 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Link } from "wouter";
 
 export default function Landing() {
   const handleLogin = () => {
     window.location.href = "/api/login";
+  };
+
+  const handleViewDemo = () => {
+    // Scroll to features section for demo
+    const featuresSection = document.getElementById('features-section');
+    if (featuresSection) {
+      featuresSection.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
@@ -24,11 +33,36 @@ export default function Landing() {
             
             {/* Desktop Navigation Menu */}
             <div className="hidden md:flex items-center space-x-8">
-              <a href="/records" className="text-slate-300 hover:text-cyan-400 font-medium transition-colors">Health Records</a>
-              <a href="/providers" className="text-slate-300 hover:text-cyan-400 font-medium transition-colors">Provider Network</a>
-              <a href="/insurance" className="text-slate-300 hover:text-cyan-400 font-medium transition-colors">Insurance</a>
-              <a href="/pets" className="text-slate-300 hover:text-cyan-400 font-medium transition-colors">QR Protection</a>
-              <a href="/provider-grading" className="text-slate-300 hover:text-cyan-400 font-medium transition-colors">Analytics</a>
+              <button 
+                onClick={() => document.getElementById('features-section')?.scrollIntoView({ behavior: 'smooth' })}
+                className="text-slate-300 hover:text-cyan-400 font-medium transition-colors"
+              >
+                Health Records
+              </button>
+              <button 
+                onClick={() => document.getElementById('providers-section')?.scrollIntoView({ behavior: 'smooth' })}
+                className="text-slate-300 hover:text-cyan-400 font-medium transition-colors"
+              >
+                Provider Network
+              </button>
+              <button 
+                onClick={() => document.getElementById('insurance-section')?.scrollIntoView({ behavior: 'smooth' })}
+                className="text-slate-300 hover:text-cyan-400 font-medium transition-colors"
+              >
+                Insurance
+              </button>
+              <button 
+                onClick={() => document.getElementById('qr-section')?.scrollIntoView({ behavior: 'smooth' })}
+                className="text-slate-300 hover:text-cyan-400 font-medium transition-colors"
+              >
+                QR Protection
+              </button>
+              <button 
+                onClick={() => document.getElementById('analytics-section')?.scrollIntoView({ behavior: 'smooth' })}
+                className="text-slate-300 hover:text-cyan-400 font-medium transition-colors"
+              >
+                Analytics
+              </button>
             </div>
 
             <div className="flex items-center space-x-4">
@@ -56,7 +90,12 @@ export default function Landing() {
       {/* Banner */}
       <div className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white text-center py-3">
         <p className="text-sm font-medium">
-          <a href="#" className="hover:underline">Advanced Pet Health Analytics Now Available - Experience the Future</a>
+          <button 
+            onClick={() => document.getElementById('analytics-section')?.scrollIntoView({ behavior: 'smooth' })}
+            className="hover:underline"
+          >
+            Advanced Pet Health Analytics Now Available - Experience the Future
+          </button>
         </p>
       </div>
 
@@ -92,6 +131,7 @@ export default function Landing() {
                   Launch Platform
                 </Button>
                 <Button 
+                  onClick={handleViewDemo}
                   variant="outline"
                   className="border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white font-semibold px-8 py-4 rounded-lg transition-all"
                 >
@@ -191,7 +231,7 @@ export default function Landing() {
       </div>
 
       {/* Features Section */}
-      <div className="bg-slate-900 py-20">
+      <div id="features-section" className="bg-slate-900 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <Badge className="bg-slate-800 text-cyan-400 border-slate-700 px-4 py-2 mb-4">
@@ -301,6 +341,281 @@ export default function Landing() {
         </div>
       </div>
 
+      {/* Provider Network Section */}
+      <div id="providers-section" className="bg-slate-950 py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <Badge className="bg-slate-800 text-cyan-400 border-slate-700 px-4 py-2 mb-4">
+              Provider Network
+            </Badge>
+            <h2 className="text-4xl font-bold text-white mb-6">
+              Trusted Veterinary Provider Network
+            </h2>
+            <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+              Connect with verified veterinarians, specialists, and pet care providers in your area.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardHeader className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  </svg>
+                </div>
+                <CardTitle className="text-white">5,000+ Providers</CardTitle>
+                <CardDescription className="text-slate-300">
+                  Nationwide network of verified veterinary professionals
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardHeader className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                  </svg>
+                </div>
+                <CardTitle className="text-white">Quality Verified</CardTitle>
+                <CardDescription className="text-slate-300">
+                  All providers undergo rigorous verification and quality assessment
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="bg-slate-800/50 border-slate-700">
+              <CardHeader className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <CardTitle className="text-white">24/7 Availability</CardTitle>
+                <CardDescription className="text-slate-300">
+                  Emergency care providers available around the clock
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+        </div>
+      </div>
+
+      {/* Insurance Section */}
+      <div id="insurance-section" className="bg-slate-900 py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <Badge className="bg-slate-800 text-cyan-400 border-slate-700 px-4 py-2 mb-4">
+              Insurance Integration
+            </Badge>
+            <h2 className="text-4xl font-bold text-white mb-6">
+              Smart Insurance Management
+            </h2>
+            <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+              Seamlessly integrate with major pet insurance providers and optimize your coverage.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-cyan-500 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-2">Health Score Discounts</h3>
+                  <p className="text-slate-300">Earn up to 25% insurance discounts based on your pet's health score</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-2">Automated Claims</h3>
+                  <p className="text-slate-300">Streamlined claim processing with digital health records</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-2">Coverage Optimization</h3>
+                  <p className="text-slate-300">AI-powered recommendations for optimal insurance coverage</p>
+                </div>
+              </div>
+            </div>
+            <div className="relative">
+              <Card className="bg-slate-800/50 border-slate-700 p-8">
+                <div className="text-center">
+                  <div className="w-20 h-20 bg-gradient-to-r from-green-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-4">Save up to $2,400/year</h3>
+                  <p className="text-slate-300 mb-6">Average savings with health score optimization</p>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-400">Excellent Health (90-100)</span>
+                      <span className="text-green-400 font-semibold">25% discount</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-400">Good Health (80-89)</span>
+                      <span className="text-blue-400 font-semibold">20% discount</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-slate-400">Fair Health (70-79)</span>
+                      <span className="text-yellow-400 font-semibold">15% discount</span>
+                    </div>
+                  </div>
+                </div>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* QR Protection Section */}
+      <div id="qr-section" className="bg-slate-950 py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <Badge className="bg-slate-800 text-cyan-400 border-slate-700 px-4 py-2 mb-4">
+              QR Protection Technology
+            </Badge>
+            <h2 className="text-4xl font-bold text-white mb-6">
+              Next-Generation Pet Identification
+            </h2>
+            <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+              Smart QR codes with GPS tracking, emergency protocols, and instant access to critical information.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="relative">
+              <Card className="bg-slate-800/50 border-slate-700 p-8">
+                <div className="text-center">
+                  <div className="w-32 h-32 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg flex items-center justify-center mx-auto mb-6">
+                    <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-4">Instant Pet ID</h3>
+                  <p className="text-slate-300">Scan to access pet information, medical history, and emergency contacts</p>
+                </div>
+              </Card>
+            </div>
+            <div className="space-y-6">
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-2">GPS Location Tracking</h3>
+                  <p className="text-slate-300">Real-time location updates when your pet is found</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-red-500 to-pink-500 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-2">Emergency Protocol</h3>
+                  <p className="text-slate-300">Automatic alerts to emergency contacts and nearby veterinarians</p>
+                </div>
+              </div>
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-cyan-500 rounded-lg flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-white mb-2">Secure & Private</h3>
+                  <p className="text-slate-300">End-to-end encryption protects your pet's sensitive information</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Analytics Section */}
+      <div id="analytics-section" className="bg-slate-900 py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <Badge className="bg-slate-800 text-cyan-400 border-slate-700 px-4 py-2 mb-4">
+              Advanced Analytics
+            </Badge>
+            <h2 className="text-4xl font-bold text-white mb-6">
+              AI-Powered Health Insights
+            </h2>
+            <p className="text-xl text-slate-300 max-w-3xl mx-auto">
+              Leverage machine learning and predictive analytics to optimize your pet's health outcomes.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <Card className="bg-slate-800/50 border-slate-700 text-center">
+              <CardHeader>
+                <div className="w-16 h-16 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-2xl font-bold text-white">96</span>
+                </div>
+                <CardTitle className="text-white">Health Score</CardTitle>
+                <CardDescription className="text-slate-300">
+                  AI-calculated overall health rating
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="bg-slate-800/50 border-slate-700 text-center">
+              <CardHeader>
+                <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-cyan-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                </div>
+                <CardTitle className="text-white">Trend Analysis</CardTitle>
+                <CardDescription className="text-slate-300">
+                  Long-term health pattern recognition
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="bg-slate-800/50 border-slate-700 text-center">
+              <CardHeader>
+                <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <CardTitle className="text-white">Predictive Alerts</CardTitle>
+                <CardDescription className="text-slate-300">
+                  Early warning system for health issues
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="bg-slate-800/50 border-slate-700 text-center">
+              <CardHeader>
+                <div className="w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.196-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                  </svg>
+                </div>
+                <CardTitle className="text-white">Provider Ratings</CardTitle>
+                <CardDescription className="text-slate-300">
+                  Quality metrics for veterinary providers
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
+        </div>
+      </div>
+
       {/* Footer */}
       <footer className="bg-black border-t border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -339,22 +654,92 @@ export default function Landing() {
             <div>
               <h3 className="font-semibold mb-6 text-white">Platform</h3>
               <ul className="space-y-3 text-slate-400">
-                <li><a href="/records" className="hover:text-cyan-400 transition-colors">Health Records</a></li>
-                <li><a href="/pets" className="hover:text-cyan-400 transition-colors">QR Technology</a></li>
-                <li><a href="/providers" className="hover:text-cyan-400 transition-colors">Provider Network</a></li>
-                <li><a href="/provider-grading" className="hover:text-cyan-400 transition-colors">Analytics Dashboard</a></li>
-                <li><a href="/provider-portal" className="hover:text-cyan-400 transition-colors">API Access</a></li>
+                <li>
+                  <button 
+                    onClick={() => document.getElementById('features-section')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="hover:text-cyan-400 transition-colors"
+                  >
+                    Health Records
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => document.getElementById('qr-section')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="hover:text-cyan-400 transition-colors"
+                  >
+                    QR Technology
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => document.getElementById('providers-section')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="hover:text-cyan-400 transition-colors"
+                  >
+                    Provider Network
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => document.getElementById('analytics-section')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="hover:text-cyan-400 transition-colors"
+                  >
+                    Analytics Dashboard
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={handleLogin}
+                    className="hover:text-cyan-400 transition-colors"
+                  >
+                    API Access
+                  </button>
+                </li>
               </ul>
             </div>
 
             <div>
               <h3 className="font-semibold mb-6 text-white">Enterprise</h3>
               <ul className="space-y-3 text-slate-400">
-                <li><a href="/insurance" className="hover:text-cyan-400 transition-colors">Insurance</a></li>
-                <li><a href="/provider-portal" className="hover:text-cyan-400 transition-colors">Provider Portal</a></li>
-                <li><a href="/dashboard" className="hover:text-cyan-400 transition-colors">Dashboard</a></li>
-                <li><a href="/providers" className="hover:text-cyan-400 transition-colors">Directory</a></li>
-                <li><a href="/pets" className="hover:text-cyan-400 transition-colors">Pet Management</a></li>
+                <li>
+                  <button 
+                    onClick={() => document.getElementById('insurance-section')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="hover:text-cyan-400 transition-colors"
+                  >
+                    Insurance
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={handleLogin}
+                    className="hover:text-cyan-400 transition-colors"
+                  >
+                    Provider Portal
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={handleLogin}
+                    className="hover:text-cyan-400 transition-colors"
+                  >
+                    Dashboard
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => document.getElementById('providers-section')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="hover:text-cyan-400 transition-colors"
+                  >
+                    Directory
+                  </button>
+                </li>
+                <li>
+                  <button 
+                    onClick={() => document.getElementById('qr-section')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="hover:text-cyan-400 transition-colors"
+                  >
+                    Pet Management
+                  </button>
+                </li>
               </ul>
             </div>
           </div>
