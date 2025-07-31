@@ -162,118 +162,124 @@ export default function Dashboard() {
     : [];
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
+    <div className="min-h-screen bg-slate-950">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-black">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(34,211,238,0.1),transparent_50%)]"></div>
+      </div>
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <BackToDashboard />
-        {/* Dashboard Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">
-            Welcome back!
-          </h1>
-          <p className="text-muted-foreground">
-            Manage your pets' health records and connect with trusted service providers.
-          </p>
-        </div>
+      <div className="relative">
+        <Navigation />
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <BackToDashboard />
+          {/* Dashboard Header */}
+          <div className="mb-12">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-4">
+              Welcome back!
+            </h1>
+            <p className="text-slate-300 text-lg">
+              Manage your pets' health records and connect with trusted service providers.
+            </p>
+          </div>
 
-        {/* Quick Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="hover-lift">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">My Pets</p>
-                  {statsLoading ? (
-                    <Skeleton className="h-8 w-8 mt-2" />
-                  ) : (
-                    <p className="text-3xl font-bold text-foreground">{stats?.totalPets || 0}</p>
-                  )}
-                </div>
-                <div className="bg-pet-blue bg-opacity-10 p-3 rounded-lg">
-                  <svg className="h-6 w-6 text-pet-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                  </svg>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="hover-lift">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Recent Checkups</p>
-                  {statsLoading ? (
-                    <Skeleton className="h-8 w-8 mt-2" />
-                  ) : (
-                    <p className="text-3xl font-bold text-foreground">{stats?.recentCheckups || 0}</p>
-                  )}
-                </div>
-                <div className="bg-pet-green bg-opacity-10 p-3 rounded-lg">
-                  <svg className="h-6 w-6 text-pet-green" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="hover-lift">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Upcoming Appointments</p>
-                  {statsLoading ? (
-                    <Skeleton className="h-8 w-8 mt-2" />
-                  ) : (
-                    <p className="text-3xl font-bold text-foreground">{stats?.upcomingAppointments || 0}</p>
-                  )}
-                </div>
-                <div className="bg-gradient-to-r from-cyan-500/10 to-blue-500/10 p-3 rounded-lg">
-                  <svg className="h-6 w-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="hover-lift">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">Due Vaccinations</p>
-                  {statsLoading ? (
-                    <Skeleton className="h-8 w-8 mt-2" />
-                  ) : (
-                    <p className="text-3xl font-bold text-foreground">{stats?.dueVaccinations || 0}</p>
-                  )}
-                </div>
-                <div className="bg-pet-purple bg-opacity-10 p-3 rounded-lg">
-                  <svg className="h-6 w-6 text-pet-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
-                  </svg>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* My Pets Section */}
-          <div className="lg:col-span-2">
-            <Card>
-              <CardHeader>
+          {/* Quick Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm hover:bg-slate-800/60 transition-all duration-300 hover:border-cyan-500/30">
+              <CardContent className="p-6">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-xl font-semibold text-gray-900">My Pets</CardTitle>
+                  <div>
+                    <p className="text-sm font-medium text-slate-400">My Pets</p>
+                    {statsLoading ? (
+                      <Skeleton className="h-8 w-8 mt-2" />
+                    ) : (
+                      <p className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">{stats?.totalPets || 0}</p>
+                    )}
+                  </div>
+                  <div className="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 p-3 rounded-lg">
+                    <svg className="h-6 w-6 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm hover:bg-slate-800/60 transition-all duration-300 hover:border-green-500/30">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-slate-400">Recent Checkups</p>
+                    {statsLoading ? (
+                      <Skeleton className="h-8 w-8 mt-2" />
+                    ) : (
+                      <p className="text-3xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">{stats?.recentCheckups || 0}</p>
+                    )}
+                  </div>
+                  <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 p-3 rounded-lg">
+                    <svg className="h-6 w-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm hover:bg-slate-800/60 transition-all duration-300 hover:border-purple-500/30">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-slate-400">Upcoming Appointments</p>
+                    {statsLoading ? (
+                      <Skeleton className="h-8 w-8 mt-2" />
+                    ) : (
+                      <p className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">{stats?.upcomingAppointments || 0}</p>
+                    )}
+                  </div>
+                  <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 p-3 rounded-lg">
+                    <svg className="h-6 w-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm hover:bg-slate-800/60 transition-all duration-300 hover:border-blue-500/30">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-slate-400">Due Vaccinations</p>
+                    {statsLoading ? (
+                      <Skeleton className="h-8 w-8 mt-2" />
+                    ) : (
+                      <p className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">{stats?.dueVaccinations || 0}</p>
+                    )}
+                  </div>
+                  <div className="bg-gradient-to-r from-blue-500/20 to-indigo-500/20 p-3 rounded-lg">
+                    <svg className="h-6 w-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                    </svg>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+        </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* My Pets Section */}
+            <div className="lg:col-span-2">
+              <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-xl font-semibold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">My Pets</CardTitle>
                   <div className="flex space-x-2">
                     {(pets as any[]).length === 0 && (
                       <Button 
                         onClick={() => demoDataMutation.mutate()}
                         disabled={demoDataMutation.isPending}
                         variant="outline"
-                        className="border-pet-purple text-pet-purple hover:bg-pet-purple hover:text-white"
+                        className="border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-cyan-400 hover:border-cyan-500"
                       >
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4" />
@@ -309,13 +315,13 @@ export default function Dashboard() {
                   </div>
                 ) : pets.length === 0 ? (
                   <div className="text-center py-8">
-                    <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                      <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="mx-auto w-24 h-24 bg-slate-700/50 rounded-full flex items-center justify-center mb-4">
+                      <svg className="w-12 h-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">No pets yet</h3>
-                    <p className="text-gray-600 mb-4">Add your first pet to get started with managing their health records.</p>
+                    <h3 className="text-lg font-medium text-slate-200 mb-2">No pets yet</h3>
+                    <p className="text-slate-400 mb-4">Add your first pet to get started with managing their health records.</p>
                     <Button 
                       onClick={() => setShowAddPetModal(true)}
                       className="bg-pet-blue text-white hover:bg-blue-700"
@@ -338,10 +344,10 @@ export default function Dashboard() {
             </Card>
 
             {/* Recent Records Section */}
-            <Card className="mt-8">
+            <Card className="mt-8 bg-slate-800/50 border-slate-700 backdrop-blur-sm">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-xl font-semibold text-gray-900">Recent Medical Records</CardTitle>
+                  <CardTitle className="text-xl font-semibold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Recent Medical Records</CardTitle>
                   <Button 
                     variant="ghost" 
                     className="text-pet-blue hover:text-blue-700"
@@ -430,14 +436,14 @@ export default function Dashboard() {
           {/* Right Sidebar */}
           <div className="space-y-6">
             {/* Quick Actions */}
-            <Card>
+            <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-lg font-semibold text-gray-900">Quick Actions</CardTitle>
+                <CardTitle className="text-lg font-semibold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Quick Actions</CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <Button 
                   onClick={() => setShowUploadModal(true)}
-                  className="w-full bg-pet-blue text-white hover:bg-blue-700 justify-start"
+                  className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white justify-start border-0"
                 >
                   <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -447,7 +453,7 @@ export default function Dashboard() {
                 
                 <Button 
                   variant="outline" 
-                  className="w-full border-pet-green text-pet-green hover:bg-pet-green hover:text-white justify-start"
+                  className="w-full border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-green-400 hover:border-green-500 justify-start"
                   onClick={() => window.location.href = '/providers'}
                 >
                   <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -458,7 +464,7 @@ export default function Dashboard() {
                 
                 <Button 
                   variant="outline" 
-                  className="w-full border-pet-purple text-pet-purple hover:bg-pet-purple hover:text-white justify-start"
+                  className="w-full border-slate-600 text-slate-300 hover:bg-slate-700 hover:text-purple-400 hover:border-purple-500 justify-start"
                   onClick={() => setShowQRModal(true)}
                 >
                   <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -470,9 +476,9 @@ export default function Dashboard() {
             </Card>
 
             {/* Upcoming Appointments */}
-            <Card>
+            <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-lg font-semibold text-gray-900">Upcoming Appointments</CardTitle>
+                <CardTitle className="text-lg font-semibold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Upcoming Appointments</CardTitle>
               </CardHeader>
               <CardContent>
                 {appointmentsLoading ? (
@@ -487,12 +493,12 @@ export default function Dashboard() {
                   </div>
                 ) : upcomingAppointments.length === 0 ? (
                   <div className="text-center py-4">
-                    <div className="mx-auto w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mb-3">
-                      <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="mx-auto w-12 h-12 bg-slate-700/50 rounded-full flex items-center justify-center mb-3">
+                      <svg className="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                       </svg>
                     </div>
-                    <p className="text-sm text-gray-600">No upcoming appointments</p>
+                    <p className="text-sm text-slate-400">No upcoming appointments</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -615,6 +621,7 @@ export default function Dashboard() {
           onClose={() => setShowUploadModal(false)} 
         />
       )}
+      </div>
     </div>
   );
 }
