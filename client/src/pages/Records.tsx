@@ -47,24 +47,6 @@ export default function Records() {
     queryKey: ["/api/medical-records"],
     enabled: isAuthenticated,
     retry: false,
-    onError: (error: Error) => {
-      if (isUnauthorizedError(error)) {
-        toast({
-          title: "Unauthorized",
-          description: "You are logged out. Logging in again...",
-          variant: "destructive",
-        });
-        setTimeout(() => {
-          window.location.href = "/api/login";
-        }, 500);
-        return;
-      }
-      toast({
-        title: "Error",
-        description: "Failed to fetch medical records",
-        variant: "destructive",
-      });
-    },
   });
 
   const deleteMutation = useMutation({

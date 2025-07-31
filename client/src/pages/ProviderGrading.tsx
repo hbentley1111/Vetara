@@ -265,7 +265,7 @@ export default function ProviderGrading() {
               {loadingSearch ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {Array.from({ length: 6 }, (_, i) => (
-                    <Card key={i} className="animate-pulse">
+                    <Card key={`search-skeleton-${i}`} className="animate-pulse">
                       <CardHeader>
                         <div className="h-4 bg-gray-200 rounded w-3/4"></div>
                         <div className="h-3 bg-gray-200 rounded w-1/2"></div>
@@ -281,8 +281,8 @@ export default function ProviderGrading() {
                 </div>
               ) : searchResults && searchResults.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {searchResults.map((provider: any, index: number) => (
-                    <ProviderCard key={index} provider={provider} />
+                  {searchResults.map((provider: any) => (
+                    <ProviderCard key={`search-${provider.id}`} provider={provider} />
                   ))}
                 </div>
               ) : (
@@ -311,7 +311,7 @@ export default function ProviderGrading() {
             {loadingTop ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {Array.from({ length: 6 }, (_, i) => (
-                  <Card key={i} className="animate-pulse">
+                  <Card key={`top-skeleton-${i}`} className="animate-pulse">
                     <CardHeader>
                       <div className="h-4 bg-gray-200 rounded w-3/4"></div>
                       <div className="h-3 bg-gray-200 rounded w-1/2"></div>
@@ -327,8 +327,8 @@ export default function ProviderGrading() {
               </div>
             ) : topProviders && topProviders.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {topProviders.map((provider: any, index: number) => (
-                  <ProviderCard key={index} provider={provider} />
+                {topProviders.map((provider: any) => (
+                  <ProviderCard key={`top-${provider.id}`} provider={provider} />
                 ))}
               </div>
             ) : (
