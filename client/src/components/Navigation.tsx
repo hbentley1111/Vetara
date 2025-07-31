@@ -86,18 +86,18 @@ export default function Navigation() {
   }
 
   return (
-    <nav className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-50">
+    <nav className="bg-slate-900/95 backdrop-blur-sm border-b border-slate-700 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center space-x-3">
             <div className="flex items-center space-x-2">
-              <div className="p-2 bg-pet-blue rounded-lg">
+              <div className="p-2 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-lg">
                 <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                 </svg>
               </div>
-              <span className="text-xl font-bold text-gray-900">PetCare Pro</span>
+              <span className="text-xl font-bold text-slate-100">PetCare Pro</span>
             </div>
           </div>
 
@@ -106,10 +106,10 @@ export default function Navigation() {
             {navItems.map((item) => (
               <Link key={item.path} href={item.path}>
                 <div
-                  className={`flex items-center space-x-2 text-sm font-medium transition-colors hover:text-pet-blue cursor-pointer ${
+                  className={`flex items-center space-x-2 text-sm font-medium transition-colors hover:text-cyan-400 cursor-pointer ${
                     location === item.path
-                      ? "text-pet-blue border-b-2 border-pet-blue pb-4"
-                      : "text-gray-600"
+                      ? "text-cyan-400 border-b-2 border-cyan-400 pb-4"
+                      : "text-slate-300"
                   }`}
                 >
                   {getIcon(item.icon)}
@@ -124,55 +124,55 @@ export default function Navigation() {
             {/* Notifications */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="relative">
-                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <Button variant="ghost" size="sm" className="relative hover:bg-slate-800">
+                  <svg className="w-5 h-5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-5 5v-5zM15 17v5l-5-5h5zM15 17l-5-5v5h5z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 3c0-1.1.9-2 2-2s2 .9 2 2-1.1 2-2 2-2-.9-2-2zm4 4c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2z" />
                   </svg>
                   {/* Notification badge */}
-                  <Badge className="absolute -top-1 -right-1 h-5 w-5 text-xs bg-pet-pink text-white p-0 flex items-center justify-center">
+                  <Badge className="absolute -top-1 -right-1 h-5 w-5 text-xs bg-gradient-to-r from-pink-500 to-rose-500 text-white p-0 flex items-center justify-center border-0">
                     3
                   </Badge>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-80">
-                <DropdownMenuLabel>Notifications</DropdownMenuLabel>
-                <DropdownMenuSeparator />
+              <DropdownMenuContent align="end" className="w-80 bg-slate-800 border-slate-700">
+                <DropdownMenuLabel className="text-slate-200">Notifications</DropdownMenuLabel>
+                <DropdownMenuSeparator className="bg-slate-700" />
                 <div className="max-h-96 overflow-y-auto">
-                  <div className="p-2 hover:bg-gray-50 cursor-pointer border-b">
+                  <div className="p-2 hover:bg-slate-700 cursor-pointer border-b border-slate-700">
                     <div className="flex items-start space-x-3">
-                      <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <div className="w-2 h-2 bg-cyan-400 rounded-full mt-2 flex-shrink-0"></div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium">Vaccination Reminder</p>
-                        <p className="text-xs text-gray-600">Buddy's rabies vaccination is due in 3 days</p>
-                        <p className="text-xs text-gray-400 mt-1">2 hours ago</p>
+                        <p className="text-sm font-medium text-slate-200">Vaccination Reminder</p>
+                        <p className="text-xs text-slate-400">Buddy's rabies vaccination is due in 3 days</p>
+                        <p className="text-xs text-slate-500 mt-1">2 hours ago</p>
                       </div>
                     </div>
                   </div>
-                  <div className="p-2 hover:bg-gray-50 cursor-pointer border-b">
+                  <div className="p-2 hover:bg-slate-700 cursor-pointer border-b border-slate-700">
                     <div className="flex items-start space-x-3">
-                      <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <div className="w-2 h-2 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium">Appointment Confirmed</p>
-                        <p className="text-xs text-gray-600">Your appointment with Dr. Thompson has been confirmed</p>
-                        <p className="text-xs text-gray-400 mt-1">5 hours ago</p>
+                        <p className="text-sm font-medium text-slate-200">Appointment Confirmed</p>
+                        <p className="text-xs text-slate-400">Your appointment with Dr. Thompson has been confirmed</p>
+                        <p className="text-xs text-slate-500 mt-1">5 hours ago</p>
                       </div>
                     </div>
                   </div>
-                  <div className="p-2 hover:bg-gray-50 cursor-pointer">
+                  <div className="p-2 hover:bg-slate-700 cursor-pointer">
                     <div className="flex items-start space-x-3">
-                      <div className="w-2 h-2 bg-yellow-500 rounded-full mt-2 flex-shrink-0"></div>
+                      <div className="w-2 h-2 bg-yellow-400 rounded-full mt-2 flex-shrink-0"></div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium">Health Score Updated</p>
-                        <p className="text-xs text-gray-600">Max's health score improved to 92/100</p>
-                        <p className="text-xs text-gray-400 mt-1">1 day ago</p>
+                        <p className="text-sm font-medium text-slate-200">Health Score Updated</p>
+                        <p className="text-xs text-slate-400">Max's health score improved to 92/100</p>
+                        <p className="text-xs text-slate-500 mt-1">1 day ago</p>
                       </div>
                     </div>
                   </div>
                 </div>
-                <DropdownMenuSeparator />
+                <DropdownMenuSeparator className="bg-slate-700" />
                 <div className="p-2">
-                  <Button variant="ghost" className="w-full text-sm">
+                  <Button variant="ghost" className="w-full text-sm text-slate-300 hover:bg-slate-700 hover:text-white">
                     View All Notifications
                   </Button>
                 </div>
@@ -182,53 +182,53 @@ export default function Navigation() {
             {/* User menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex items-center space-x-2 hover:bg-gray-50">
+                <Button variant="ghost" className="flex items-center space-x-2 hover:bg-slate-800">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={user?.profileImageUrl || ""} alt="Profile" />
-                    <AvatarFallback className="bg-pet-blue text-white">
+                    <AvatarFallback className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white">
                       {user?.firstName?.charAt(0) || user?.email?.charAt(0) || "U"}
                     </AvatarFallback>
                   </Avatar>
                   <div className="hidden md:block text-left">
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-slate-200">
                       {user?.firstName || user?.email?.split("@")[0] || "User"}
                     </p>
-                    <p className="text-xs text-gray-500">{user?.email}</p>
+                    <p className="text-xs text-slate-400">{user?.email}</p>
                   </div>
-                  <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuContent align="end" className="w-56 bg-slate-800 border-slate-700">
                 <div className="px-3 py-2">
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-slate-200">
                     {user?.firstName} {user?.lastName}
                   </p>
-                  <p className="text-xs text-gray-500">{user?.email}</p>
+                  <p className="text-xs text-slate-400">{user?.email}</p>
                 </div>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
+                <DropdownMenuSeparator className="bg-slate-700" />
+                <DropdownMenuItem className="text-slate-300 hover:bg-slate-700 hover:text-white">
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                   </svg>
                   Profile Settings
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem className="text-slate-300 hover:bg-slate-700 hover:text-white">
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   </svg>
                   Account Settings
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem className="text-slate-300 hover:bg-slate-700 hover:text-white">
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                   Help & Support
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleLogout} className="text-red-600">
+                <DropdownMenuSeparator className="bg-slate-700" />
+                <DropdownMenuItem onClick={handleLogout} className="text-red-400 hover:bg-slate-700 hover:text-red-300">
                   <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                   </svg>
@@ -241,10 +241,10 @@ export default function Navigation() {
             <Button
               variant="ghost"
               size="sm"
-              className="md:hidden"
+              className="md:hidden hover:bg-slate-800"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </Button>
@@ -253,15 +253,15 @@ export default function Navigation() {
 
         {/* Mobile menu */}
         {isMobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 pt-4 pb-6">
+          <div className="md:hidden border-t border-slate-700 pt-4 pb-6">
             <div className="space-y-2">
               {navItems.map((item) => (
                 <Link key={item.path} href={item.path}>
                   <div
                     className={`flex items-center space-x-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                       location === item.path
-                        ? "bg-pet-blue bg-opacity-10 text-pet-blue"
-                        : "text-gray-600 hover:bg-gray-50"
+                        ? "bg-gradient-to-r from-cyan-500/10 to-blue-500/10 text-cyan-400 border border-cyan-500/20"
+                        : "text-slate-300 hover:bg-slate-800"
                     }`}
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
