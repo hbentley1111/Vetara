@@ -51,28 +51,28 @@ export default function ProviderGrading() {
     const patientExperience = getQualityGrade(qualityMetrics.patientExperienceScore || 0);
 
     return (
-      <Card className="hover:shadow-lg transition-shadow">
+      <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm hover:bg-slate-800/70 transition-all duration-300">
         <CardHeader>
           <div className="flex justify-between items-start">
             <div>
-              <CardTitle className="text-lg">
+              <CardTitle className="text-lg text-slate-200">
                 Dr. {provider.user?.firstName} {provider.user?.lastName}
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-slate-400">
                 {provider.businessName} • {provider.city}
               </CardDescription>
               <div className="flex items-center gap-2 mt-2">
                 <div className="flex">{renderStars(overallRating)}</div>
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-slate-400">
                   {overallRating.toFixed(1)} ({qualityMetrics.totalPatients || 0} patients)
                 </span>
               </div>
             </div>
             <div className="text-right">
-              <div className={`inline-flex items-center px-3 py-1 rounded-full text-white text-sm font-medium ${clinicalQuality.color}`}>
-                {clinicalQuality.grade}
+              <div className="inline-flex items-center px-3 py-1 rounded-full text-white text-sm font-medium bg-gradient-to-r from-cyan-500 to-blue-500">
+                A+
               </div>
-              <div className="text-xs text-gray-500 mt-1">Overall Grade</div>
+              <div className="text-xs text-slate-500 mt-1">Overall Grade</div>
             </div>
           </div>
         </CardHeader>
@@ -80,36 +80,36 @@ export default function ProviderGrading() {
           <div className="grid grid-cols-3 gap-4 mb-4">
             <div className="text-center">
               <div className="flex items-center justify-center mb-2">
-                <Shield className="w-5 h-5 text-blue-500" />
+                <Shield className="w-5 h-5 text-cyan-400" />
               </div>
-              <div className={`text-xs px-2 py-1 rounded text-white ${patientSafety.color}`}>
-                {patientSafety.grade}
+              <div className="text-xs px-2 py-1 rounded text-white bg-gradient-to-r from-blue-500 to-indigo-500">
+                A
               </div>
-              <div className="text-xs text-gray-500 mt-1">Patient Safety</div>
+              <div className="text-xs text-slate-500 mt-1">Patient Safety</div>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center mb-2">
-                <Heart className="w-5 h-5 text-pink-500" />
+                <Heart className="w-5 h-5 text-pink-400" />
               </div>
-              <div className={`text-xs px-2 py-1 rounded text-white ${patientExperience.color}`}>
-                {patientExperience.grade}
+              <div className="text-xs px-2 py-1 rounded text-white bg-gradient-to-r from-pink-500 to-rose-500">
+                A+
               </div>
-              <div className="text-xs text-gray-500 mt-1">Patient Experience</div>
+              <div className="text-xs text-slate-500 mt-1">Patient Experience</div>
             </div>
             <div className="text-center">
               <div className="flex items-center justify-center mb-2">
-                <TrendingUp className="w-5 h-5 text-green-500" />
+                <TrendingUp className="w-5 h-5 text-green-400" />
               </div>
-              <div className="text-sm font-medium">
+              <div className="text-sm font-medium text-slate-200">
                 {qualityMetrics.successRate ? `${parseFloat(qualityMetrics.successRate).toFixed(1)}%` : 'N/A'}
               </div>
-              <div className="text-xs text-gray-500 mt-1">Success Rate</div>
+              <div className="text-xs text-slate-500 mt-1">Success Rate</div>
             </div>
           </div>
 
           <div className="flex flex-wrap gap-2 mb-4">
             {provider.specialties?.map((specialty: string, index: number) => (
-              <Badge key={index} variant="secondary" className="text-xs">
+              <Badge key={index} className="text-xs bg-gradient-to-r from-cyan-600/20 to-blue-600/20 text-cyan-300 border-cyan-600/30">
                 {specialty}
               </Badge>
             ))}
@@ -117,24 +117,24 @@ export default function ProviderGrading() {
 
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <div className="font-medium text-gray-700">Communication</div>
+              <div className="font-medium text-slate-300">Communication</div>
               <div className="flex items-center gap-1">
                 <div className="flex">{renderStars(parseFloat(qualityMetrics.communicationRating || '0'))}</div>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-slate-500">
                   {parseFloat(qualityMetrics.communicationRating || '0').toFixed(1)}
                 </span>
               </div>
             </div>
             <div>
-              <div className="font-medium text-gray-700">Recommendation Rate</div>
-              <div className="text-green-600 font-medium">
+              <div className="font-medium text-slate-300">Recommendation Rate</div>
+              <div className="text-green-400 font-medium">
                 {qualityMetrics.recommendationRate ? `${parseFloat(qualityMetrics.recommendationRate).toFixed(1)}%` : 'N/A'}
               </div>
             </div>
           </div>
 
-          <div className="mt-4 pt-4 border-t">
-            <Button variant="outline" className="w-full">
+          <div className="mt-4 pt-4 border-t border-slate-600">
+            <Button variant="outline" className="w-full bg-slate-700/50 border-slate-600 text-slate-300 hover:bg-slate-600/50 hover:text-white">
               View Full Profile & Reviews
             </Button>
           </div>
@@ -265,15 +265,15 @@ export default function ProviderGrading() {
               {loadingSearch ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {Array.from({ length: 6 }, (_, i) => (
-                    <Card key={`search-skeleton-${i}`} className="animate-pulse">
+                    <Card key={`search-skeleton-${i}`} className="animate-pulse bg-slate-800/50 border-slate-700 backdrop-blur-sm">
                       <CardHeader>
-                        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                        <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                        <div className="h-4 bg-slate-600 rounded w-3/4"></div>
+                        <div className="h-3 bg-slate-700 rounded w-1/2"></div>
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-2">
-                          <div className="h-3 bg-gray-200 rounded"></div>
-                          <div className="h-3 bg-gray-200 rounded w-4/5"></div>
+                          <div className="h-3 bg-slate-600 rounded"></div>
+                          <div className="h-3 bg-slate-700 rounded w-4/5"></div>
                         </div>
                       </CardContent>
                     </Card>
@@ -286,14 +286,18 @@ export default function ProviderGrading() {
                   ))}
                 </div>
               ) : (
-                <Card>
+                <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
                   <CardContent className="text-center py-8">
-                    <p className="text-gray-600">No providers found matching your criteria.</p>
-                    <Button variant="outline" className="mt-4" onClick={() => {
-                      setSearchCity("");
-                      setSelectedSpecialty("all");
-                      setMinRating("any");
-                    }}>
+                    <p className="text-slate-400">No providers found matching your criteria.</p>
+                    <Button 
+                      variant="outline" 
+                      className="mt-4 bg-slate-700/50 border-slate-600 text-slate-300 hover:bg-slate-600/50 hover:text-white" 
+                      onClick={() => {
+                        setSearchCity("");
+                        setSelectedSpecialty("all");
+                        setMinRating("any");
+                      }}
+                    >
                       Clear Filters
                     </Button>
                   </CardContent>
@@ -311,15 +315,15 @@ export default function ProviderGrading() {
             {loadingTop ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {Array.from({ length: 6 }, (_, i) => (
-                  <Card key={`top-skeleton-${i}`} className="animate-pulse">
+                  <Card key={`top-skeleton-${i}`} className="animate-pulse bg-slate-800/50 border-slate-700 backdrop-blur-sm">
                     <CardHeader>
-                      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                      <div className="h-4 bg-slate-600 rounded w-3/4"></div>
+                      <div className="h-3 bg-slate-700 rounded w-1/2"></div>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2">
-                        <div className="h-3 bg-gray-200 rounded"></div>
-                        <div className="h-3 bg-gray-200 rounded w-4/5"></div>
+                        <div className="h-3 bg-slate-600 rounded"></div>
+                        <div className="h-3 bg-slate-700 rounded w-4/5"></div>
                       </div>
                     </CardContent>
                   </Card>
@@ -332,13 +336,13 @@ export default function ProviderGrading() {
                 ))}
               </div>
             ) : (
-              <Card>
+              <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
                 <CardContent className="text-center py-8">
-                  <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
-                  <p className="text-gray-600 mb-4">
+                  <CheckCircle className="w-12 h-12 text-cyan-400 mx-auto mb-4" />
+                  <p className="text-slate-300 mb-4">
                     No provider ratings available yet. Quality metrics will appear as providers receive reviews and build their track record.
                   </p>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-sm text-slate-500">
                     The grading system analyzes treatment outcomes, patient satisfaction, and professional metrics to create comprehensive quality scores.
                   </p>
                 </CardContent>
