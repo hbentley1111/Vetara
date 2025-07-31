@@ -66,13 +66,13 @@ export default function PetCard({ pet, onGenerateQR, showFullActions = false }: 
   const getVaccinationStatusColor = (status: string) => {
     switch (status) {
       case "Vaccinated":
-        return "bg-pet-green bg-opacity-10 text-pet-green";
+        return "bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400";
       case "Due Soon":
-        return "bg-gradient-to-r from-cyan-50 to-blue-50 text-cyan-600";
+        return "bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-400";
       case "Overdue":
-        return "bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700";
+        return "bg-gradient-to-r from-blue-500/20 to-indigo-500/20 text-blue-400";
       default:
-        return "bg-gray-100 text-gray-600";
+        return "bg-slate-700/50 text-slate-400";
     }
   };
 
@@ -112,7 +112,7 @@ export default function PetCard({ pet, onGenerateQR, showFullActions = false }: 
   const vaccinationStatus = getVaccinationStatus();
 
   return (
-    <Card className="hover-lift">
+    <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm hover:bg-slate-800/60 transition-all duration-300">
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
@@ -126,7 +126,7 @@ export default function PetCard({ pet, onGenerateQR, showFullActions = false }: 
             </div>
             <div className="flex-1">
               <div className="flex items-center space-x-2 mb-2">
-                <h3 className="text-lg font-semibold text-gray-900">{pet.name}</h3>
+                <h3 className="text-lg font-semibold text-slate-200">{pet.name}</h3>
                 {pet.microchipId && (
                   <Badge variant="secondary" className="text-xs">
                     <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -136,7 +136,7 @@ export default function PetCard({ pet, onGenerateQR, showFullActions = false }: 
                   </Badge>
                 )}
               </div>
-              <p className="text-sm text-gray-600 mb-2">
+              <p className="text-sm text-slate-400 mb-2">
                 <span className="font-medium">{pet.breed}</span> • {formatAge(pet.dateOfBirth)}
               </p>
               <div className="flex items-center space-x-2">
