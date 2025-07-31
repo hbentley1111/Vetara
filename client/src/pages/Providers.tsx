@@ -136,27 +136,34 @@ export default function Providers() {
     return [...Array(5)].map((_, i) => (
       <Star
         key={i}
-        className={`w-4 h-4 ${i < rating ? 'fill-cyan-400 text-cyan-400' : 'text-gray-300'}`}
+        className={`w-4 h-4 ${i < rating ? 'fill-cyan-400 text-cyan-400' : 'text-slate-600'}`}
       />
     ));
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
+    <div className="min-h-screen bg-slate-950">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-black">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(34,211,238,0.1),transparent_50%)]"></div>
+      </div>
       
-      <div className="container mx-auto px-4 py-8">
-        <BackToDashboard />
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-foreground mb-2">Service Providers</h1>
-          <p className="text-muted-foreground">
-            Find trusted veterinarians, groomers, and pet care professionals in your area
-          </p>
-        </div>
+      <div className="relative">
+        <Navigation />
+        
+        <div className="container mx-auto px-4 py-8">
+          <BackToDashboard />
+          <div className="mb-12">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-4">Service Providers</h1>
+            <p className="text-slate-300 text-lg">
+              Find trusted veterinarians, groomers, and pet care professionals in your area
+            </p>
+          </div>
 
-        {/* Search and Filter Controls */}
-        <div className="mb-6 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {/* Search and Filter Controls */}
+          <Card className="mb-8 bg-slate-800/50 border-slate-700 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <Input
               placeholder="Search providers..."
               value={searchTerm}
@@ -190,12 +197,13 @@ export default function Providers() {
                 checked={includeGoogle}
                 onCheckedChange={setIncludeGoogle}
               />
-              <Label htmlFor="google-toggle" className="text-sm font-medium">
-                Include Google Places
-              </Label>
+                <Label htmlFor="google-toggle" className="text-sm font-medium text-slate-300">
+                  Include Google Places
+                </Label>
+              </div>
             </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
 
         {/* Providers Grid */}
         {providersLoading ? (
@@ -205,11 +213,11 @@ export default function Providers() {
             ))}
           </div>
         ) : filteredProviders.length === 0 ? (
-          <Card>
+          <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
             <CardContent className="text-center py-8">
-              <p className="text-muted-foreground">No service providers found matching your criteria.</p>
+              <p className="text-slate-400">No service providers found matching your criteria.</p>
               {!includeGoogle && (
-                <p className="text-sm text-muted-foreground mt-2">
+                <p className="text-sm text-slate-500 mt-2">
                   Try enabling "Include Google Places" for more results.
                 </p>
               )}
@@ -218,11 +226,11 @@ export default function Providers() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredProviders.map((provider: any) => (
-              <Card key={provider.id} className="hover:shadow-lg transition-shadow cursor-pointer">
+              <Card key={provider.id} className="bg-slate-800/50 border-slate-700 backdrop-blur-sm hover:bg-slate-700/40 transition-colors cursor-pointer">
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <CardTitle className="text-lg">{provider.businessName}</CardTitle>
+                      <CardTitle className="text-lg text-slate-200">{provider.businessName}</CardTitle>
                       <div className="flex items-center mt-2 space-x-2">
                         {provider.specialties?.map((specialty: string) => (
                           <Badge key={specialty} variant="secondary" className="text-xs">
@@ -241,7 +249,7 @@ export default function Providers() {
                         <div className="flex">
                           {renderStars(Math.round(parseFloat(provider.rating) || 0))}
                         </div>
-                        <span className="text-sm text-muted-foreground">
+                        <span className="text-sm text-slate-400">
                           ({provider.reviewCount || 0})
                         </span>
                       </div>
@@ -509,6 +517,7 @@ export default function Providers() {
             </div>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
     </div>
   );

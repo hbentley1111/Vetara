@@ -148,11 +148,17 @@ export default function Insurance() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-      <div className="container mx-auto p-6 space-y-8">
-        <BackToDashboard />
-        <div className="flex items-center gap-3 mb-8">
+    <div className="min-h-screen bg-slate-950">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-black">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(34,211,238,0.1),transparent_50%)]"></div>
+      </div>
+      
+      <div className="relative">
+        <Navigation />
+        <div className="container mx-auto p-6 space-y-8">
+          <BackToDashboard />
+          <div className="flex items-center gap-3 mb-12">
           <Shield className="h-8 w-8 text-blue-600" />
           <div>
             <h1 className="text-3xl font-bold text-foreground">Pet Insurance Dashboard</h1>
@@ -423,7 +429,8 @@ export default function Insurance() {
             </div>
           </div>
         </CardContent>
-      </Card>
+        </Card>
+        </div>
       </div>
     </div>
   );

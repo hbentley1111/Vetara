@@ -144,79 +144,88 @@ export default function ProviderGrading() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <BackToDashboard />
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Find Top-Rated Veterinary Providers
-        </h1>
-        <p className="text-gray-600">
-          Quality ratings and patient reviews to help you choose the best care for your pet
-        </p>
+    <div className="min-h-screen bg-slate-950">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-black">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(34,211,238,0.1),transparent_50%)]"></div>
       </div>
-
-      {/* Search Filters */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle className="text-lg">Search by Quality</CardTitle>
-          <CardDescription>
-            Find providers based on location, specialty, and quality ratings
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Input
-              placeholder="City"
-              value={searchCity}
-              onChange={(e) => setSearchCity(e.target.value)}
-            />
-            <Select value={selectedSpecialty} onValueChange={setSelectedSpecialty}>
-              <SelectTrigger>
-                <SelectValue placeholder="Specialty" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Specialties</SelectItem>
-                <SelectItem value="Emergency">Emergency Medicine</SelectItem>
-                <SelectItem value="Surgery">Surgery</SelectItem>
-                <SelectItem value="Cardiology">Cardiology</SelectItem>
-                <SelectItem value="Dermatology">Dermatology</SelectItem>
-                <SelectItem value="Oncology">Oncology</SelectItem>
-                <SelectItem value="Dentistry">Dentistry</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={minRating} onValueChange={setMinRating}>
-              <SelectTrigger>
-                <SelectValue placeholder="Minimum Rating" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="any">Any Rating</SelectItem>
-                <SelectItem value="4.5">4.5+ Stars</SelectItem>
-                <SelectItem value="4.0">4.0+ Stars</SelectItem>
-                <SelectItem value="3.5">3.5+ Stars</SelectItem>
-                <SelectItem value="3.0">3.0+ Stars</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button onClick={() => {
-              setSearchCity("");
-              setSelectedSpecialty("all");
-              setMinRating("any");
-            }}>
-              Clear Filters
-            </Button>
+      
+      <div className="relative">
+        <div className="container mx-auto px-4 py-8">
+          <BackToDashboard />
+          <div className="mb-12">
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent mb-4">
+              Find Top-Rated Veterinary Providers
+            </h1>
+            <p className="text-slate-300 text-lg">
+              Quality ratings and patient reviews to help you choose the best care for your pet
+            </p>
           </div>
-        </CardContent>
-      </Card>
 
-      {/* Quality Metrics Legend */}
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Award className="w-5 h-5 text-cyan-400" />
-            Quality Rating System
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          {/* Search Filters */}
+          <Card className="mb-8 bg-slate-800/50 border-slate-700 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-lg text-slate-200">Search by Quality</CardTitle>
+              <CardDescription className="text-slate-400">
+                Find providers based on location, specialty, and quality ratings
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <Input
+                  placeholder="City"
+                  value={searchCity}
+                  onChange={(e) => setSearchCity(e.target.value)}
+                />
+                <Select value={selectedSpecialty} onValueChange={setSelectedSpecialty}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Specialty" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Specialties</SelectItem>
+                    <SelectItem value="Emergency">Emergency Medicine</SelectItem>
+                    <SelectItem value="Surgery">Surgery</SelectItem>
+                    <SelectItem value="Cardiology">Cardiology</SelectItem>
+                    <SelectItem value="Dermatology">Dermatology</SelectItem>
+                    <SelectItem value="Oncology">Oncology</SelectItem>
+                    <SelectItem value="Dentistry">Dentistry</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={minRating} onValueChange={setMinRating}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Minimum Rating" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="any">Any Rating</SelectItem>
+                    <SelectItem value="4.5">4.5+ Stars</SelectItem>
+                    <SelectItem value="4.0">4.0+ Stars</SelectItem>
+                    <SelectItem value="3.5">3.5+ Stars</SelectItem>
+                    <SelectItem value="3.0">3.0+ Stars</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button 
+                  className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:from-cyan-600 hover:to-blue-600"
+                  onClick={() => {
+                    setSearchCity("");
+                    setSelectedSpecialty("all");
+                    setMinRating("any");
+                  }}>
+                  Clear Filters
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Quality Metrics Legend */}
+          <Card className="mb-8 bg-slate-800/50 border-slate-700 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2 text-slate-200">
+                <Award className="w-5 h-5 text-cyan-400" />
+                Quality Rating System
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="flex items-center gap-2">
               <Shield className="w-5 h-5 text-blue-500" />
               <div>
@@ -249,92 +258,94 @@ export default function ProviderGrading() {
         </CardContent>
       </Card>
 
-      {/* Search Results */}
-      {(searchCity || selectedSpecialty || minRating) && (
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Search Results</h2>
-          {loadingSearch ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {Array.from({ length: 6 }, (_, i) => (
-                <Card key={i} className="animate-pulse">
-                  <CardHeader>
-                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <div className="h-3 bg-gray-200 rounded"></div>
-                      <div className="h-3 bg-gray-200 rounded w-4/5"></div>
-                    </div>
+          {/* Search Results */}
+          {(searchCity || selectedSpecialty || minRating) && (
+            <div className="mb-8">
+              <h2 className="text-2xl font-bold text-slate-200 mb-4">Search Results</h2>
+              {loadingSearch ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {Array.from({ length: 6 }, (_, i) => (
+                    <Card key={i} className="animate-pulse">
+                      <CardHeader>
+                        <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                        <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="space-y-2">
+                          <div className="h-3 bg-gray-200 rounded"></div>
+                          <div className="h-3 bg-gray-200 rounded w-4/5"></div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : searchResults && searchResults.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {searchResults.map((provider: any, index: number) => (
+                    <ProviderCard key={index} provider={provider} />
+                  ))}
+                </div>
+              ) : (
+                <Card>
+                  <CardContent className="text-center py-8">
+                    <p className="text-gray-600">No providers found matching your criteria.</p>
+                    <Button variant="outline" className="mt-4" onClick={() => {
+                      setSearchCity("");
+                      setSelectedSpecialty("all");
+                      setMinRating("any");
+                    }}>
+                      Clear Filters
+                    </Button>
                   </CardContent>
                 </Card>
-              ))}
+              )}
             </div>
-          ) : searchResults && searchResults.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {searchResults.map((provider: any, index: number) => (
-                <ProviderCard key={index} provider={provider} />
-              ))}
-            </div>
-          ) : (
-            <Card>
-              <CardContent className="text-center py-8">
-                <p className="text-gray-600">No providers found matching your criteria.</p>
-                <Button variant="outline" className="mt-4" onClick={() => {
-                  setSearchCity("");
-                  setSelectedSpecialty("all");
-                  setMinRating("any");
-                }}>
-                  Clear Filters
-                </Button>
-              </CardContent>
-            </Card>
           )}
-        </div>
-      )}
 
-      {/* Top-Rated Providers */}
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <Award className="w-6 h-6 text-cyan-400" />
-          Top-Rated Providers
-        </h2>
-        {loadingTop ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({ length: 6 }, (_, i) => (
-              <Card key={i} className="animate-pulse">
-                <CardHeader>
-                  <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div className="h-3 bg-gray-200 rounded"></div>
-                    <div className="h-3 bg-gray-200 rounded w-4/5"></div>
-                  </div>
+          {/* Top-Rated Providers */}
+          <div>
+            <h2 className="text-2xl font-bold text-slate-200 mb-4 flex items-center gap-2">
+              <Award className="w-6 h-6 text-cyan-400" />
+              Top-Rated Providers
+            </h2>
+            {loadingTop ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {Array.from({ length: 6 }, (_, i) => (
+                  <Card key={i} className="animate-pulse">
+                    <CardHeader>
+                      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <div className="h-3 bg-gray-200 rounded"></div>
+                        <div className="h-3 bg-gray-200 rounded w-4/5"></div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : topProviders && topProviders.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {topProviders.map((provider: any, index: number) => (
+                  <ProviderCard key={index} provider={provider} />
+                ))}
+              </div>
+            ) : (
+              <Card>
+                <CardContent className="text-center py-8">
+                  <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
+                  <p className="text-gray-600 mb-4">
+                    No provider ratings available yet. Quality metrics will appear as providers receive reviews and build their track record.
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    The grading system analyzes treatment outcomes, patient satisfaction, and professional metrics to create comprehensive quality scores.
+                  </p>
                 </CardContent>
               </Card>
-            ))}
+            )}
           </div>
-        ) : topProviders && topProviders.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {topProviders.map((provider: any, index: number) => (
-              <ProviderCard key={index} provider={provider} />
-            ))}
-          </div>
-        ) : (
-          <Card>
-            <CardContent className="text-center py-8">
-              <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
-              <p className="text-gray-600 mb-4">
-                No provider ratings available yet. Quality metrics will appear as providers receive reviews and build their track record.
-              </p>
-              <p className="text-sm text-gray-500">
-                The grading system analyzes treatment outcomes, patient satisfaction, and professional metrics to create comprehensive quality scores.
-              </p>
-            </CardContent>
-          </Card>
-        )}
+        </div>
       </div>
     </div>
   );
