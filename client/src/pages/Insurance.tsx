@@ -168,51 +168,51 @@ export default function Insurance() {
 
       {/* Insurance Overview */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <Card>
+        <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Policies</CardTitle>
-            <Shield className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-slate-200">Active Policies</CardTitle>
+            <Shield className="h-4 w-4 text-cyan-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{insurancePolicies.length}</div>
-            <p className="text-xs text-muted-foreground">
+            <div className="text-2xl font-bold text-slate-100">{insurancePolicies.length}</div>
+            <p className="text-xs text-slate-400">
               Across {pets.length} pets
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Savings</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-slate-200">Total Savings</CardTitle>
+            <DollarSign className="h-4 w-4 text-green-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-slate-100">
               ${insurancePolicies.reduce((sum: number, policy: any) => {
                 const originalPremium = parseFloat(policy.pet_insurance_policies?.premiumAmount || "0");
                 const discountedPremium = parseFloat(policy.pet_insurance_policies?.discountedPremium || originalPremium.toString());
                 return sum + (originalPremium - discountedPremium);
               }, 0).toFixed(0)}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-slate-400">
               Monthly discount earned
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Avg Health Score</CardTitle>
-            <Heart className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-slate-200">Avg Health Score</CardTitle>
+            <Heart className="h-4 w-4 text-pink-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-slate-100">
               {insurancePolicies.length > 0 
                 ? Math.round(insurancePolicies.reduce((sum: number, policy: any) => 
                     sum + (policy.pet_insurance_policies?.currentHealthScore || 0), 0) / insurancePolicies.length)
                 : 0}/100
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-slate-400">
               Across all covered pets
             </p>
           </CardContent>
@@ -220,38 +220,38 @@ export default function Insurance() {
       </div>
 
       {/* Available Insurance Partners */}
-      <Card>
+      <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Award className="h-5 w-5" />
+          <CardTitle className="flex items-center gap-2 text-slate-200">
+            <Award className="h-5 w-5 text-cyan-400" />
             Insurance Partners
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-slate-400">
             Our trusted insurance partners offering discounts for preventive care
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {insurancePartners.map((partner: any) => (
-              <Card key={partner.id} className="border-2">
+              <Card key={partner.id} className="bg-slate-700/50 border-slate-600 backdrop-blur-sm">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-lg">{partner.companyName}</CardTitle>
-                  <CardDescription>{partner.description}</CardDescription>
+                  <CardTitle className="text-lg text-slate-200">{partner.companyName}</CardTitle>
+                  <CardDescription className="text-slate-400">{partner.description}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span>Base Discount:</span>
-                    <Badge variant="secondary">{partner.baseDiscountRate}%</Badge>
+                    <span className="text-slate-300">Base Discount:</span>
+                    <Badge className="bg-gradient-to-r from-cyan-600/20 to-blue-600/20 text-cyan-300 border-cyan-600/30">{partner.baseDiscountRate}%</Badge>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span>Max Discount:</span>
-                    <Badge variant="default">{partner.maxDiscountRate}%</Badge>
+                    <span className="text-slate-300">Max Discount:</span>
+                    <Badge className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white">{partner.maxDiscountRate}%</Badge>
                   </div>
                   {partner.websiteUrl && (
                     <Button 
                       variant="outline" 
                       size="sm" 
-                      className="w-full mt-3"
+                      className="w-full mt-3 bg-slate-600/50 border-slate-500 text-slate-300 hover:bg-slate-500/50 hover:text-white"
                       onClick={() => window.open(partner.websiteUrl, '_blank')}
                     >
                       Learn More
@@ -265,13 +265,13 @@ export default function Insurance() {
       </Card>
 
       {/* Pet Health Scores & Discount Calculator */}
-      <Card>
+      <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Calculator className="h-5 w-5" />
+          <CardTitle className="flex items-center gap-2 text-slate-200">
+            <Calculator className="h-5 w-5 text-green-400" />
             Health Score Calculator
           </CardTitle>
-          <CardDescription>
+          <CardDescription className="text-slate-400">
             Calculate your pet's health score to see potential insurance discounts
           </CardDescription>
         </CardHeader>
@@ -283,21 +283,21 @@ export default function Insurance() {
               const discountPercentage = parseFloat(policy?.pet_insurance_policies?.discountPercentage || "0");
               
               return (
-                <Card key={pet.id} className={`border-2 ${selectedPetId === pet.id ? 'border-blue-500' : ''}`}>
+                <Card key={pet.id} className={`bg-slate-700/50 border-slate-600 backdrop-blur-sm ${selectedPetId === pet.id ? 'border-cyan-500 ring-1 ring-cyan-500/50' : ''}`}>
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-lg flex items-center justify-between">
+                    <CardTitle className="text-lg flex items-center justify-between text-slate-200">
                       {pet.name}
-                      {policy && <Badge variant="secondary">Insured</Badge>}
+                      {policy && <Badge className="bg-gradient-to-r from-green-600/20 to-emerald-600/20 text-green-300 border-green-600/30">Insured</Badge>}
                     </CardTitle>
-                    <CardDescription>{pet.breed} • {pet.species}</CardDescription>
+                    <CardDescription className="text-slate-400">{pet.breed} • {pet.species}</CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {healthScore > 0 && (
                       <>
                         <div>
                           <div className="flex justify-between text-sm mb-2">
-                            <span>Health Score</span>
-                            <span className={`font-semibold ${getHealthScoreColor(healthScore)}`}>
+                            <span className="text-slate-300">Health Score</span>
+                            <span className="font-semibold text-cyan-400">
                               {healthScore}/100
                             </span>
                           </div>
@@ -305,19 +305,19 @@ export default function Insurance() {
                         </div>
                         
                         <div className="flex justify-between items-center">
-                          <span className="text-sm">Current Discount:</span>
-                          <Badge variant={getDiscountBadgeVariant(discountPercentage)}>
+                          <span className="text-sm text-slate-300">Current Discount:</span>
+                          <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">
                             {discountPercentage}%
                           </Badge>
                         </div>
                         
                         {policy && (
-                          <div className="text-xs text-gray-600 space-y-1">
+                          <div className="text-xs text-slate-400 space-y-1">
                             <div className="flex justify-between">
                               <span>Original Premium:</span>
                               <span>${policy.pet_insurance_policies.premiumAmount}</span>
                             </div>
-                            <div className="flex justify-between font-semibold">
+                            <div className="flex justify-between font-semibold text-slate-200">
                               <span>Discounted Premium:</span>
                               <span>${policy.pet_insurance_policies.discountedPremium}</span>
                             </div>
@@ -332,7 +332,7 @@ export default function Insurance() {
                         variant="outline"
                         onClick={() => calculateHealthScoreMutation.mutate(pet.id)}
                         disabled={calculateHealthScoreMutation.isPending}
-                        className="flex-1"
+                        className="flex-1 bg-slate-600/50 border-slate-500 text-slate-300 hover:bg-slate-500/50 hover:text-white"
                       >
                         <Calculator className="h-4 w-4 mr-1" />
                         Calculate
@@ -343,7 +343,7 @@ export default function Insurance() {
                           size="sm"
                           onClick={() => updateDiscountsMutation.mutate(pet.id)}
                           disabled={updateDiscountsMutation.isPending}
-                          className="flex-1"
+                          className="flex-1 bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white"
                         >
                           <TrendingUp className="h-4 w-4 mr-1" />
                           Update
@@ -359,71 +359,71 @@ export default function Insurance() {
       </Card>
 
       {/* How It Works */}
-      <Card>
+      <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CheckCircle className="h-5 w-5" />
+          <CardTitle className="flex items-center gap-2 text-slate-200">
+            <CheckCircle className="h-5 w-5 text-green-400" />
             How Insurance Discounts Work
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">Health Score Factors</h3>
+              <h3 className="font-semibold text-lg text-slate-200">Health Score Factors</h3>
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <CheckCircle className="h-4 w-4 text-green-400" />
                   <div>
-                    <span className="font-medium">Regular Checkups</span>
-                    <p className="text-sm text-gray-600">Up to 30 points for 2+ annual visits</p>
+                    <span className="font-medium text-slate-200">Regular Checkups</span>
+                    <p className="text-sm text-slate-400">Up to 30 points for 2+ annual visits</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <CheckCircle className="h-4 w-4 text-green-400" />
                   <div>
-                    <span className="font-medium">Vaccinations</span>
-                    <p className="text-sm text-gray-600">Up to 25 points for up-to-date vaccines</p>
+                    <span className="font-medium text-slate-200">Vaccinations</span>
+                    <p className="text-sm text-slate-400">Up to 25 points for up-to-date vaccines</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <CheckCircle className="h-4 w-4 text-green-400" />
                   <div>
-                    <span className="font-medium">Preventive Care</span>
-                    <p className="text-sm text-gray-600">Up to 20 points for dental, grooming</p>
+                    <span className="font-medium text-slate-200">Preventive Care</span>
+                    <p className="text-sm text-slate-400">Up to 20 points for dental, grooming</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <CheckCircle className="h-4 w-4 text-green-600" />
+                  <CheckCircle className="h-4 w-4 text-green-400" />
                   <div>
-                    <span className="font-medium">Visit Consistency</span>
-                    <p className="text-sm text-gray-600">Up to 25 points for regular care</p>
+                    <span className="font-medium text-slate-200">Visit Consistency</span>
+                    <p className="text-sm text-slate-400">Up to 25 points for regular care</p>
                   </div>
                 </div>
               </div>
             </div>
             
             <div className="space-y-4">
-              <h3 className="font-semibold text-lg">Discount Tiers</h3>
+              <h3 className="font-semibold text-lg text-slate-200">Discount Tiers</h3>
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                  <span>90-100 Score</span>
-                  <Badge className="bg-green-600">25% Discount</Badge>
+                <div className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg border border-slate-600">
+                  <span className="text-slate-200">90-100 Score</span>
+                  <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white">25% Discount</Badge>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                  <span>80-89 Score</span>
-                  <Badge className="bg-blue-600">20% Discount</Badge>
+                <div className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg border border-slate-600">
+                  <span className="text-slate-200">80-89 Score</span>
+                  <Badge className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white">20% Discount</Badge>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-lg">
-                  <span>70-79 Score</span>
+                <div className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg border border-slate-600">
+                  <span className="text-slate-200">70-79 Score</span>
                   <Badge className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white">15% Discount</Badge>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg">
-                  <span>60-69 Score</span>
-                  <Badge className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white">10% Discount</Badge>
+                <div className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg border border-slate-600">
+                  <span className="text-slate-200">60-69 Score</span>
+                  <Badge className="bg-gradient-to-r from-purple-500 to-pink-500 text-white">10% Discount</Badge>
                 </div>
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <span>50-59 Score</span>
-                  <Badge variant="secondary">5% Discount</Badge>
+                <div className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg border border-slate-600">
+                  <span className="text-slate-200">50-59 Score</span>
+                  <Badge className="bg-gradient-to-r from-slate-600/20 to-slate-500/20 text-slate-300 border-slate-500/30">5% Discount</Badge>
                 </div>
               </div>
             </div>
