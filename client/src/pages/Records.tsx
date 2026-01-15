@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { BackToDashboard } from "@/components/BackToDashboard";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export default function Records() {
   const { toast } = useToast();
@@ -21,6 +22,7 @@ export default function Records() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
   const [selectedPet, setSelectedPet] = useState("all");
+  const [viewRecord, setViewRecord] = useState<any>(null);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -341,6 +343,7 @@ export default function Records() {
                       <Button 
                         variant="outline" 
                         size="sm"
+                        onClick={() => setViewRecord(record)}
                         className="border-cyan-500 text-cyan-400 hover:bg-cyan-500 hover:text-white"
                       >
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -441,6 +444,93 @@ export default function Records() {
           onClose={() => setShowUploadModal(false)} 
         />
       )}
+
+      {/* View Record Modal */}
+      <Dialog open={!!viewRecord} onOpenChange={(open) => !open && setViewRecord(null)}>
+        <DialogContent className="bg-slate-800 border-slate-700 text-slate-100 max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+              {viewRecord?.title}
+            </DialogTitle>
+          </DialogHeader>
+          
+          {viewRecord && (
+            <div className="space-y-6 mt-4">
+              <div className="flex items-center gap-3">
+                <Badge className={getRecordTypeColor(viewRecord.recordType)}>
+                  {viewRecord.recordType?.replace('_', ' ') || 'Medical Record'}
+                </Badge>
+                {viewRecord.isEmergency && (
+                  <Badge className="bg-gradient-to-r from-red-500/20 to-red-600/20 text-red-400">Emergency</Badge>
+                )}
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-slate-700/50 rounded-lg p-4">
+                  <p className="text-sm text-slate-400 mb-1">Pet</p>
+                  <p className="text-slate-200 font-medium">{viewRecord.pet?.name || 'Unknown'}</p>
+                </div>
+                <div className="bg-slate-700/50 rounded-lg p-4">
+                  <p className="text-sm text-slate-400 mb-1">Visit Date</p>
+                  <p className="text-slate-200 font-medium">{formatDate(viewRecord.visitDate)}</p>
+                </div>
+              </div>
+
+              {viewRecord.description && (
+                <div className="bg-slate-700/50 rounded-lg p-4">
+                  <p className="text-sm text-slate-400 mb-2">Description</p>
+                  <p className="text-slate-200">{viewRecord.description}</p>
+                </div>
+              )}
+
+              {viewRecord.diagnosis && (
+                <div className="bg-slate-700/50 rounded-lg p-4">
+                  <p className="text-sm text-slate-400 mb-2">Diagnosis</p>
+                  <p className="text-slate-200">{viewRecord.diagnosis}</p>
+                </div>
+              )}
+
+              {viewRecord.treatment && (
+                <div className="bg-slate-700/50 rounded-lg p-4">
+                  <p className="text-sm text-slate-400 mb-2">Treatment</p>
+                  <p className="text-slate-200">{viewRecord.treatment}</p>
+                </div>
+              )}
+
+              {viewRecord.medications && (
+                <div className="bg-slate-700/50 rounded-lg p-4">
+                  <p className="text-sm text-slate-400 mb-2">Medications</p>
+                  <p className="text-slate-200">{viewRecord.medications}</p>
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 gap-4">
+                {viewRecord.cost && (
+                  <div className="bg-slate-700/50 rounded-lg p-4">
+                    <p className="text-sm text-slate-400 mb-1">Cost</p>
+                    <p className="text-2xl font-bold text-cyan-400">${viewRecord.cost}</p>
+                  </div>
+                )}
+                {viewRecord.followUpDate && (
+                  <div className="bg-slate-700/50 rounded-lg p-4">
+                    <p className="text-sm text-slate-400 mb-1">Follow-up Date</p>
+                    <p className="text-slate-200 font-medium">{formatDate(viewRecord.followUpDate)}</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-end pt-4">
+                <Button 
+                  onClick={() => setViewRecord(null)}
+                  className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:from-cyan-600 hover:to-blue-600"
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
