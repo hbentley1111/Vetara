@@ -30,6 +30,12 @@ export function getSession() {
     store: new PgStore({
       conString: process.env.DATABASE_URL,
       createTableIfMissing: true,
+      errorLog: (...args: any[]) => {
+        const msg = args.join(' ');
+        if (!msg.includes('already exists')) {
+          console.error('Session store error:', ...args);
+        }
+      },
     }),
     secret: process.env.SESSION_SECRET!,
     resave: false,
