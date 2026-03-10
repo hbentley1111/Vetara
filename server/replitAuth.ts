@@ -24,9 +24,13 @@ const getOidcConfig = memoize(
 
 export function getSession() {
   const sessionTtl = 7 * 24 * 60 * 60 * 1000; // 1 week
+  const PgStore = connectPg(session);
   
-  // Temporarily use memory store due to database connection issues
   return session({
+    store: new PgStore({
+      conString: process.env.DATABASE_URL,
+      createTableIfMissing: true,
+    }),
     secret: process.env.SESSION_SECRET!,
     resave: false,
     saveUninitialized: false,
@@ -74,8 +78,7 @@ export async function setupAuth(app: Express) {
   ) => {
     const user = {};
     updateUserSession(user, tokens);
-    // Temporarily disabled due to database connection issues
-    // await upsertUser(tokens.claims());
+    await upsertUser(tokens.claims());
     verified(null, user);
   };
 
@@ -96,15 +99,21 @@ export async function setupAuth(app: Express) {
   passport.serializeUser((user: Express.User, cb) => cb(null, user));
   passport.deserializeUser((user: Express.User, cb) => cb(null, user));
 
+  const getDomainStrategy = (hostname: string) => {
+    const domains = process.env.REPLIT_DOMAINS!.split(",");
+    const match = domains.find(d => d === hostname);
+    return `replitauth:${match || domains[0]}`;
+  };
+
   app.get("/api/login", (req, res, next) => {
-    passport.authenticate(`replitauth:${req.hostname}`, {
+    passport.authenticate(getDomainStrategy(req.hostname), {
       prompt: "login consent",
       scope: ["openid", "email", "profile", "offline_access"],
     })(req, res, next);
   });
 
   app.get("/api/callback", (req, res, next) => {
-    passport.authenticate(`replitauth:${req.hostname}`, {
+    passport.authenticate(getDomainStrategy(req.hostname), {
       successReturnToOrRedirect: "/",
       failureRedirect: "/api/login",
     })(req, res, next);
