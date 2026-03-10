@@ -82,10 +82,19 @@ export async function setupAuth(app: Express) {
     tokens: client.TokenEndpointResponse & client.TokenEndpointResponseHelpers,
     verified: passport.AuthenticateCallback
   ) => {
-    const user = {};
-    updateUserSession(user, tokens);
-    await upsertUser(tokens.claims());
-    verified(null, user);
+    try {
+      const user = {};
+      updateUserSession(user, tokens);
+      try {
+        await upsertUser(tokens.claims());
+      } catch (dbError) {
+        console.error("Failed to upsert user (non-fatal):", dbError);
+      }
+      verified(null, user);
+    } catch (error) {
+      console.error("Auth verify error:", error);
+      verified(error as Error);
+    }
   };
 
   for (const domain of process.env
@@ -121,8 +130,13 @@ export async function setupAuth(app: Express) {
   app.get("/api/callback", (req, res, next) => {
     passport.authenticate(getDomainStrategy(req.hostname), {
       successReturnToOrRedirect: "/",
-      failureRedirect: "/api/login",
-    })(req, res, next);
+    })(req, res, (err: any) => {
+      if (err) {
+        console.error("Callback auth error:", err.message || err);
+        return res.redirect("/");
+      }
+      next(err);
+    });
   });
 
   app.get("/api/logout", (req, res) => {

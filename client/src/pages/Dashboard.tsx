@@ -46,7 +46,7 @@ export default function Dashboard() {
           variant: "destructive",
         });
         setTimeout(() => {
-          window.top && window.top !== window ? window.top.location.href = "/api/login" : window.location.href = "/api/login";
+          window.location.href = "/api/login";
         }, 500);
         return;
       }
@@ -67,7 +67,7 @@ export default function Dashboard() {
         variant: "destructive",
       });
       setTimeout(() => {
-        window.top && window.top !== window ? window.top.location.href = "/api/login" : window.location.href = "/api/login";
+        window.location.href = "/api/login";
       }, 500);
       return;
     }

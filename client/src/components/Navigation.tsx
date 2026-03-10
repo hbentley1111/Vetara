@@ -21,11 +21,7 @@ export default function Navigation() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
-    if (window.top && window.top !== window) {
-      window.top.location.href = "/api/logout";
-    } else {
-      window.location.href = "/api/logout";
-    }
+    window.location.href = "/api/logout";
   };
 
   const navItems = [
