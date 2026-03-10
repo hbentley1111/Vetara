@@ -5,7 +5,11 @@ import { Link } from "wouter";
 
 export default function Landing() {
   const handleLogin = () => {
-    window.location.href = "/api/login";
+    if (window.top && window.top !== window) {
+      window.top.location.href = "/api/login";
+    } else {
+      window.location.href = "/api/login";
+    }
   };
 
   const handleViewDemo = () => {

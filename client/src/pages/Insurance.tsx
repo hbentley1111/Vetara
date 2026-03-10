@@ -67,7 +67,7 @@ export default function Insurance() {
           variant: "destructive",
         });
         setTimeout(() => {
-          window.location.href = "/api/login";
+          window.top && window.top !== window ? window.top.location.href = "/api/login" : window.location.href = "/api/login";
         }, 500);
         return;
       }
@@ -101,7 +101,7 @@ export default function Insurance() {
           variant: "destructive",
         });
         setTimeout(() => {
-          window.location.href = "/api/login";
+          window.top && window.top !== window ? window.top.location.href = "/api/login" : window.location.href = "/api/login";
         }, 500);
         return;
       }
@@ -125,7 +125,7 @@ export default function Insurance() {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-4">
         <h1 className="text-2xl font-bold mb-4">Please log in to access insurance features</h1>
-        <Button onClick={() => window.location.href = "/api/login"}>
+        <Button onClick={() => window.top && window.top !== window ? window.top.location.href = "/api/login" : window.location.href = "/api/login"}>
           Log In
         </Button>
       </div>

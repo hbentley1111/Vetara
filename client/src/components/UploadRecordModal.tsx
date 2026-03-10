@@ -101,7 +101,7 @@ export default function UploadRecordModal({ pets, onClose }: UploadRecordModalPr
           variant: "destructive",
         });
         setTimeout(() => {
-          window.location.href = "/api/login";
+          window.top && window.top !== window ? window.top.location.href = "/api/login" : window.location.href = "/api/login";
         }, 500);
         return;
       }
