@@ -57,40 +57,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/pets', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      // Mock pet data due to database connection issues
-      const pets = [
-        {
-          id: 1,
-          name: "Buddy",
-          species: "Dog",
-          breed: "Golden Retriever",
-          age: 3,
-          weight: 65,
-          color: "Golden",
-          microchipId: "982000123456789",
-          ownerId: userId,
-          emergencyContact: "555-0123",
-          insurancePolicyNumber: "PET-2024-001",
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        },
-        {
-          id: 2,
-          name: "Whiskers",
-          species: "Cat",
-          breed: "Persian",
-          age: 5,
-          weight: 12,
-          color: "White",
-          microchipId: "982000987654321",
-          ownerId: userId,
-          emergencyContact: "555-0456",
-          insurancePolicyNumber: "PET-2024-002",
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        }
-      ];
-      res.json(pets);
+      const userPets = await storage.getPetsByOwner(userId);
+      res.json(userPets);
     } catch (error) {
       console.error("Error fetching pets:", error);
       res.status(500).json({ message: "Failed to fetch pets" });
@@ -202,51 +170,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/medical-records', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      // Mock medical records data due to database connection issues
-      const records = [
-        {
-          id: 1,
-          petId: 1,
-          title: "Annual Checkup",
-          description: "Routine health examination and vaccinations",
-          recordType: "checkup",
-          visitDate: new Date("2024-01-15").toISOString(),
-          diagnosis: "Healthy",
-          treatment: "Routine vaccinations updated",
-          medications: "None",
-          cost: "150.00",
-          isEmergency: false,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          pet: {
-            id: 1,
-            name: "Buddy",
-            species: "Dog",
-            breed: "Golden Retriever"
-          }
-        },
-        {
-          id: 2,
-          petId: 2,
-          title: "Dental Cleaning",
-          description: "Professional dental cleaning and examination",
-          recordType: "checkup",
-          visitDate: new Date("2024-02-20").toISOString(),
-          diagnosis: "Mild tartar buildup",
-          treatment: "Professional cleaning performed",
-          medications: "Antibiotics prescribed",
-          cost: "280.00",
-          isEmergency: false,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          pet: {
-            id: 2,
-            name: "Whiskers",
-            species: "Cat",
-            breed: "Persian"
-          }
-        }
-      ];
+      const records = await storage.getMedicalRecordsByOwner(userId);
       res.json(records);
     } catch (error) {
       console.error("Error fetching medical records:", error);
@@ -300,6 +224,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error creating medical record:", error);
       res.status(400).json({ message: "Failed to create medical record" });
+    }
+  });
+
+  // Delete medical record
+  app.delete('/api/medical-records/:id', isAuthenticated, async (req: any, res) => {
+    try {
+      const recordId = parseInt(req.params.id);
+      const userId = req.user.claims.sub;
+      
+      const record = await storage.getMedicalRecordById(recordId);
+      if (!record) {
+        return res.status(404).json({ message: "Record not found" });
+      }
+
+      const pet = await storage.getPetById(record.petId);
+      if (!pet || pet.ownerId !== userId) {
+        return res.status(403).json({ message: "Not authorized to delete this record" });
+      }
+
+      await storage.deleteMedicalRecord(recordId);
+      res.json({ message: "Medical record deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting medical record:", error);
+      res.status(500).json({ message: "Failed to delete medical record" });
     }
   });
 
@@ -384,57 +332,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get top-rated providers (B+ and above)
   app.get('/api/service-providers/top-rated', async (req, res) => {
     try {
-      // Mock top-rated providers data due to database connection issues
-      const topProviders = [
-        {
-          id: 1,
-          businessName: "City Pet Clinic",
-          specialty: "General Practice",
-          city: "San Francisco",
-          rating: 4.8,
-          reviewCount: 152,
-          address: "123 Main St, San Francisco, CA",
-          phoneNumber: "555-0123",
-          user: {
-            id: "provider1",
-            firstName: "Dr. Sarah",
-            lastName: "Johnson",
-            email: "sarah@citypetclinic.com",
-            profileImageUrl: null
-          },
-          qualityMetrics: {
-            overallGrade: "A+",
-            patientSatisfaction: 4.8,
-            treatmentSuccess: 95.5,
-            communicationScore: 4.9,
-            facilityRating: 4.7
-          }
-        },
-        {
-          id: 2,
-          businessName: "Feline Health Center",
-          specialty: "Feline Medicine",
-          city: "San Francisco",
-          rating: 4.7,
-          reviewCount: 98,
-          address: "456 Oak Ave, San Francisco, CA",
-          phoneNumber: "555-0456",
-          user: {
-            id: "provider2",
-            firstName: "Dr. Michael",
-            lastName: "Chen",
-            email: "michael@felinehealthcenter.com",
-            profileImageUrl: null
-          },
-          qualityMetrics: {
-            overallGrade: "A",
-            patientSatisfaction: 4.7,
-            treatmentSuccess: 93.2,
-            communicationScore: 4.8,
-            facilityRating: 4.6
-          }
-        }
-      ];
+      const topProviders = await storage.getTopRatedProviders(10);
       res.json(topProviders);
     } catch (error) {
       console.error("Error fetching top-rated providers:", error);
@@ -496,38 +394,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Provider search and ranking routes
   app.get('/api/providers/top-rated', async (req, res) => {
-    // Development fallback data since DB endpoint is disabled
-    const mockProviders = [
-      {
-        id: 1,
-        businessName: "Oakwood Veterinary Clinic",
-        city: "San Francisco",
-        user: { firstName: "Sarah", lastName: "Johnson" },
-        specialties: ["Emergency Medicine", "Surgery"],
-        qualityMetrics: {
-          overallRating: "4.8",
-          totalPatients: "1250",
-          successRate: "95.2",
-          communicationRating: "4.9",
-          recommendationRate: "94.8"
-        }
-      },
-      {
-        id: 2,
-        businessName: "Marina Pet Hospital",
-        city: "San Francisco",
-        user: { firstName: "Michael", lastName: "Chen" },
-        specialties: ["Cardiology", "Internal Medicine"],
-        qualityMetrics: {
-          overallRating: "4.7",
-          totalPatients: "890",
-          successRate: "92.8",
-          communicationRating: "4.8",
-          recommendationRate: "91.5"
-        }
-      }
-    ];
-    res.json(mockProviders);
+    try {
+      const topProviders = await storage.getTopRatedProviders(10);
+      res.json(topProviders);
+    } catch (error) {
+      console.error("Error fetching top-rated providers:", error);
+      res.status(500).json({ message: "Failed to fetch top-rated providers" });
+    }
   });
 
   app.get('/api/providers/by-specialty/:specialty', async (req, res) => {
@@ -543,24 +416,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   app.get('/api/providers/search-by-quality', async (req, res) => {
-    // Development fallback data since DB endpoint is disabled
-    const mockSearchResults = [
-      {
-        id: 3,
-        businessName: "Bay Area Animal Hospital",
-        city: "Oakland",
-        user: { firstName: "Jessica", lastName: "Liu" },
-        specialties: ["Dentistry", "Surgery"],
-        qualityMetrics: {
-          overallRating: "4.6",
-          totalPatients: "675",
-          successRate: "89.3",
-          communicationRating: "4.7",
-          recommendationRate: "88.2"
-        }
-      }
-    ];
-    res.json(mockSearchResults);
+    try {
+      const { city, minRating, specialty } = req.query;
+      const providers = await storage.searchProvidersByQuality({
+        city: city as string,
+        minRating: minRating ? parseFloat(minRating as string) : undefined,
+        specialty: specialty as string,
+      });
+      res.json(providers);
+    } catch (error) {
+      console.error("Error searching providers by quality:", error);
+      res.status(500).json({ message: "Failed to search providers" });
+    }
   });
 
   // Insurance routes
@@ -681,66 +548,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/appointments', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      // Mock appointments data due to database connection issues
-      const appointments = [
-        {
-          id: 1,
-          petId: 1,
-          providerId: 1,
-          scheduledDate: new Date("2024-07-15T10:00:00").toISOString(),
-          appointmentType: "checkup",
-          status: "scheduled",
-          notes: "Annual wellness exam",
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          pet: {
-            id: 1,
-            name: "Buddy",
-            species: "Dog",
-            breed: "Golden Retriever"
-          },
-          provider: {
-            id: 1,
-            businessName: "City Pet Clinic",
-            specialty: "General Practice",
-            user: {
-              id: "provider1",
-              firstName: "Dr. Sarah",
-              lastName: "Johnson",
-              email: "sarah@citypetclinic.com"
-            }
-          }
-        },
-        {
-          id: 2,
-          petId: 2,
-          providerId: 2,
-          scheduledDate: new Date("2024-07-20T14:30:00").toISOString(),
-          appointmentType: "vaccination",
-          status: "scheduled",
-          notes: "Booster shots due",
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          pet: {
-            id: 2,
-            name: "Whiskers",
-            species: "Cat",
-            breed: "Persian"
-          },
-          provider: {
-            id: 2,
-            businessName: "Feline Health Center",
-            specialty: "Feline Medicine",
-            user: {
-              id: "provider2",
-              firstName: "Dr. Michael",
-              lastName: "Chen",
-              email: "michael@felinehealthcenter.com"
-            }
-          }
-        }
-      ];
-      res.json(appointments);
+      const userAppointments = await storage.getAppointmentsByOwner(userId);
+      res.json(userAppointments);
     } catch (error) {
       console.error("Error fetching appointments:", error);
       res.status(500).json({ message: "Failed to fetch appointments" });
@@ -777,12 +586,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = req.user.claims.sub;
       
-      // Mock dashboard stats due to database connection issues
+      const userPets = await storage.getPetsByOwner(userId);
+      const userAppointments = await storage.getAppointmentsByOwner(userId);
+      const userRecords = await storage.getMedicalRecordsByOwner(userId);
+
+      const now = new Date();
+      const upcomingAppointments = userAppointments.filter(
+        (a: any) => new Date(a.scheduledDate) > now && a.status === 'scheduled'
+      ).length;
+
+      const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const recentCheckups = userRecords.filter(
+        (r: any) => r.recordType === 'checkup' && new Date(r.visitDate) > thirtyDaysAgo
+      ).length;
+
+      const dueVaccinations = userRecords.filter(
+        (r: any) => r.recordType === 'vaccination' && r.followUpDate && new Date(r.followUpDate) <= new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
+      ).length;
+
       const stats = {
-        totalPets: 2,
-        upcomingAppointments: 2,
-        recentCheckups: 1,
-        dueVaccinations: 1,
+        totalPets: userPets.length,
+        upcomingAppointments,
+        recentCheckups,
+        dueVaccinations: dueVaccinations || 0,
         trustedProviders: 5,
       };
 
@@ -881,18 +707,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error creating provider subscription:", error);
       res.status(500).json({ message: "Failed to create subscription" });
-    }
-  });
-
-  // Seed demo data endpoint
-  app.post('/api/seed-demo-data', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      await seedDemoData(userId);
-      res.json({ message: "Demo data seeded successfully" });
-    } catch (error) {
-      console.error("Error seeding demo data:", error);
-      res.status(500).json({ message: "Failed to seed demo data" });
     }
   });
 

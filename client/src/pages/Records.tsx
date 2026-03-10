@@ -94,11 +94,12 @@ export default function Records() {
     return null;
   }
 
-  // Extract the actual medical records from the nested structure
-  const medicalRecords = (records as any[]).map((item: any) => ({
-    ...item.medical_records,
-    pet: item.pet
-  }));
+  const medicalRecords = (records as any[]).map((item: any) => {
+    if (item.medical_records) {
+      return { ...item.medical_records, pet: item.pets };
+    }
+    return item;
+  });
 
   const filteredRecords = medicalRecords.filter((record: any) => {
     const matchesSearch = 
@@ -356,6 +357,15 @@ export default function Records() {
                       <Button 
                         variant="outline" 
                         size="sm"
+                        onClick={() => {
+                          const recordSummary = `${record.pet?.name || 'Pet'} - ${record.title} (${formatDate(record.visitDate)})`;
+                          navigator.clipboard.writeText(recordSummary).then(() => {
+                            toast({
+                              title: "Copied",
+                              description: "Record summary copied to clipboard",
+                            });
+                          });
+                        }}
                         className="border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white"
                       >
                         <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
