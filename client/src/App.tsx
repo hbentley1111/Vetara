@@ -14,6 +14,7 @@ import Providers from "@/pages/Providers";
 import ProviderPortal from "@/pages/ProviderPortal";
 import ProviderGrading from "@/pages/ProviderGrading";
 import Insurance from "@/pages/Insurance";
+import MedicalSearch from "@/pages/MedicalSearch";
 
 function Router() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -30,6 +31,7 @@ function Router() {
           <Route path="/providers" component={Providers} />
           <Route path="/provider-grading" component={ProviderGrading} />
           <Route path="/insurance" component={Insurance} />
+          <Route path="/medical-search" component={MedicalSearch} />
           <Route path="/provider-portal" component={ProviderPortal} />
         </>
       )}

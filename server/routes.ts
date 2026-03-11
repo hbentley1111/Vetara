@@ -718,6 +718,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Medical search - PubMed proxy
+  app.get('/api/medical-search', isAuthenticated, async (req: any, res) => {
+    try {
+      const query = req.query.q as string;
+      if (!query || query.trim().length === 0) {
+        return res.status(400).json({ message: "Search query is required" });
+      }
+
+      const searchUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=${encodeURIComponent(query)}&retmode=json&retmax=15&sort=relevance`;
+      const searchRes = await fetch(searchUrl);
+      const searchData = await searchRes.json();
+
+      const ids = searchData?.esearchresult?.idlist || [];
+      const totalResults = parseInt(searchData?.esearchresult?.count || "0");
+
+      if (ids.length === 0) {
+        return res.json({ articles: [], totalResults: 0 });
+      }
+
+      const summaryUrl = `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=pubmed&id=${ids.join(",")}&retmode=json`;
+      const summaryRes = await fetch(summaryUrl);
+      const summaryData = await summaryRes.json();
+
+      const articles = ids.map((id: string) => {
+        const item = summaryData?.result?.[id];
+        if (!item) return null;
+        return {
+          uid: item.uid,
+          title: item.title || "Untitled",
+          authors: item.authors?.map((a: any) => a.name) || [],
+          source: item.source || "",
+          pubdate: item.pubdate || "",
+          description: item.description || item.sorttitle || "",
+          pubtype: item.pubtype || [],
+          volume: item.volume || "",
+          issue: item.issue || "",
+          pages: item.pages || "",
+        };
+      }).filter(Boolean);
+
+      res.json({ articles, totalResults });
+    } catch (error) {
+      console.error("Error searching PubMed:", error);
+      res.status(500).json({ message: "Failed to search medical literature" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
