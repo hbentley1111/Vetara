@@ -122,18 +122,17 @@ export default function MedicalSearch() {
     setIsStreaming(true);
     setStreamingContent("");
 
+    const now = new Date().toISOString();
+    const userMsg: Message = { id: Date.now(), conversationId, role: "user", content, createdAt: now };
+
     queryClient.setQueryData<Conversation>(
       ["/api/conversations", conversationId],
-      (old) => {
-        if (!old) return old;
-        return {
-          ...old,
-          messages: [
-            ...(old.messages || []),
-            { id: Date.now(), conversationId, role: "user", content, createdAt: new Date().toISOString() },
-          ],
-        };
-      }
+      (old) => ({
+        id: conversationId,
+        title: old?.title || content.slice(0, 40),
+        createdAt: old?.createdAt || now,
+        messages: [...(old?.messages || []), userMsg],
+      })
     );
 
     try {
@@ -175,18 +174,16 @@ export default function MedicalSearch() {
         }
       }
 
+      const assistantMsg: Message = { id: Date.now() + 1, conversationId, role: "assistant", content: accumulated, createdAt: new Date().toISOString() };
+
       queryClient.setQueryData<Conversation>(
         ["/api/conversations", conversationId],
-        (old) => {
-          if (!old) return old;
-          return {
-            ...old,
-            messages: [
-              ...(old.messages || []),
-              { id: Date.now() + 1, conversationId, role: "assistant", content: accumulated, createdAt: new Date().toISOString() },
-            ],
-          };
-        }
+        (old) => ({
+          id: conversationId,
+          title: old?.title || content.slice(0, 40),
+          createdAt: old?.createdAt || now,
+          messages: [...(old?.messages || []), assistantMsg],
+        })
       );
 
       setIsStreaming(false);
