@@ -175,11 +175,27 @@ export default function MedicalSearch() {
         }
       }
 
-      queryClient.invalidateQueries({ queryKey: ["/api/conversations", conversationId] });
+      queryClient.setQueryData<Conversation>(
+        ["/api/conversations", conversationId],
+        (old) => {
+          if (!old) return old;
+          return {
+            ...old,
+            messages: [
+              ...(old.messages || []),
+              { id: Date.now() + 1, conversationId, role: "assistant", content: accumulated, createdAt: new Date().toISOString() },
+            ],
+          };
+        }
+      );
+
+      setIsStreaming(false);
+      setStreamingContent("");
+
+      await queryClient.invalidateQueries({ queryKey: ["/api/conversations", conversationId] });
       queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
     } catch (error) {
       console.error("Failed to send message:", error);
-    } finally {
       setIsStreaming(false);
       setStreamingContent("");
     }
