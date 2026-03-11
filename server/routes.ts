@@ -9,6 +9,7 @@ import { z } from "zod";
 import multer from "multer";
 import path from "path";
 import QRCode from "qrcode";
+import { registerChatRoutes } from "./replit_integrations/chat/routes";
 
 // Configure multer for file uploads
 const upload = multer({
@@ -764,6 +765,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to search medical literature" });
     }
   });
+
+  registerChatRoutes(app);
 
   const httpServer = createServer(app);
   return httpServer;

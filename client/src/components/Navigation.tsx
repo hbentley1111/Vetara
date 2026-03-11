@@ -31,7 +31,7 @@ export default function Navigation() {
     { path: "/providers", label: "Service Providers", icon: "providers" },
     { path: "/provider-grading", label: "Provider Ratings", icon: "grading" },
     { path: "/insurance", label: "Insurance", icon: "insurance" },
-    { path: "/medical-search", label: "Medical Search", icon: "search" },
+    { path: "/medical-search", label: "AI Vet Chat", icon: "search" },
     ...(user?.userType !== 'pet_owner' ? [{ path: "/provider-portal", label: "Provider Portal", icon: "portal" }] : []),
   ];
 

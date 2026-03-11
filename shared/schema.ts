@@ -652,3 +652,6 @@ export type ProviderPerformanceHistory = typeof providerPerformanceHistory.$infe
 
 export type InsertProviderRecognitions = z.infer<typeof insertProviderRecognitionsSchema>;
 export type ProviderRecognitions = typeof providerRecognitions.$inferSelect;
+
+export { conversations, messages, insertConversationSchema, insertMessageSchema } from "./models/chat";
+export type { Conversation, InsertConversation, Message, InsertMessage } from "./models/chat";

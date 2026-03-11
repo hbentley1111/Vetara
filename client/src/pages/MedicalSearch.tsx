@@ -1,346 +1,436 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { BackToDashboard } from "@/components/BackToDashboard";
 import Navigation from "@/components/Navigation";
+import { apiRequest } from "@/lib/queryClient";
 import {
-  Search,
-  BookOpen,
-  ExternalLink,
-  Stethoscope,
-  Info,
+  Send,
+  Bot,
+  User,
+  Plus,
+  Trash2,
+  MessageSquare,
   Loader2,
   Sparkles,
+  Stethoscope,
+  PawPrint,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
-const quickSearchTopics = [
-  { label: "Dog Vaccinations", query: "canine vaccination schedule recommendations" },
-  { label: "Cat Dental Care", query: "feline dental disease prevention treatment" },
-  { label: "Pet Nutrition", query: "companion animal nutrition dietary guidelines" },
-  { label: "Flea & Tick Prevention", query: "flea tick prevention dogs cats veterinary" },
-  { label: "Spay/Neuter Benefits", query: "spay neuter health benefits companion animals" },
-  { label: "Puppy Health", query: "puppy health care first year veterinary" },
-  { label: "Senior Pet Care", query: "geriatric veterinary medicine elderly pets" },
-  { label: "Pet Allergies", query: "pet allergies dermatitis veterinary treatment" },
-  { label: "Heartworm Prevention", query: "heartworm prevention treatment dogs cats" },
-  { label: "Anxiety in Pets", query: "separation anxiety pets veterinary behavioral" },
+interface Message {
+  id: number;
+  conversationId: number;
+  role: string;
+  content: string;
+  createdAt: string;
+}
+
+interface Conversation {
+  id: number;
+  title: string;
+  createdAt: string;
+  messages?: Message[];
+}
+
+const suggestedQuestions = [
+  { label: "Dog Vaccinations", prompt: "What vaccinations does my puppy need in the first year?" },
+  { label: "Cat Dental Care", prompt: "How do I care for my cat's teeth and prevent dental disease?" },
+  { label: "Pet Nutrition", prompt: "What should I look for in a high-quality dog food?" },
+  { label: "Flea Prevention", prompt: "What's the best approach to flea and tick prevention for my pets?" },
+  { label: "Senior Pet Care", prompt: "My dog is getting older. What health changes should I watch for?" },
+  { label: "Pet Allergies", prompt: "My cat keeps scratching. Could it be allergies? What should I do?" },
 ];
+
+function formatMarkdown(text: string): string {
+  let html = text
+    .replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>')
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/^### (.*$)/gm, '<h4 class="text-sm font-semibold text-slate-200 mt-3 mb-1">$1</h4>')
+    .replace(/^## (.*$)/gm, '<h3 class="text-base font-semibold text-slate-200 mt-3 mb-1">$1</h3>')
+    .replace(/^# (.*$)/gm, '<h2 class="text-lg font-bold text-slate-100 mt-3 mb-1">$1</h2>')
+    .replace(/^[\-\*] (.*$)/gm, '<li class="ml-4 list-disc text-slate-300">$1</li>')
+    .replace(/^\d+\. (.*$)/gm, '<li class="ml-4 list-decimal text-slate-300">$1</li>')
+    .replace(/\n\n/g, '<br/><br/>')
+    .replace(/\n/g, '<br/>');
+  return html;
+}
 
 export default function MedicalSearch() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
-  const [searchQuery, setSearchQuery] = useState("");
-  const [activeQuery, setActiveQuery] = useState("");
+  const queryClient = useQueryClient();
+  const [activeConversationId, setActiveConversationId] = useState<number | null>(null);
+  const [inputMessage, setInputMessage] = useState("");
+  const [streamingContent, setStreamingContent] = useState("");
+  const [isStreaming, setIsStreaming] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const { data: searchResults, isLoading: searchLoading, isFetching } = useQuery<any>({
-    queryKey: ["/api/medical-search", activeQuery],
-    queryFn: async () => {
-      if (!activeQuery) return null;
-      const res = await fetch(`/api/medical-search?q=${encodeURIComponent(activeQuery)}`);
-      if (!res.ok) throw new Error("Search failed");
-      return res.json();
-    },
-    enabled: !!activeQuery,
-    staleTime: 5 * 60 * 1000,
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [streamingContent, scrollToBottom]);
+
+  const { data: conversations = [] } = useQuery<Conversation[]>({
+    queryKey: ["/api/conversations"],
   });
 
-  const handleSearch = (e?: React.FormEvent) => {
-    e?.preventDefault();
-    if (searchQuery.trim()) {
-      setActiveQuery(searchQuery.trim() + " veterinary");
+  const { data: activeConversation, isLoading: conversationLoading } = useQuery<Conversation>({
+    queryKey: ["/api/conversations", activeConversationId],
+    enabled: !!activeConversationId,
+  });
+
+  useEffect(() => {
+    if (activeConversation?.messages?.length) {
+      scrollToBottom();
+    }
+  }, [activeConversation, scrollToBottom]);
+
+  const createConversation = useMutation({
+    mutationFn: async (title: string) => {
+      const res = await apiRequest("POST", "/api/conversations", { title });
+      return res.json();
+    },
+    onSuccess: (data: Conversation) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
+      setActiveConversationId(data.id);
+    },
+  });
+
+  const deleteConversation = useMutation({
+    mutationFn: async (id: number) => {
+      await apiRequest("DELETE", `/api/conversations/${id}`);
+    },
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
+      if (activeConversationId === id) {
+        setActiveConversationId(null);
+      }
+    },
+  });
+
+  const sendMessage = async (content: string, conversationId: number) => {
+    setIsStreaming(true);
+    setStreamingContent("");
+
+    queryClient.setQueryData<Conversation>(
+      ["/api/conversations", conversationId],
+      (old) => {
+        if (!old) return old;
+        return {
+          ...old,
+          messages: [
+            ...(old.messages || []),
+            { id: Date.now(), conversationId, role: "user", content, createdAt: new Date().toISOString() },
+          ],
+        };
+      }
+    );
+
+    try {
+      const response = await fetch(`/api/conversations/${conversationId}/messages`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content }),
+      });
+
+      const reader = response.body?.getReader();
+      const decoder = new TextDecoder();
+      let accumulated = "";
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const text = decoder.decode(value, { stream: true });
+          const lines = text.split("\n");
+
+          for (const line of lines) {
+            if (line.startsWith("data: ")) {
+              try {
+                const data = JSON.parse(line.slice(6));
+                if (data.done) {
+                  break;
+                }
+                if (data.content) {
+                  accumulated += data.content;
+                  setStreamingContent(accumulated);
+                }
+                if (data.error) {
+                  console.error("Stream error:", data.error);
+                }
+              } catch {}
+            }
+          }
+        }
+      }
+
+      queryClient.invalidateQueries({ queryKey: ["/api/conversations", conversationId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
+    } catch (error) {
+      console.error("Failed to send message:", error);
+    } finally {
+      setIsStreaming(false);
+      setStreamingContent("");
     }
   };
 
-  const handleQuickSearch = (query: string) => {
-    setSearchQuery(query.replace(" veterinary", ""));
-    setActiveQuery(query);
+  const handleSend = async (e?: React.FormEvent) => {
+    e?.preventDefault();
+    const content = inputMessage.trim();
+    if (!content || isStreaming) return;
+    setInputMessage("");
+
+    if (!activeConversationId) {
+      const title = content.length > 40 ? content.slice(0, 40) + "..." : content;
+      const res = await apiRequest("POST", "/api/conversations", { title });
+      const conv: Conversation = await res.json();
+      queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
+      setActiveConversationId(conv.id);
+      await sendMessage(content, conv.id);
+    } else {
+      await sendMessage(content, activeConversationId);
+    }
+  };
+
+  const handleSuggestion = async (prompt: string) => {
+    setInputMessage("");
+    const title = prompt.length > 40 ? prompt.slice(0, 40) + "..." : prompt;
+    const res = await apiRequest("POST", "/api/conversations", { title });
+    const conv: Conversation = await res.json();
+    queryClient.invalidateQueries({ queryKey: ["/api/conversations"] });
+    setActiveConversationId(conv.id);
+    await sendMessage(prompt, conv.id);
   };
 
   if (authLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+      <div className="flex items-center justify-center min-h-screen bg-slate-950">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cyan-400"></div>
       </div>
     );
   }
 
   if (!isAuthenticated) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4">
-        <h1 className="text-2xl font-bold mb-4">Please log in to access medical search</h1>
-        <Button onClick={() => window.location.href = "/api/login"}>Log In</Button>
+      <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-slate-950">
+        <h1 className="text-2xl font-bold mb-4 text-slate-100">Please log in to access the AI Vet Assistant</h1>
+        <Button onClick={() => window.location.href = "/api/login"} className="bg-gradient-to-r from-cyan-500 to-blue-500">Log In</Button>
       </div>
     );
   }
 
-  const isSearching = searchLoading || isFetching;
-  const articles = searchResults?.articles || [];
-  const totalResults = searchResults?.totalResults || 0;
+  const messages = activeConversation?.messages || [];
 
   return (
-    <div className="min-h-screen bg-slate-950">
-      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-black">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(34,211,238,0.1),transparent_50%)]"></div>
+    <div className="min-h-screen bg-slate-950 flex flex-col">
+      <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-950 to-black pointer-events-none">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(34,211,238,0.05),transparent_50%)]"></div>
       </div>
 
-      <div className="relative">
+      <div className="relative flex flex-col h-screen">
         <Navigation />
-        <div className="container mx-auto p-6 space-y-8">
-          <BackToDashboard />
 
-          <div className="flex items-center gap-3 mb-4">
-            <Stethoscope className="h-8 w-8 text-cyan-400" />
-            <div>
-              <h1 className="text-3xl font-bold text-slate-100">Veterinary Medical Search</h1>
-              <p className="text-slate-400">
-                Search peer-reviewed veterinary research from the National Library of Medicine
-              </p>
+        <div className="flex flex-1 overflow-hidden">
+          <div className={`${sidebarOpen ? "w-72" : "w-0"} transition-all duration-300 bg-slate-900/80 border-r border-slate-800 flex flex-col overflow-hidden`}>
+            <div className="p-3 border-b border-slate-800">
+              <Button
+                onClick={() => {
+                  setActiveConversationId(null);
+                  inputRef.current?.focus();
+                }}
+                className="w-full bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white"
+                size="sm"
+              >
+                <Plus className="h-4 w-4 mr-2" /> New Chat
+              </Button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-2 space-y-1">
+              {conversations.map((conv) => (
+                <div
+                  key={conv.id}
+                  className={`group flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer transition-colors ${
+                    activeConversationId === conv.id
+                      ? "bg-cyan-500/20 text-cyan-300"
+                      : "text-slate-400 hover:bg-slate-800/50 hover:text-slate-200"
+                  }`}
+                  onClick={() => setActiveConversationId(conv.id)}
+                >
+                  <MessageSquare className="h-4 w-4 flex-shrink-0" />
+                  <span className="text-sm truncate flex-1">{conv.title}</span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteConversation.mutate(conv.id);
+                    }}
+                    className="opacity-0 group-hover:opacity-100 hover:text-red-400 transition-opacity"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ))}
+              {conversations.length === 0 && (
+                <p className="text-xs text-slate-600 text-center py-4">No conversations yet</p>
+              )}
             </div>
           </div>
 
-          <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-slate-200">
-                <Search className="h-5 w-5 text-cyan-400" />
-                Search Medical Literature
-              </CardTitle>
-              <CardDescription className="text-slate-400">
-                Search PubMed's database of veterinary and animal health research articles
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <form onSubmit={handleSearch} className="flex gap-3">
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-slate-800 border border-slate-700 rounded-r-md p-1 text-slate-400 hover:text-slate-200 transition-colors"
+            style={{ left: sidebarOpen ? "288px" : "0px" }}
+          >
+            {sidebarOpen ? <ChevronLeft className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          </button>
+
+          <div className="flex-1 flex flex-col min-w-0">
+            <div className="flex items-center gap-2 px-6 py-3 border-b border-slate-800 bg-slate-900/50">
+              <BackToDashboard />
+              <div className="h-4 w-px bg-slate-700 mx-1"></div>
+              <Stethoscope className="h-5 w-5 text-cyan-400" />
+              <h1 className="text-lg font-semibold text-slate-100">AI Vet Health Assistant</h1>
+              <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs ml-2">
+                <Sparkles className="h-3 w-3 mr-1" /> AI Powered
+              </Badge>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-4 py-6">
+              {!activeConversationId && messages.length === 0 && !isStreaming ? (
+                <div className="flex flex-col items-center justify-center h-full max-w-2xl mx-auto space-y-8">
+                  <div className="text-center space-y-3">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center mx-auto mb-4">
+                      <PawPrint className="h-8 w-8 text-white" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-slate-100">PetCare Pro AI Assistant</h2>
+                    <p className="text-slate-400 max-w-md">
+                      Ask me anything about your pet's health, nutrition, vaccinations, behavior, or wellness. I'm here to help!
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg">
+                    {suggestedQuestions.map((q) => (
+                      <button
+                        key={q.label}
+                        onClick={() => handleSuggestion(q.prompt)}
+                        disabled={isStreaming}
+                        className="text-left p-3 rounded-xl bg-slate-800/50 border border-slate-700 hover:border-cyan-500/50 hover:bg-slate-800 transition-all text-sm group"
+                      >
+                        <span className="text-cyan-400 font-medium group-hover:text-cyan-300">{q.label}</span>
+                        <p className="text-slate-500 text-xs mt-1 line-clamp-2">{q.prompt}</p>
+                      </button>
+                    ))}
+                  </div>
+
+                  <p className="text-xs text-slate-600 text-center max-w-sm">
+                    This AI assistant provides general pet health information. Always consult a licensed veterinarian for medical advice.
+                  </p>
+                </div>
+              ) : (
+                <div className="max-w-3xl mx-auto space-y-6">
+                  {messages.map((msg) => (
+                    <div
+                      key={msg.id}
+                      className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                    >
+                      {msg.role === "assistant" && (
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center flex-shrink-0 mt-1">
+                          <Bot className="h-4 w-4 text-white" />
+                        </div>
+                      )}
+                      <div
+                        className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                          msg.role === "user"
+                            ? "bg-gradient-to-r from-cyan-500 to-blue-500 text-white"
+                            : "bg-slate-800/80 border border-slate-700 text-slate-200"
+                        }`}
+                      >
+                        {msg.role === "user" ? (
+                          <p className="text-sm whitespace-pre-wrap">{msg.content}</p>
+                        ) : (
+                          <div
+                            className="text-sm leading-relaxed prose-invert"
+                            dangerouslySetInnerHTML={{ __html: formatMarkdown(msg.content) }}
+                          />
+                        )}
+                      </div>
+                      {msg.role === "user" && (
+                        <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center flex-shrink-0 mt-1">
+                          <User className="h-4 w-4 text-slate-300" />
+                        </div>
+                      )}
+                    </div>
+                  ))}
+
+                  {isStreaming && streamingContent && (
+                    <div className="flex gap-3 justify-start">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center flex-shrink-0 mt-1">
+                        <Bot className="h-4 w-4 text-white" />
+                      </div>
+                      <div className="max-w-[80%] rounded-2xl px-4 py-3 bg-slate-800/80 border border-slate-700 text-slate-200">
+                        <div
+                          className="text-sm leading-relaxed prose-invert"
+                          dangerouslySetInnerHTML={{ __html: formatMarkdown(streamingContent) }}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {isStreaming && !streamingContent && (
+                    <div className="flex gap-3 justify-start">
+                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center flex-shrink-0 mt-1">
+                        <Bot className="h-4 w-4 text-white" />
+                      </div>
+                      <div className="rounded-2xl px-4 py-3 bg-slate-800/80 border border-slate-700">
+                        <div className="flex items-center gap-2 text-slate-400">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span className="text-sm">Thinking...</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div ref={messagesEndRef} />
+                </div>
+              )}
+            </div>
+
+            <div className="border-t border-slate-800 bg-slate-900/50 px-4 py-3">
+              <form onSubmit={handleSend} className="max-w-3xl mx-auto flex gap-3">
                 <Input
-                  placeholder="E.g., dog hip dysplasia treatment, feline kidney disease, parrot nutrition..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="flex-1 bg-slate-700/50 border-slate-600 text-slate-100 placeholder:text-slate-500 focus:border-cyan-500 focus:ring-cyan-500/20"
+                  ref={inputRef}
+                  placeholder="Ask about your pet's health..."
+                  value={inputMessage}
+                  onChange={(e) => setInputMessage(e.target.value)}
+                  disabled={isStreaming}
+                  className="flex-1 bg-slate-800/50 border-slate-700 text-slate-100 placeholder:text-slate-500 focus:border-cyan-500 focus:ring-cyan-500/20 rounded-xl"
                 />
                 <Button
                   type="submit"
-                  disabled={!searchQuery.trim() || isSearching}
-                  className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white px-6"
+                  disabled={!inputMessage.trim() || isStreaming}
+                  className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white rounded-xl px-4"
                 >
-                  {isSearching ? (
+                  {isStreaming ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    <Search className="h-4 w-4" />
+                    <Send className="h-4 w-4" />
                   )}
-                  <span className="ml-2">Search</span>
                 </Button>
               </form>
-
-              <div>
-                <p className="text-xs text-slate-500 mb-2">Quick searches:</p>
-                <div className="flex flex-wrap gap-2">
-                  {quickSearchTopics.map((topic) => (
-                    <Badge
-                      key={topic.label}
-                      className="cursor-pointer bg-slate-700/50 text-slate-300 border-slate-600 hover:bg-cyan-500/20 hover:text-cyan-300 hover:border-cyan-500/30 transition-colors"
-                      onClick={() => handleQuickSearch(topic.query)}
-                    >
-                      {topic.label}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {activeQuery && !isSearching && articles.length > 0 && (
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-slate-400">
-                Showing {articles.length} of {totalResults.toLocaleString()} results for "{activeQuery.replace(' veterinary', '')}"
+              <p className="text-center text-xs text-slate-600 mt-2">
+                AI responses are informational only. Consult a veterinarian for medical advice.
               </p>
-              <a
-                href={`https://pubmed.ncbi.nlm.nih.gov/?term=${encodeURIComponent(activeQuery)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-cyan-400 hover:text-cyan-300 flex items-center gap-1"
-              >
-                View all on PubMed <ExternalLink className="h-3 w-3" />
-              </a>
             </div>
-          )}
-
-          {isSearching && (
-            <div className="flex flex-col items-center justify-center py-16 space-y-4">
-              <Loader2 className="h-10 w-10 text-cyan-400 animate-spin" />
-              <p className="text-slate-400">Searching medical literature...</p>
-            </div>
-          )}
-
-          {activeQuery && !isSearching && articles.length === 0 && (
-            <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
-              <CardContent className="flex flex-col items-center justify-center py-12">
-                <Search className="h-12 w-12 text-slate-600 mb-4" />
-                <p className="text-slate-300 text-lg font-medium">No results found</p>
-                <p className="text-slate-500 text-sm mt-1">Try different keywords or a broader search term</p>
-              </CardContent>
-            </Card>
-          )}
-
-          {!isSearching && articles.length > 0 && (
-            <div className="space-y-4">
-              {articles.map((article: any) => (
-                <Card key={article.uid} className="bg-slate-800/50 border-slate-700 backdrop-blur-sm hover:border-slate-600 transition-colors">
-                  <CardContent className="p-5">
-                    <div className="space-y-3">
-                      <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1">
-                          <a
-                            href={`https://pubmed.ncbi.nlm.nih.gov/${article.uid}/`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-lg font-medium text-cyan-300 hover:text-cyan-200 transition-colors leading-snug"
-                          >
-                            {article.title}
-                          </a>
-                        </div>
-                        <a
-                          href={`https://pubmed.ncbi.nlm.nih.gov/${article.uid}/`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-shrink-0"
-                        >
-                          <Button variant="outline" size="sm" className="bg-slate-700/50 border-slate-600 text-slate-300 hover:bg-slate-600/50 hover:text-white">
-                            <ExternalLink className="h-3 w-3 mr-1" />
-                            Read
-                          </Button>
-                        </a>
-                      </div>
-
-                      <div className="flex flex-wrap items-center gap-2 text-sm text-slate-400">
-                        {article.authors && article.authors.length > 0 && (
-                          <span>{article.authors.slice(0, 3).join(", ")}{article.authors.length > 3 ? " et al." : ""}</span>
-                        )}
-                        {article.source && (
-                          <>
-                            <span className="text-slate-600">|</span>
-                            <span className="text-slate-300 font-medium">{article.source}</span>
-                          </>
-                        )}
-                        {article.pubdate && (
-                          <>
-                            <span className="text-slate-600">|</span>
-                            <span>{article.pubdate}</span>
-                          </>
-                        )}
-                      </div>
-
-                      {article.description && (
-                        <p className="text-sm text-slate-400 leading-relaxed line-clamp-3">
-                          {article.description}
-                        </p>
-                      )}
-
-                      <div className="flex items-center gap-2">
-                        <Badge className="bg-blue-500/20 text-blue-300 border-blue-500/30 text-xs">
-                          PMID: {article.uid}
-                        </Badge>
-                        {article.pubtype && article.pubtype.length > 0 && article.pubtype.map((type: string, i: number) => (
-                          <Badge key={i} className="bg-slate-700/50 text-slate-400 border-slate-600 text-xs">
-                            {type}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-
-          {!activeQuery && (
-            <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-slate-200">
-                  <Info className="h-5 w-5 text-cyan-400" />
-                  About This Resource
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-3">
-                    <h3 className="font-semibold text-slate-200 flex items-center gap-2">
-                      <BookOpen className="h-4 w-4 text-cyan-400" />
-                      What You Can Find
-                    </h3>
-                    <ul className="space-y-2 text-sm text-slate-400">
-                      <li className="flex items-start gap-2">
-                        <span className="text-cyan-400 mt-0.5">&#8226;</span>
-                        Peer-reviewed veterinary research articles
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-cyan-400 mt-0.5">&#8226;</span>
-                        Treatment guidelines and clinical studies
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-cyan-400 mt-0.5">&#8226;</span>
-                        Preventive care and nutrition information
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-cyan-400 mt-0.5">&#8226;</span>
-                        Disease diagnosis and management protocols
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-cyan-400 mt-0.5">&#8226;</span>
-                        Drug safety and pharmaceutical research
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="space-y-3">
-                    <h3 className="font-semibold text-slate-200 flex items-center gap-2">
-                      <Sparkles className="h-4 w-4 text-cyan-400" />
-                      Tips for Better Results
-                    </h3>
-                    <ul className="space-y-2 text-sm text-slate-400">
-                      <li className="flex items-start gap-2">
-                        <span className="text-cyan-400 mt-0.5">&#8226;</span>
-                        Include the species name (e.g., "canine" or "feline")
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-cyan-400 mt-0.5">&#8226;</span>
-                        Use medical terms when possible (e.g., "dermatitis" instead of "skin rash")
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-cyan-400 mt-0.5">&#8226;</span>
-                        Combine condition + treatment (e.g., "feline diabetes insulin therapy")
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-cyan-400 mt-0.5">&#8226;</span>
-                        Try the quick search badges above for common topics
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-cyan-400 mt-0.5">&#8226;</span>
-                        Click "Read" to see the full article on PubMed
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-
-                <Separator className="bg-slate-700" />
-
-                <div className="flex items-center justify-between">
-                  <p className="text-xs text-slate-500">
-                    Powered by the U.S. National Library of Medicine (NLM) PubMed database
-                  </p>
-                  <a
-                    href="https://www.nlm.nih.gov/services/queries/veterinarymed.html"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-cyan-400 hover:text-cyan-300 flex items-center gap-1"
-                  >
-                    NLM Veterinary Resources <ExternalLink className="h-3 w-3" />
-                  </a>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+          </div>
         </div>
       </div>
     </div>
