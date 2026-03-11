@@ -329,7 +329,7 @@ export default function MedicalSearch() {
                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 flex items-center justify-center mx-auto mb-4">
                       <PawPrint className="h-8 w-8 text-white" />
                     </div>
-                    <h2 className="text-2xl font-bold text-slate-100">PetCare Pro AI Assistant</h2>
+                    <h2 className="text-2xl font-bold text-slate-100">Vatara Health AI Assistant</h2>
                     <p className="text-slate-400 max-w-md">
                       Ask me anything about your pet's health, nutrition, vaccinations, behavior, or wellness. I'm here to help!
                     </p>

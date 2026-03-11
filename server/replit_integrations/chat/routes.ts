@@ -82,7 +82,7 @@ export function registerChatRoutes(app: Express): void {
 
       const systemPrompt = {
         role: "system" as const,
-        content: `You are PetCare Pro AI, a knowledgeable and compassionate veterinary health assistant. You help pet owners understand their pets' health conditions, symptoms, treatments, preventive care, nutrition, and general wellness.
+        content: `You are Vatara Health AI, a knowledgeable and compassionate veterinary health assistant. You help pet owners understand their pets' health conditions, symptoms, treatments, preventive care, nutrition, and general wellness.
 
 Key guidelines:
 - Provide accurate, helpful information about pet health topics
