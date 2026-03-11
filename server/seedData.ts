@@ -1,5 +1,6 @@
 import { db } from './db';
-import { pets, medicalRecords, serviceProviders, users, providerQualityMetrics, reviews } from '@shared/schema';
+import { pets, medicalRecords, serviceProviders, users, providerQualityMetrics, reviews, insurancePartners } from '@shared/schema';
+import { eq } from 'drizzle-orm';
 
 // Helper functions
 function getProviderDescription(specialty: string, grade: string): string {
@@ -578,4 +579,87 @@ export async function seedDemoData(userId: string) {
     console.error('Error seeding demo data:', error);
     throw error;
   }
+}
+
+export async function seedInsurancePartners() {
+  const existing = await db.select().from(insurancePartners);
+  if (existing.length > 0) return;
+
+  const partners = [
+    {
+      companyName: "PawGuard Insurance",
+      partnerCode: "PAWGUARD",
+      description: "Comprehensive pet insurance with flexible plans for dogs and cats. Covers accidents, illnesses, and preventive care with no breed restrictions.",
+      websiteUrl: "https://pawguard.example.com",
+      contactEmail: "partners@pawguard.example.com",
+      contactPhone: "(800) 555-7291",
+      isActive: true,
+      baseDiscountRate: "8.00",
+      maxDiscountRate: "28.00",
+      commissionRate: "3.50",
+    },
+    {
+      companyName: "VetShield Pro",
+      partnerCode: "VETSHIELD",
+      description: "Premium veterinary insurance trusted by over 500,000 pet owners. Offers 90% reimbursement on covered costs with fast claims processing.",
+      websiteUrl: "https://vetshield.example.com",
+      contactEmail: "support@vetshield.example.com",
+      contactPhone: "(800) 555-4810",
+      isActive: true,
+      baseDiscountRate: "10.00",
+      maxDiscountRate: "30.00",
+      commissionRate: "4.00",
+    },
+    {
+      companyName: "HappyPet Coverage",
+      partnerCode: "HAPPYPET",
+      description: "Affordable multi-pet insurance plans with wellness add-ons. Reward pet owners for keeping up with preventive care and annual checkups.",
+      websiteUrl: "https://happypet.example.com",
+      contactEmail: "hello@happypet.example.com",
+      contactPhone: "(800) 555-3392",
+      isActive: true,
+      baseDiscountRate: "5.00",
+      maxDiscountRate: "22.00",
+      commissionRate: "3.00",
+    },
+    {
+      companyName: "CareFirst Pets",
+      partnerCode: "CAREFIRST",
+      description: "Nationally recognized pet insurer offering customizable deductibles and annual limits. Specialized plans for senior pets and chronic conditions.",
+      websiteUrl: "https://carefirst.example.com",
+      contactEmail: "info@carefirst.example.com",
+      contactPhone: "(800) 555-6624",
+      isActive: true,
+      baseDiscountRate: "7.00",
+      maxDiscountRate: "25.00",
+      commissionRate: "3.25",
+    },
+    {
+      companyName: "TailSafe Insurance",
+      partnerCode: "TAILSAFE",
+      description: "Innovative digital-first pet insurance with an AI-powered claims app. Real-time claim status, direct vet billing, and instant policy updates.",
+      websiteUrl: "https://tailsafe.example.com",
+      contactEmail: "claims@tailsafe.example.com",
+      contactPhone: "(800) 555-9047",
+      isActive: true,
+      baseDiscountRate: "6.00",
+      maxDiscountRate: "26.00",
+      commissionRate: "3.75",
+    },
+    {
+      companyName: "FureverSafe",
+      partnerCode: "FUREVER",
+      description: "Boutique pet insurance focused on holistic and alternative care coverage including acupuncture, chiropractic, and hydrotherapy treatments.",
+      websiteUrl: "https://fureverSafe.example.com",
+      contactEmail: "care@furever.example.com",
+      contactPhone: "(800) 555-2218",
+      isActive: true,
+      baseDiscountRate: "5.00",
+      maxDiscountRate: "20.00",
+      commissionRate: "2.75",
+    },
+  ];
+
+  await db.insert(insurancePartners).values(partners);
+  console.log(`Seeded ${partners.length} insurance partners.`);
 }
