@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { GooglePlacesService, convertGooglePlaceToServiceProvider, geocodeZipcode } from "./googlePlaces";
+import { GooglePlacesService, convertGooglePlaceToServiceProvider } from "./googlePlaces";
 import { insertPetSchema, insertMedicalRecordSchema, insertReviewSchema, insertAppointmentSchema } from "@shared/schema";
 import { seedDemoData } from "./seedData";
 import { z } from "zod";
@@ -259,25 +259,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!zipcode) return res.status(400).json({ message: "Zipcode required" });
       if (!process.env.GOOGLE_PLACES_API_KEY) return res.status(503).json({ message: "Google Places API not configured" });
 
-      const coords = await geocodeZipcode(process.env.GOOGLE_PLACES_API_KEY, zipcode as string);
-      if (!coords) return res.status(404).json({ message: "Could not find location for that zipcode" });
-
-      const googlePlaces = new GooglePlacesService(process.env.GOOGLE_PLACES_API_KEY);
-      let allResults: any[] = [];
-
+      const apiKey = process.env.GOOGLE_PLACES_API_KEY;
+      const zip = zipcode as string;
       const searchType = type as string || 'all';
 
+      // Use Places Text Search directly with zipcode — no Geocoding API needed
+      const queries: { query: string; serviceType: string }[] = [];
       if (searchType === 'all' || searchType === 'Veterinarian') {
-        const vets = await googlePlaces.searchNearbyVeterinarians(coords.lat, coords.lng, 8000);
-        allResults.push(...vets);
+        queries.push({ query: `veterinarian near ${zip}`, serviceType: 'Veterinarian' });
       }
       if (searchType === 'all' || searchType === 'Groomer') {
-        const groomers = await googlePlaces.searchNearbyPetGroomers(coords.lat, coords.lng, 8000);
-        allResults.push(...groomers);
+        queries.push({ query: `pet grooming near ${zip}`, serviceType: 'Groomer' });
       }
       if (searchType === 'all' || searchType === 'Pet Store') {
-        const stores = await googlePlaces.searchNearbyPetStores(coords.lat, coords.lng, 8000);
-        allResults.push(...stores);
+        queries.push({ query: `pet store near ${zip}`, serviceType: 'Pet Store' });
+      }
+
+      let allResults: any[] = [];
+      let locationCity = '';
+      let locationState = '';
+
+      for (const { query, serviceType } of queries) {
+        const url = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${apiKey}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        if (data.status === 'OK' && data.results?.length) {
+          // Extract city/state from first result on first query
+          if (!locationCity && data.results[0]?.formatted_address) {
+            const parts = data.results[0].formatted_address.split(',');
+            if (parts.length >= 2) {
+              locationCity = parts[parts.length - 2]?.trim() || '';
+              const stateZip = parts[parts.length - 1]?.trim() || '';
+              locationState = stateZip.split(' ')[0] || '';
+            }
+          }
+          allResults.push(...data.results.map((r: any) => ({ ...r, _serviceType: serviceType })));
+        } else {
+          console.log(`Places text search status for "${query}": ${data.status}`);
+        }
+      }
+
+      if (allResults.length === 0) {
+        return res.status(404).json({ message: "No providers found for that zipcode. Make sure the Places API is enabled in Google Cloud Console." });
       }
 
       const converted = allResults.map((place, index) => {
@@ -285,13 +308,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return {
           id: -(index + 1),
           ...c,
+          serviceType: place._serviceType || c.serviceType,
           isGooglePlace: true,
           googlePlaceId: place.place_id,
           openNow: place.opening_hours?.open_now ?? null,
         };
       });
 
-      res.json({ providers: converted, location: coords });
+      res.json({ providers: converted, location: { city: locationCity, state: locationState, zip } });
     } catch (error) {
       console.error("Error searching by zipcode:", error);
       res.status(500).json({ message: "Failed to search providers by zipcode" });
