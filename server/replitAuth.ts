@@ -114,29 +114,25 @@ export async function setupAuth(app: Express) {
   passport.serializeUser((user: Express.User, cb) => cb(null, user));
   passport.deserializeUser((user: Express.User, cb) => cb(null, user));
 
-  const getDomainStrategy = (hostname: string) => {
-    const domains = process.env.REPLIT_DOMAINS!.split(",");
-    const match = domains.find(d => d === hostname);
-    return `replitauth:${match || domains[0]}`;
-  };
+  const domains = process.env.REPLIT_DOMAINS!.split(",");
+  const primaryDomain = domains[0];
 
   app.get("/api/login", (req, res, next) => {
-    passport.authenticate(getDomainStrategy(req.hostname), {
+    // Force login through the canonical domain to keep session consistent
+    if (req.hostname !== primaryDomain) {
+      return res.redirect(`https://${primaryDomain}/api/login`);
+    }
+    passport.authenticate(`replitauth:${primaryDomain}`, {
       prompt: "login consent",
       scope: ["openid", "email", "profile", "offline_access"],
     })(req, res, next);
   });
 
   app.get("/api/callback", (req, res, next) => {
-    passport.authenticate(getDomainStrategy(req.hostname), {
+    passport.authenticate(`replitauth:${primaryDomain}`, {
       successReturnToOrRedirect: "/",
-    })(req, res, (err: any) => {
-      if (err) {
-        console.error("Callback auth error:", err.message || err);
-        return res.redirect("/");
-      }
-      next(err);
-    });
+      failureRedirect: "/api/login",
+    })(req, res, next);
   });
 
   app.get("/api/logout", (req, res) => {
