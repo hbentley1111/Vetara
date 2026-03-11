@@ -86,6 +86,11 @@ export default function MedicalSearch() {
 
   const { data: activeConversation, isLoading: conversationLoading } = useQuery<Conversation>({
     queryKey: ["/api/conversations", activeConversationId],
+    queryFn: async () => {
+      const res = await fetch(`/api/conversations/${activeConversationId}`, { credentials: "include" });
+      if (!res.ok) throw new Error("Failed to fetch conversation");
+      return res.json();
+    },
     enabled: !!activeConversationId,
   });
 
