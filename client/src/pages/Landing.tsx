@@ -28,7 +28,7 @@ export default function Landing() {
                   <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                 </svg>
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Vatara Health</span>
+              <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Vetara Health</span>
             </div>
             
             {/* Desktop Navigation Menu */}
@@ -627,7 +627,7 @@ export default function Landing() {
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                   </svg>
                 </div>
-                <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Vatara Health</span>
+                <span className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">Vetara Health</span>
               </div>
               <p className="text-slate-400 text-lg mb-6 max-w-md">
                 Enterprise-grade pet health management platform for the modern world.
@@ -745,7 +745,7 @@ export default function Landing() {
           </div>
 
           <div className="border-t border-slate-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-            <p className="text-slate-500">&copy; 2025 Vatara Health. Enterprise-grade pet health solutions.</p>
+            <p className="text-slate-500">&copy; 2025 Vetara Health. Enterprise-grade pet health solutions.</p>
             <div className="flex space-x-6 mt-4 md:mt-0">
               <a href="#" className="text-slate-500 hover:text-cyan-400 transition-colors text-sm">Privacy</a>
               <a href="#" className="text-slate-500 hover:text-cyan-400 transition-colors text-sm">Terms</a>

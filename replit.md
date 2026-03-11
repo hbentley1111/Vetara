@@ -1,8 +1,8 @@
-# Vatara Health - Veterinary Health Management Platform
+# Vetara Health - Veterinary Health Management Platform
 
 ## Overview
 
-Vatara Health is a comprehensive veterinary health management platform built with a modern full-stack architecture. The system provides pet owners with digital health records, QR code pet identification, provider discovery, insurance integration, and a quality-graded provider network. It also includes a provider portal for veterinarians to access authorized pet records through a subscription-based model.
+Vetara Health is a comprehensive veterinary health management platform built with a modern full-stack architecture. The system provides pet owners with digital health records, QR code pet identification, provider discovery, insurance integration, and a quality-graded provider network. It also includes a provider portal for veterinarians to access authorized pet records through a subscription-based model.
 
 ## System Architecture
 
