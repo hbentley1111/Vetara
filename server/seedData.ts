@@ -650,6 +650,83 @@ export async function seedDemoData(userId: string) {
   }
 }
 
+export async function seedAppointmentsForExistingPets() {
+  // Find all pets in the system
+  const allPets = await db.select().from(pets).where(eq(pets.isActive, true));
+  if (allPets.length === 0) return;
+
+  // Find existing providers
+  const allProviders = await db.select().from(serviceProviders).limit(12);
+  if (allProviders.length === 0) return;
+
+  const now = new Date();
+
+  // Check which pets already have upcoming appointments
+  const existingAppointments = await db.select().from(appointments)
+    .where(eq(appointments.status, 'scheduled'));
+  const confirmedAppointments = await db.select().from(appointments)
+    .where(eq(appointments.status, 'confirmed'));
+
+  const petsWithAppointments = new Set([
+    ...existingAppointments.map(a => a.petId),
+    ...confirmedAppointments.map(a => a.petId),
+  ]);
+
+  // Only seed for pets that have no appointments at all
+  const petsNeedingAppointments = allPets.filter(p => !petsWithAppointments.has(p.id));
+  if (petsNeedingAppointments.length === 0) return;
+
+  const daysFromNow = (days: number, hour = 10, minute = 0) => {
+    const d = new Date(now);
+    d.setDate(d.getDate() + days);
+    d.setHours(hour, minute, 0, 0);
+    return d;
+  };
+
+  const appointmentTemplates = [
+    { type: "Routine Checkup", days: 5, hour: 9, duration: 45, status: "confirmed", notes: "Annual wellness exam. Routine physical assessment and health screening." },
+    { type: "Dental Cleaning", days: 14, hour: 10, duration: 90, status: "scheduled", notes: "Routine dental cleaning and oral health examination." },
+    { type: "Vaccination", days: 21, hour: 11, duration: 30, status: "scheduled", notes: "Annual core vaccinations update." },
+    { type: "Post-Surgery Follow-Up", days: 3, hour: 15, duration: 30, status: "confirmed", notes: "Post-procedure check-up and suture inspection." },
+    { type: "Dermatology Follow-Up", days: 7, hour: 14, duration: 30, status: "confirmed", notes: "Follow-up on treatment plan and skin condition assessment." },
+    { type: "Routine Checkup", days: 30, hour: 9, duration: 45, status: "scheduled", notes: "6-month wellness check and nutritional review." },
+  ];
+
+  const newAppointments = [];
+  for (let i = 0; i < petsNeedingAppointments.length; i++) {
+    const pet = petsNeedingAppointments[i];
+    // Give each pet 2 upcoming appointments
+    const template1 = appointmentTemplates[(i * 2) % appointmentTemplates.length];
+    const template2 = appointmentTemplates[(i * 2 + 1) % appointmentTemplates.length];
+    const provider1 = allProviders[i % allProviders.length];
+    const provider2 = allProviders[(i + 1) % allProviders.length];
+
+    newAppointments.push({
+      petId: pet.id,
+      providerId: provider1.id,
+      appointmentType: template1.type,
+      scheduledDate: daysFromNow(template1.days, template1.hour),
+      duration: template1.duration,
+      status: template1.status,
+      notes: template1.notes,
+    });
+    newAppointments.push({
+      petId: pet.id,
+      providerId: provider2.id,
+      appointmentType: template2.type,
+      scheduledDate: daysFromNow(template2.days, template2.hour),
+      duration: template2.duration,
+      status: template2.status,
+      notes: template2.notes,
+    });
+  }
+
+  if (newAppointments.length > 0) {
+    await db.insert(appointments).values(newAppointments);
+    console.log(`Seeded ${newAppointments.length} appointments for ${petsNeedingAppointments.length} pets.`);
+  }
+}
+
 export async function seedInsurancePartners() {
   const existing = await db.select().from(insurancePartners);
   if (existing.length > 0) return;

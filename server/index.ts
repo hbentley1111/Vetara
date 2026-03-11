@@ -1,7 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
-import { seedInsurancePartners } from "./seedData";
+import { seedInsurancePartners, seedAppointmentsForExistingPets } from "./seedData";
 
 const app = express();
 app.use(express.json());
@@ -39,6 +39,7 @@ app.use((req, res, next) => {
 
 (async () => {
   await seedInsurancePartners().catch(err => console.error("Insurance partner seed error:", err));
+  await seedAppointmentsForExistingPets().catch(err => console.error("Appointment seed error:", err));
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
