@@ -36,6 +36,27 @@ interface GooglePlaceDetails extends GooglePlaceResult {
   }>;
 }
 
+export async function geocodeZipcode(apiKey: string, zipcode: string): Promise<{ lat: number; lng: number; city: string; state: string } | null> {
+  const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(zipcode)}&key=${apiKey}`;
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    if (data.status !== 'OK' || !data.results.length) return null;
+    const result = data.results[0];
+    const lat = result.geometry.location.lat;
+    const lng = result.geometry.location.lng;
+    let city = '';
+    let state = '';
+    for (const comp of result.address_components) {
+      if (comp.types.includes('locality')) city = comp.long_name;
+      if (comp.types.includes('administrative_area_level_1')) state = comp.short_name;
+    }
+    return { lat, lng, city, state };
+  } catch {
+    return null;
+  }
+}
+
 export class GooglePlacesService {
   private apiKey: string;
   private baseUrl = 'https://maps.googleapis.com/maps/api/place';

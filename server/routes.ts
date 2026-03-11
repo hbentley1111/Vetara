@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, isAuthenticated } from "./replitAuth";
-import { GooglePlacesService, convertGooglePlaceToServiceProvider } from "./googlePlaces";
+import { GooglePlacesService, convertGooglePlaceToServiceProvider, geocodeZipcode } from "./googlePlaces";
 import { insertPetSchema, insertMedicalRecordSchema, insertReviewSchema, insertAppointmentSchema } from "@shared/schema";
 import { seedDemoData } from "./seedData";
 import { z } from "zod";
@@ -249,6 +249,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error deleting medical record:", error);
       res.status(500).json({ message: "Failed to delete medical record" });
+    }
+  });
+
+  // Search providers by zipcode using Google Places
+  app.get('/api/service-providers/by-zipcode', async (req, res) => {
+    try {
+      const { zipcode, type } = req.query;
+      if (!zipcode) return res.status(400).json({ message: "Zipcode required" });
+      if (!process.env.GOOGLE_PLACES_API_KEY) return res.status(503).json({ message: "Google Places API not configured" });
+
+      const coords = await geocodeZipcode(process.env.GOOGLE_PLACES_API_KEY, zipcode as string);
+      if (!coords) return res.status(404).json({ message: "Could not find location for that zipcode" });
+
+      const googlePlaces = new GooglePlacesService(process.env.GOOGLE_PLACES_API_KEY);
+      let allResults: any[] = [];
+
+      const searchType = type as string || 'all';
+
+      if (searchType === 'all' || searchType === 'Veterinarian') {
+        const vets = await googlePlaces.searchNearbyVeterinarians(coords.lat, coords.lng, 8000);
+        allResults.push(...vets);
+      }
+      if (searchType === 'all' || searchType === 'Groomer') {
+        const groomers = await googlePlaces.searchNearbyPetGroomers(coords.lat, coords.lng, 8000);
+        allResults.push(...groomers);
+      }
+      if (searchType === 'all' || searchType === 'Pet Store') {
+        const stores = await googlePlaces.searchNearbyPetStores(coords.lat, coords.lng, 8000);
+        allResults.push(...stores);
+      }
+
+      const converted = allResults.map((place, index) => {
+        const c = convertGooglePlaceToServiceProvider(place, 'google_user');
+        return {
+          id: -(index + 1),
+          ...c,
+          isGooglePlace: true,
+          googlePlaceId: place.place_id,
+          openNow: place.opening_hours?.open_now ?? null,
+        };
+      });
+
+      res.json({ providers: converted, location: coords });
+    } catch (error) {
+      console.error("Error searching by zipcode:", error);
+      res.status(500).json({ message: "Failed to search providers by zipcode" });
     }
   });
 
