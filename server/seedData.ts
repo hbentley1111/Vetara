@@ -1,5 +1,5 @@
 import { db } from './db';
-import { pets, medicalRecords, serviceProviders, users, providerQualityMetrics, reviews, insurancePartners } from '@shared/schema';
+import { pets, medicalRecords, serviceProviders, users, providerQualityMetrics, reviews, insurancePartners, appointments } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 
 // Helper functions
@@ -569,11 +569,80 @@ export async function seedDemoData(userId: string) {
 
     await db.insert(medicalRecords).values(demoRecords);
 
+    // Create upcoming appointments (future dates relative to now)
+    const now = new Date();
+    const daysFromNow = (days: number, hour = 10, minute = 0) => {
+      const d = new Date(now);
+      d.setDate(d.getDate() + days);
+      d.setHours(hour, minute, 0, 0);
+      return d;
+    };
+
+    const demoAppointments = [
+      {
+        petId: insertedPets[0].id, // Buddy
+        providerId: insertedProviders[0].id, // Thompson Veterinary Excellence (Cardiology)
+        appointmentType: "Routine Checkup",
+        scheduledDate: daysFromNow(5, 9, 0),
+        duration: 45,
+        status: "confirmed",
+        notes: "Annual wellness exam. Bring previous vaccination records. Buddy has been eating well and seems energetic."
+      },
+      {
+        petId: insertedPets[0].id, // Buddy
+        providerId: insertedProviders[5].id, // Davis Dental Veterinary
+        appointmentType: "Dental",
+        scheduledDate: daysFromNow(14, 10, 30),
+        duration: 90,
+        status: "scheduled",
+        notes: "Follow-up dental cleaning appointment. Monitor gum line from last visit."
+      },
+      {
+        petId: insertedPets[1].id, // Whiskers
+        providerId: insertedProviders[6].id, // Miller Dermatology for Pets
+        appointmentType: "Dermatology Follow-Up",
+        scheduledDate: daysFromNow(7, 14, 0),
+        duration: 30,
+        status: "confirmed",
+        notes: "Follow-up on allergy treatment plan. Check skin condition and adjust antihistamine dose if needed."
+      },
+      {
+        petId: insertedPets[1].id, // Whiskers
+        providerId: insertedProviders[3].id, // Johnson Family Pet Care
+        appointmentType: "Vaccination",
+        scheduledDate: daysFromNow(21, 11, 0),
+        duration: 30,
+        status: "scheduled",
+        notes: "Annual FVRCP booster vaccination. Indoor cat - no rabies required this cycle."
+      },
+      {
+        petId: insertedPets[2].id, // Luna
+        providerId: insertedProviders[1].id, // Chen Animal Medical Center
+        appointmentType: "Post-Surgery Follow-Up",
+        scheduledDate: daysFromNow(3, 15, 30),
+        duration: 30,
+        status: "confirmed",
+        notes: "10-day post-spay suture check. Inspect incision site and remove sutures if healed properly."
+      },
+      {
+        petId: insertedPets[2].id, // Luna
+        providerId: insertedProviders[3].id, // Johnson Family Pet Care
+        appointmentType: "Routine Checkup",
+        scheduledDate: daysFromNow(30, 9, 30),
+        duration: 45,
+        status: "scheduled",
+        notes: "6-month wellness check for Luna. Growth assessment and nutritional review for young adult cat."
+      }
+    ];
+
+    await db.insert(appointments).values(demoAppointments);
+
     console.log('Demo data seeded successfully!');
     return {
       pets: insertedPets.length,
       providers: insertedProviders.length,
-      records: demoRecords.length
+      records: demoRecords.length,
+      appointments: demoAppointments.length
     };
   } catch (error) {
     console.error('Error seeding demo data:', error);

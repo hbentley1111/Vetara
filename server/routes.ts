@@ -548,7 +548,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/appointments', isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.claims.sub;
-      const userAppointments = await storage.getAppointmentsByOwner(userId);
+      const raw = await storage.getAppointmentsByOwner(userId);
+      // Map Drizzle join format to flat structure the frontend expects
+      const userAppointments = raw.map((row: any) => ({
+        ...(row.appointments ?? row),
+        pet: row.pets ?? row.pet,
+        provider: row.service_providers
+          ? { ...(row.service_providers), user: row.users }
+          : row.provider,
+      }));
       res.json(userAppointments);
     } catch (error) {
       console.error("Error fetching appointments:", error);

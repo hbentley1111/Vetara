@@ -152,7 +152,8 @@ export default function Dashboard() {
   // Get upcoming appointments
   const upcomingAppointments = Array.isArray(appointments) 
     ? appointments
-        .filter(apt => new Date(apt.scheduledDate) > new Date() && apt.status === 'scheduled')
+        .filter(apt => new Date(apt.scheduledDate) > new Date() && (apt.status === 'scheduled' || apt.status === 'confirmed'))
+        .sort((a, b) => new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime())
         .slice(0, 3)
     : [];
 
@@ -503,16 +504,21 @@ export default function Dashboard() {
                 ) : (
                   <div className="space-y-3">
                     {upcomingAppointments.map((appointment: any) => (
-                      <div key={appointment.id} className="p-3 bg-blue-50 rounded-lg">
+                      <div key={appointment.id} className="p-3 bg-slate-700/50 border border-slate-600 rounded-lg">
                         <div className="flex items-center justify-between">
                           <div>
-                            <h4 className="font-medium text-gray-900">{appointment.pet?.name}</h4>
-                            <p className="text-sm text-gray-600">{appointment.appointmentType}</p>
-                            <p className="text-sm text-pet-blue font-medium">
+                            <div className="flex items-center gap-2">
+                              <h4 className="font-medium text-slate-100">{appointment.pet?.name}</h4>
+                              <span className={`text-xs px-2 py-0.5 rounded-full ${appointment.status === 'confirmed' ? 'bg-green-500/20 text-green-400' : 'bg-cyan-500/20 text-cyan-400'}`}>
+                                {appointment.status}
+                              </span>
+                            </div>
+                            <p className="text-sm text-slate-300">{appointment.appointmentType}</p>
+                            <p className="text-sm text-cyan-400 font-medium">
                               {formatDate(appointment.scheduledDate)}
                             </p>
                           </div>
-                          <svg className="w-5 h-5 text-pet-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <svg className="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                           </svg>
                         </div>
